@@ -1,0 +1,206 @@
+{
+  "island": {
+    "path": "/assets/world/island-v1.png",
+    "width": 1536,
+    "height": 1024,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a1625c-d908-7f11-ae43-3c3b1ad19184/exec-9351044c-5ce1-41af-80da-38d6937ced57.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "moved into project",
+    "solidBounds": {
+      "x": 19,
+      "y": 18,
+      "width": 1499,
+      "height": 916
+    },
+    "alphaRange": [
+      0,
+      254
+    ],
+    "plotAnchors": {
+      "home": {
+        "x": 0.29,
+        "y": 0.55
+      },
+      "workshop": {
+        "x": 0.69,
+        "y": 0.55
+      },
+      "lookout": {
+        "x": 0.5,
+        "y": 0.32
+      }
+    }
+  },
+  "route": {
+    "path": "/assets/world/route-v1.png",
+    "width": 1024,
+    "height": 1536,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a1625c-d908-7f11-ae43-3c3b1ad19184/exec-9a6a81f4-f851-4523-943e-0296a64ccf45.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "moved into project",
+    "horizon": {
+      "x": 0.5,
+      "y": 0.18
+    },
+    "notes": "Lane projection is independent of decorative plank seams; road spans full bottom width."
+  },
+  "courier": {
+    "path": "/assets/courier/run-v1.png",
+    "width": 1536,
+    "height": 1024,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a1625c-d908-7f11-ae43-3c3b1ad19184/exec-1aaa98e4-c748-4551-aa3a-964debfc690e.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original data URL recovered after ENOSPC; copied from /tmp",
+    "solidBounds": {
+      "x": 45,
+      "y": 87,
+      "width": 1443,
+      "height": 793
+    },
+    "alphaRange": [
+      0,
+      254
+    ],
+    "frames": 4,
+    "frameWidth": 384,
+    "frameHeight": 1024,
+    "origin": {
+      "x": 0.5,
+      "y": 0.859375
+    },
+    "frameSolidBounds": [
+      {
+        "x": 45,
+        "y": 87,
+        "width": 339,
+        "height": 793
+      },
+      {
+        "x": 42,
+        "y": 87,
+        "width": 332,
+        "height": 778
+      },
+      {
+        "x": 15,
+        "y": 87,
+        "width": 339,
+        "height": 793
+      },
+      {
+        "x": 9,
+        "y": 87,
+        "width": 327,
+        "height": 793
+      }
+    ],
+    "frameHeadAnchors": [
+      {
+        "x": 208.5,
+        "y": 87
+      },
+      {
+        "x": 181.5,
+        "y": 87
+      },
+      {
+        "x": 200.0,
+        "y": 87
+      },
+      {
+        "x": 194.0,
+        "y": 87
+      }
+    ]
+  },
+  "homeCottage": {
+    "path": "/assets/buildings/home-cottage-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a1625c-d908-7f11-ae43-3c3b1ad19184/exec-1d155cad-e25e-4d12-9d80-d9133adeb77d.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "moved into project",
+    "solidBounds": {
+      "x": 194,
+      "y": 155,
+      "width": 934,
+      "height": 936
+    },
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  "homeBungalow": {
+    "path": "/assets/buildings/home-bungalow-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a1625c-d908-7f11-ae43-3c3b1ad19184/exec-0fecde7c-0ed0-45d0-bc5a-11d9e69918b4.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "moved into project",
+    "solidBounds": {
+      "x": 45,
+      "y": 295,
+      "width": 1170,
+      "height": 793
+    },
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  "timber": {
+    "path": "/assets/pickups/timber-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a1625c-d908-7f11-ae43-3c3b1ad19184/exec-9aa299b4-55b4-4883-8863-bfecb5c74cd9.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "moved into project",
+    "solidBounds": {
+      "x": 115,
+      "y": 270,
+      "width": 1058,
+      "height": 800
+    },
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  "coin": {
+    "path": "/assets/pickups/coin-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a1625c-d908-7f11-ae43-3c3b1ad19184/exec-813d2988-1e92-4add-9ca8-cc657b05b7fe.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "moved into project",
+    "solidBounds": {
+      "x": 243,
+      "y": 183,
+      "width": 773,
+      "height": 880
+    },
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  "obstacle": {
+    "path": "/assets/pickups/obstacle-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a1625c-d908-7f11-ae43-3c3b1ad19184/exec-aa787989-b3f0-402e-a79f-f032c5dba1de.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "moved into project",
+    "solidBounds": {
+      "x": 52,
+      "y": 298,
+      "width": 1151,
+      "height": 753
+    },
+    "alphaRange": [
+      0,
+      255
+    ]
+  }
+}

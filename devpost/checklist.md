@@ -49,6 +49,13 @@ Save each verified slice as a local commit; keep private context and secrets ign
 
 - [ ] Early usable behavior explored — after slice 1, before expanding the settlement art/content; collect feedback on motion, readability, adult character, controls, and island space.
 - [ ] Final kick-the-tires exploration and feedback completed — after slice 3 and before recording readiness.
+Slice 1 mechanical verification: 26 rule tests and all 5 browser journeys pass,
+including replay/deduplication, build/save, pause/resume, slowed-frame timing,
+and phone controls/layout. Typecheck and production build pass. Reviewed captures
+are in design/checkpoints/. The implementation snapshot is committed for player
+review; the slice and early-feedback boxes remain unchecked until feedback is
+received and addressed. This is a review snapshot, not a completed learner check.
+
 - In learn mode, also perform the slice 2 learner check before committing that slice.
 - Record actual feedback and verification here as checkpoints happen; do not infer a player review from automated checks.
 
@@ -69,3 +76,11 @@ Reflection: Not yet offered; personal responses belong only in the ignored profi
 Activity mode: Planned focused alternative for an experienced developer, centered on visual/gameplay judgment.
 
 ## Revisions
+
+- Added a settled-run ID ledger alongside the last settled ID: an old result arriving after a newer run needs deduplication too; the player-facing reward rule is unchanged.
+- Pinned compatible first-build versions after registry verification: Phaser 4.2.1, TypeScript 5.9.3, Vite 8.3.5, Vitest 5.0.5, and Playwright 1.64.1. Vite 8 requires a chunk callback rather than the older object form.
+- Reinstalled dependencies cleanly after the full-disk interruption produced a truncated native build-tool binary. Dependencies are back in the ordinary project-local node_modules after the learner freed space.
+- Compact-layout visual QA exposed a clipped Gather supplies action. Reduced redundant compact-panel content so the action remains visible and strengthened the readable text sizes.
+- Browser QA found Phaser delta smoothing stretched active run time on slow rendering. Disabled smoothing so the existing model receives real elapsed time, and aligned obstacle artwork height with physical jump clearance.
+- Added the matching Node 22 type declarations for the browser-test screenshot helpers; application/runtime dependencies are unchanged.
+- Desktop screenshot review also exposed a clipped run CTA and a compositor artifact from the heavy panel shadow. Compacted spacing, removed the diffuse shadow, and cleared intro text from foliage; browser viewport checks and fresh captures verify the result.

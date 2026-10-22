@@ -1,0 +1,37 @@
+/** The renderer reads this snapshot; the controller alone changes game rules. */
+export type Resources = { timber: number; stone: number; coins: number };
+export type PlotId = 'home' | 'workshop' | 'lookout';
+export type RenderEntity = {
+  id: string;
+  kind: 'timber' | 'stone' | 'coin' | 'obstacle';
+  /** Lane -1 is left, 0 is center, 1 is right. */
+  lane: number;
+  /** Absolute route distance; contact occurs at z === Frame.distance. */
+  z: number;
+};
+export interface Frame {
+  view: 'island' | 'run';
+  phase: 'active' | 'paused' | 'ended' | 'settled';
+  elapsed: number;
+  distance: number;
+  lane: number;
+  /** Physical jump height, from 0 to 2.2 world units. */
+  jumpHeight: number;
+  entities: RenderEntity[];
+  wallet: Resources;
+  loot: Resources;
+  homeBuilt: boolean;
+  homeStyle: 'cottage' | 'bungalow';
+  selectedPlot: PlotId;
+  reducedMotion: boolean;
+}
+export interface GameBridge {
+  read(): Frame;
+  tick(dtSeconds: number): void;
+  move(direction: -1 | 1): void;
+  jump(): void;
+  pause(): void;
+  selectPlot(id: PlotId): void;
+  onReady(): void;
+  onError(message: string): void;
+}

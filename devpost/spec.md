@@ -49,16 +49,17 @@ The following stack was accepted in the technical review.
 
 | Tool | Approved baseline | Role |
 | --- | --- | --- |
-| Phaser | 4.x, with verified 4.2.0 release as a baseline | Scenes, sprites, animation, input, 2D WebGL rendering. |
-| TypeScript | 5.9-compatible line | Typed run/progress rules, catalogs, saves, and UI events. |
-| Vite | 8-compatible current line | Fast local iteration and a static production build. |
+| Phaser | 4.2.1 (pinned) | Scenes, sprites, animation, input, 2D WebGL rendering. |
+| TypeScript | 5.9.3 (pinned) | Typed run/progress rules, catalogs, saves, and UI events. |
+| Vite | 8.3.5 (pinned) | Fast local iteration and a static production build. |
 | HTML/CSS | Browser standards | Readable responsive HUD, construction, guidance, pause, and results. |
-| Vitest | Current Vite-compatible line | Deterministic checks of loot, purchases, building gates, and saves. |
-| Playwright | Current compatible stable release | Focused real-player-flow and responsive-browser checks. |
+| Vitest | 5.0.5 (pinned) | Deterministic checks of loot, purchases, building gates, and saves. |
+| Playwright | 1.64.1 (pinned) | Focused real-player-flow and responsive-browser checks. |
 
-Check package versions/engines and peer compatibility before installation, then
-pin exact versions in package.json and its lockfile. The app has not yet been
-scaffolded or compatibility-tested.
+Package versions, engines, and peers were checked against npm metadata on
+22 October 2026. Exact versions are pinned in package.json and package-lock.json;
+Node 22.22.0 is compatible. The first playable is implemented, its production
+build and 26 rule tests pass, and browser QA/player review are in progress.
 
 Verified planning references:
 - Official TypeScript/Vite template: https://github.com/phaserjs/template-vite-ts
@@ -73,7 +74,7 @@ Verified planning references:
 
 The official template currently declares Phaser 4.0.0 despite its older Phaser 3
 description. Follow installed Phaser 4 APIs. The verified 4.2 release is a newer
-baseline, not a claim that the newest patch has been established.
+baseline. The first-build registry check established and pinned 4.2.1.
 
 ## Where It Runs and How Someone Tries It
 
@@ -163,7 +164,9 @@ Evaluate contacts in route/lane space, accounting for current interpolated lane
 position and jump clearance. Transparent sprite padding is not a hitbox. Process
 events in travel order so an obstacle ends collection at impact even across a
 larger frame step. Collision and timeout both use one terminal transition.
-Paused/unfocused runs freeze simulation and timer until explicit Resume.
+Paused/unfocused runs freeze simulation and timer until explicit Resume. Phaser
+uses fps.smoothStep: false so the model receives actual active elapsed time
+rather than a frame-smoothed value that stretches runs on slower renderers.
 
 RunScene renders route layers, the adult courier, grounded obstacles, and floating
 pickups with correct depth/shadow cues. Readable spacing must leave achievable
@@ -205,7 +208,8 @@ message and preserve unreadable data until the player chooses a fresh start.
 
 Load returns to the island. Never resume or credit an unfinished run on reload.
 Save after settlement, purchase, building, style/target choice, and tutorial steps.
-One terminal/settlement guard plus lastSettledRunId prevents duplicate rewards.
+One terminal/settlement guard plus settled-run IDs prevents duplicate rewards,
+including a delayed result event from an older run.
 
 Implements PRD > Saved Progress and Restart.
 
@@ -217,7 +221,7 @@ Persistent ProgressV1:
 - home/workshop/lookout records: selected style ID and built flag;
 - active unfinished target, or none at completion;
 - completed/skipped guidance steps;
-- last settled run ID.
+- last settled run ID and a settled-run ID ledger to reject delayed stale results.
 
 Derive level from home completion and settlement completion from all three
 buildings. Validate rather than maintaining conflicting progression authorities.
@@ -232,7 +236,8 @@ become available. Save all progress changes through one record.
 
 ## File Structure
 
-Planned source files; application code does not yet exist:
+Target structure; first-slice code and runtime assets now exist. Later slices
+complete the remaining content and guidance:
 
     build-with-ai-basics/
     ├── .agents/skills/            # Devpost skill pack
@@ -345,6 +350,7 @@ localStorage, fresh asset generation, and local-first delivery.
 
 Exact compatible dependency patches are a first-build preflight and will be
 pinned before implementation relies on them. The asset/playability uncertainty
-will be checked in the early slice above. The application has not yet been
-implemented or tested. The 5-build checklist now defines working steps,
+are being checked in the early slice above. First-slice code/assets are
+implemented and mechanical verification is underway. The 5-build checklist
+defines the remaining working steps,
 including art QA, player review, and the learning wrap-up.
