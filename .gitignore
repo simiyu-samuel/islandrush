@@ -1,0 +1,12 @@
+/devpost/learner-profile.md
+.env
+.env.*
+!.env.example
+/node_modules/
+/dist/
+/.vite/
+/playwright-report/
+/test-results/
+*.local
+*.log
+.DS_Store

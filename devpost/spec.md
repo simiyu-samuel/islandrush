@@ -1,0 +1,350 @@
+---
+doc: spec
+status: approved
+---
+
+# Island Rush — Technical Specification
+
+The learner approved this technical plan on 22 October 2026 with “its good lets
+proceed.” Scope, PRD, engine, architecture, and local-first delivery are approved.
+
+## How This Works, In Plain Language
+
+Phaser draws and animates the courier, route, island, buildings, and pickups.
+TypeScript holds the rules for running, earned loot, purchases, construction,
+and unlocks. A small HTML/CSS interface supplies readable controls and panels.
+Vite runs the project locally and produces the distributable browser build.
+
+The runner uses 2D sprites positioned with perspective to suggest depth; the
+island uses a fixed isometric composition. This is a fixed-view 2D implementation plan,
+suited to the approved pixel-art direction, with emphasis on composition,
+animation, controls, and feedback.
+
+On collision or timeout, the rules credit materials and coins once, save the
+updated island in the browser, and display results. Build and Buy validate the
+same saved progress before changing the visible island or inventory.
+
+## The Core Journey Through the System
+
+Implements PRD > The Core Journey.
+
+1. Load and validate saved progress, then open the island.
+2. Selecting a plot opens its construction panel, design previews, and costs.
+3. Starting a run creates a unique ID, empty loot, selected target, route seed,
+   and 60-second timer.
+4. Keyboard/touch input updates movement and jumping. The run model computes
+   pickups and contact; Phaser draws the resulting positions.
+5. Collision or timeout ends once. The controller settles loot, records the
+   settled ID, saves progress, and shows results.
+6. Run Again creates a new run. Return to Island shows construction/purchases.
+7. Buying checks eligibility and coins before exchanging the displayed amounts.
+   Building checks an eligible unfinished plot and available materials before
+   deducting the recipe and displaying the selected design.
+8. Home completion derives level 2; all three built flags derive settlement
+   completion. Save and refresh the UI after successful progress commands.
+
+## Stack
+
+The following stack was accepted in the technical review.
+
+| Tool | Approved baseline | Role |
+| --- | --- | --- |
+| Phaser | 4.x, with verified 4.2.0 release as a baseline | Scenes, sprites, animation, input, 2D WebGL rendering. |
+| TypeScript | 5.9-compatible line | Typed run/progress rules, catalogs, saves, and UI events. |
+| Vite | 8-compatible current line | Fast local iteration and a static production build. |
+| HTML/CSS | Browser standards | Readable responsive HUD, construction, guidance, pause, and results. |
+| Vitest | Current Vite-compatible line | Deterministic checks of loot, purchases, building gates, and saves. |
+| Playwright | Current compatible stable release | Focused real-player-flow and responsive-browser checks. |
+
+Check package versions/engines and peer compatibility before installation, then
+pin exact versions in package.json and its lockfile. The app has not yet been
+scaffolded or compatibility-tested.
+
+Verified planning references:
+- Official TypeScript/Vite template: https://github.com/phaserjs/template-vite-ts
+- Phaser 4 changes: https://github.com/phaserjs/phaser/blob/master/changelog/v4/4.0/CHANGELOG-v4.0.0.md
+- Phaser 4.2 release: https://editor.phaser.io/news/2026/06/phaser-v4-2-0-released
+- Game configuration: https://docs.phaser.io/phaser/concepts/game
+- TypeScript: https://www.typescriptlang.org/docs/
+- Vite: https://vite.dev/guide/
+- Vitest: https://vitest.dev/guide/
+- Playwright: https://playwright.dev/docs/intro
+- Browser storage: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+
+The official template currently declares Phaser 4.0.0 despite its older Phaser 3
+description. Follow installed Phaser 4 APIs. The verified 4.2 release is a newer
+baseline, not a claim that the newest patch has been established.
+
+## Where It Runs and How Someone Tries It
+
+Approved delivery phase: local browser build and recording first. No hosting
+provider is selected. Hosting can be chosen later for the same static build.
+
+Node 22.22.0 and Git were verified during setup. Vite documents Node 20.19+ or
+22.12+; verify exact package requirements at installation.
+
+Planned commands, to be defined during scaffolding:
+
+    npm install
+    npm run dev -- --host 127.0.0.1 --port 5173
+    npm run typecheck
+    npm test
+    npm run build
+    npm run preview -- --host 127.0.0.1 --port 4173
+
+Open http://127.0.0.1:5173 for development or http://127.0.0.1:4173 for the built
+preview. Serve through the local server rather than opening index.html directly.
+The primary target is a modern WebGL-capable desktop/phone browser. Show a clear
+initialization error when the renderer cannot start.
+
+Output is dist/. Submission requires a short working demo video and public source
+repository; hosting is optional. The approved local-only phase skips Site
+registration, source synchronization, and publication.
+
+## Look and Feel
+
+Implements PRD > Look and Feel and Screens and Layout.
+
+Carry Pixel Coast consistently through the adult courier, world, buildings,
+pickups, and UI accents: turquoise water, warm coastal light, clear silhouettes,
+spacious plots/paths, compact cream/wood-accented panels, and readable lettering.
+The mature courier proportions and floating pickups are required visual cues.
+
+Archived concept references:
+- design/reference/island-rush-visual-study-v1.png
+- design/reference/island-rush-visual-study-v2.png
+- design/reference/PROMPTS.md
+
+The second board's left column leads the art direction. Concept boards are
+reference material, not a static replacement for the playable scene.
+
+Generate fresh matching runtime PNG art: island/route artwork, adult run/jump
+frames, six building designs, material/coin pickups, and hazards. Track frame
+dimensions/origins, sources, and prompts in an asset manifest/credits. Use
+nearest-neighbor sampling and consistent pixel scale. Keep HTML text and
+controls readable independently of world scaling; adapt composition/projection
+to phone/desktop aspect ratios.
+
+Inspect sprite alignment, proportions, animation, and contacts in motion before
+expanding the full content set. Bob/rotate pickups; keep hazards grounded; make
+construction and unlocks visibly change the island. Reduced-motion presentation
+retains state cues without relying on decorative movement.
+
+## Components
+
+### App Controller
+
+Own the current view, active run, shared progress, commands, notifications, and
+save status. Update rules synchronously before rendering. A scene or result
+button cannot independently mint rewards or spend stock.
+
+Implements PRD > The Core Journey and Saved Progress and Restart.
+
+### Catalog and Progress Rules
+
+Typed catalogs contain approved recipes, prices, level gates, two style IDs per
+building, and tuning values. Pure functions validate active targets, material
+eligibility, purchases, construction, and derived progression.
+
+Initial recipes: home 30 timber; workshop 40 timber/20 stone; lookout 20 timber/
+40 stone. Material pickups give five units; coins give one. Ten coins buy five
+timber; fifteen buy five stone. Keep all tuning settings together.
+
+Implements PRD > Coins and Material Purchases, Construction and Building Designs,
+and Level Progression.
+
+### Run Model and Perspective Scene
+
+Store run ID/seed, status/end reason, active time, distance, lane/jump position,
+entities, collected IDs, and run loot. Advance with active time and input, then
+project model coordinates to the screen.
+
+Evaluate contacts in route/lane space, accounting for current interpolated lane
+position and jump clearance. Transparent sprite padding is not a hitbox. Process
+events in travel order so an obstacle ends collection at impact even across a
+larger frame step. Collision and timeout both use one terminal transition.
+Paused/unfocused runs freeze simulation and timer until explicit Resume.
+
+RunScene renders route layers, the adult courier, grounded obstacles, and floating
+pickups with correct depth/shadow cues. Readable spacing must leave achievable
+choices. Recalculate projection after resizing without resetting the run.
+
+Implements PRD > Timed Run, Timed Running and Collisions, and Material Availability
+and Run Results.
+
+### Island Scene and Construction Interface
+
+Draw the island and three plot states. Selecting a plot opens an HTML panel
+while preserving the world context. The panel previews styles/costs, shows
+shortfalls and eligible purchases, and sends explicit Buy/Build commands.
+Revalidate against latest progress, explain failures, and animate confirmed
+successes. Locked plots show their home-completion unlock condition.
+
+Implements PRD > Island and Construction, Construction and Building Designs,
+and Coins and Material Purchases.
+
+### HUD, Guidance, Results, and Completion
+
+Semantic HTML supplies the HUD, tutorial, Pause/Resume, construction/purchase
+panel, results, save notices, completion, and confirmed restart. Manage keyboard
+focus as panels change. Announce important state changes, not animation frames.
+
+Results show end reason, earned loot, and stored totals. Result actions cannot
+settle the run again. Tutorial flags persist when steps complete or are skipped.
+Reset only after the player's explicit restart confirmation.
+
+Implements PRD > Guided First Play, Run Result, Guidance, Pause, and Completion,
+and States and Boundaries.
+
+### Save Adapter
+
+One versioned localStorage record stores progress. Validate schema version,
+finite non-negative integer balances, known IDs, and consistent unlock/building
+states. Catch reads/writes and parsing failures. Keep a truthful save-status
+message and preserve unreadable data until the player chooses a fresh start.
+
+Load returns to the island. Never resume or credit an unfinished run on reload.
+Save after settlement, purchase, building, style/target choice, and tutorial steps.
+One terminal/settlement guard plus lastSettledRunId prevents duplicate rewards.
+
+Implements PRD > Saved Progress and Restart.
+
+## Data Model
+
+Persistent ProgressV1:
+- version and updated timestamp;
+- wallet with timber, stone, coins;
+- home/workshop/lookout records: selected style ID and built flag;
+- active unfinished target, or none at completion;
+- completed/skipped guidance steps;
+- last settled run ID.
+
+Derive level from home completion and settlement completion from all three
+buildings. Validate rather than maintaining conflicting progression authorities.
+
+Runtime ActiveRun:
+- unique ID, route seed, status (active/paused/ended/settled), end reason;
+- target/permitted materials, elapsed active seconds, distance;
+- lane/jump position, route entities, collected IDs, and current loot.
+
+An active run is discarded on reload. Ended runs settle before result actions
+become available. Save all progress changes through one record.
+
+## File Structure
+
+Planned source files; application code does not yet exist:
+
+    build-with-ai-basics/
+    ├── .agents/skills/            # Devpost skill pack
+    ├── devpost/                  # Planning docs and learning context
+    ├── design/reference/         # Concept boards and prompts
+    ├── public/assets/
+    │   ├── manifest.json         # Origins/frame layout/source credits
+    │   ├── world/                # Route/island art
+    │   ├── courier/              # Mature run/jump frames
+    │   ├── buildings/            # Three types, two designs each
+    │   └── pickups/              # Timber/stone/coins/hazards
+    ├── src/
+    │   ├── main.ts               # Bootstrap
+    │   ├── controller.ts         # Shared progress and view/run coordination
+    │   ├── model/
+    │   │   ├── types.ts
+    │   │   ├── catalog.ts
+    │   │   ├── progress.ts       # Settle/buy/build/unlock
+    │   │   ├── run.ts            # Deterministic simulation
+    │   │   └── save.ts           # Validation and storage
+    │   ├── game/
+    │   │   ├── config.ts
+    │   │   ├── projection.ts
+    │   │   ├── input.ts
+    │   │   └── scenes/
+    │   │       ├── BootScene.ts
+    │   │       ├── IslandScene.ts
+    │   │       └── RunScene.ts
+    │   └── ui/
+    │       ├── app.ts
+    │       ├── tutorial.ts
+    │       └── styles.css
+    ├── tests/
+    │   ├── progress.test.ts
+    │   ├── run.test.ts
+    │   ├── save.test.ts
+    │   └── browser/game.spec.ts
+    ├── index.html
+    ├── package.json
+    ├── package-lock.json
+    ├── tsconfig.json
+    ├── vite.config.ts
+    ├── playwright.config.ts
+    ├── .gitignore
+    └── README.md
+
+## Verification and Early Playable Slice
+
+The known learning uncertainty is how to turn the attractive concept board into
+readable, animated gameplay. Zalura's logical implementation did not deliver the
+visual identity/player experience the learner wanted.
+
+First implement a small real scene with the adult courier, one material, a coin,
+an obstacle, and the intended HUD. Check at normal speed on desktop and phone
+sizes. Verify visual contact/collection timing, lane/jump response, collision-
+ended runs, and preserved loot. Obtain player feedback on this scene before
+expanding the complete island art/content.
+
+Meaningful unit checks: collision/timeout credit once, no pickup after impact,
+paused time frozen, purchases/insufficiency, locked stone/buildings, one recipe
+charge, derived progression, and invalid/unavailable saves.
+
+Browser checks: guidance → design → run → collision/result → saved loot,
+purchase/build/unlock, Run Again, reload, focus pause, and compact layouts.
+Use the supported browser workflow for hands-on QA and read the local preview
+instructions before starting it. Run focused automated browser tests when the
+runtime/browser is available; report verification limits honestly.
+
+## External Services and Dependencies
+
+Bundled code/assets and browser storage support the approved behavior without
+runtime AI APIs, payment services, remote databases, or credentials. Coins
+exchange through game rules. Development package installation needs registry
+access. Original runtime images use the built-in image tool and are saved under
+public/assets. Record any deliberately introduced third-party font/asset license.
+Do not copy existing Zalura code/art into the new hackathon project.
+
+No hosting provider is selected. The static dist build keeps later hosting
+portable. If the learner later chooses hosting, document its setup and verified
+deployment during shipping.
+
+## Important Failure Modes
+
+- Asset/renderer failure: visible load/error state and Retry, preserving saved
+  progress; no static image masquerading as a playable game.
+- Invalid/unavailable saves: truthful notice, preserve old data, and an explicit
+  session-play or confirmed fresh-start path.
+- Overlapping terminal/result actions: one transition and settlement; validate
+  latest balances and built flags before any purchase/construction.
+- Stutter, aspect changes, or input loss: preserve timer/pause semantics and
+  contact order; test actual speed rather than relying only on stills.
+
+## What Was Kept Small
+
+The approved one-course, two-level, three-building model uses two designs each,
+fixed plots, local browser progress, and an integrated materials purchase panel.
+These have direct homes in the engine, UI, and small rule modules. Additional
+content, accounts, cross-device sync, and free placement remain deferred.
+Local-first delivery is approved, with optional hosting later.
+
+## Decisions and Open Issues
+
+Confirmed by product approval: the player journey, pixel direction, adult
+character, terminal collisions with retained loot, recipes/prices, progression,
+and small content boundary.
+
+Approved in the technical review: Phaser 4, TypeScript, Vite, HTML/CSS controls,
+fixed-view 2D perspective/isometric scenes, deterministic game-rule modules,
+localStorage, fresh asset generation, and local-first delivery.
+
+Exact compatible dependency patches are a first-build preflight and will be
+pinned before implementation relies on them. The asset/playability uncertainty
+will be checked in the early slice above. The application has not yet been
+implemented or tested. The 5-build checklist now defines working steps,
+including art QA, player review, and the learning wrap-up.
