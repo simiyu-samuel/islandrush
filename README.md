@@ -10,7 +10,8 @@ visible progress on your island.
 - Floating timber and coins, grounded stone obstacles, and keyboard, swipe, or button controls.
 - A collision ends the run immediately. Both collision and timeout bank collected loot once.
 - Results offer Run again or Return to island; banked supplies survive browser reloads.
-- Two home designs. Build reserves 30 timber once and shows five seconds of foundation/framing/roof work before the final home reveal. Pending construction survives reload.
+- Two home designs. Build reserves 30 timber once and shows five seconds of foundation/framing/roof work before the final home reveal, with a percentage bar above the structure. Pending construction survives reload.
+- A narrower desktop road with a continuous deck and subtle moving plank joins; mobile road width is preserved.
 - Mobile Island/Buildings/Run bottom navigation, a separate Buildings screen, and phone portrait/landscape controls.
 - Pause/focus handling and same-browser saves, with guarded save recovery and restart controls.
 
@@ -86,9 +87,9 @@ Build progress, player feedback, and remaining work are tracked in
 
 ## Verification
 
-For the 23 October responsive/construction revision, all 56 unit tests pass,
+For the 23 October responsive/construction revision, all 62 unit tests pass,
 covering run settlement, construction timing and reservation, save recovery,
-legacy saves, and camera geometry. TypeScript and the production build pass.
+legacy saves, camera geometry, desktop road bounds, and preserved mobile width. TypeScript and the production build pass.
 The six updated Playwright journeys collect successfully, but were not executed:
 the browser tool rejected local-preview access under its URL policy. New mobile
 composition, construction motion, and boardwalk rendering still need visual

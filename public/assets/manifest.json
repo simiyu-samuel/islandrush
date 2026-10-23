@@ -42,7 +42,7 @@
       "x": 0.5,
       "y": 0.18
     },
-    "notes": "Sky and coast retain native aspect. Boardwalk.ts samples clean wood from this unchanged PNG into a moving Mesh2D road; all three lane centers, two dividers, rails, and actors share one projection."
+    "notes": "Sky and coast retain native aspect from this unchanged PNG. Boardwalk.ts draws one continuous deck with subtle moving plank joins and stable curbs; three lane centers, two dividers, and actors share one projection. Desktop road width is capped; the reviewed mobile width is preserved."
   },
   "courier": {
     "path": "/assets/courier/run-v1.png",

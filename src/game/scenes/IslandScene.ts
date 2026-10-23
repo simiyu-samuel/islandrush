@@ -18,6 +18,8 @@ export class IslandScene extends Phaser.Scene {
   private home!: Phaser.GameObjects.Image;
   private homeShadow!: Phaser.GameObjects.Ellipse;
   private construction!: Phaser.GameObjects.Graphics;
+  private constructionMeter!: Phaser.GameObjects.Graphics;
+  private constructionPercent!: Phaser.GameObjects.Text;
   private plots: PlotView[] = [];
   private builtBefore = false;
   private reveal = 1;
@@ -29,6 +31,10 @@ export class IslandScene extends Phaser.Scene {
     this.island = this.add.image(0, 0, 'island').setDepth(0);
     this.homeShadow = this.add.ellipse(0, 0, 120, 36, 0x294d37, 0.17).setDepth(8);
     this.construction = this.add.graphics().setDepth(11);
+    this.constructionMeter = this.add.graphics().setDepth(40);
+    this.constructionPercent = this.add.text(0, 0, '', {
+      fontFamily: 'Arial, sans-serif', fontSize: '12px', fontStyle: 'bold', color: '#285c50',
+    }).setOrigin(0.5, 0).setDepth(41);
     this.home = this.add.image(0, 0, 'cottage', 'content').setOrigin(0.5, 0.91).setDepth(10);
     this.plots = [
       { id: 'home' as const, x: 0.29, y: 0.55 },
@@ -114,6 +120,22 @@ export class IslandScene extends Phaser.Scene {
     this.home.setVisible(frame.homeBuilt);
     this.homeShadow.setVisible(frame.homeBuilt || building);
     this.construction.setVisible(building);
+    const showProgress = building || (frame.homeBuilt && this.reveal < 1);
+    this.constructionMeter.clear().setVisible(showProgress);
+    this.constructionPercent.setVisible(showProgress);
+    if (showProgress) {
+      const progress = frame.homeBuilt ? 1 : Phaser.Math.Clamp(frame.constructionProgress ?? 0, 0, 1);
+      const houseWidth = islandWidth * (frame.homeStyle === 'bungalow' ? 0.235 : 0.22);
+      const meterWidth = 124;
+      const meterX = Phaser.Math.Clamp(this.home.x, meterWidth / 2 + 8, width - meterWidth / 2 - 8);
+      const meterY = Math.max(88, this.home.y - houseWidth * 0.83 - 50);
+      const graphics = this.constructionMeter;
+      graphics.fillStyle(0xfff9e9, 0.98).fillRoundedRect(meterX - meterWidth / 2, meterY, meterWidth, 42, 10);
+      graphics.lineStyle(1, 0xd8cba5).strokeRoundedRect(meterX - meterWidth / 2, meterY, meterWidth, 42, 10);
+      graphics.fillStyle(0xe6dfc8).fillRoundedRect(meterX - 51, meterY + 27, 102, 7, 3);
+      if (progress > 0) graphics.fillStyle(0x34836d).fillRoundedRect(meterX - 51, meterY + 27, 102 * progress, 7, 3);
+      this.constructionPercent.setPosition(meterX, meterY + 7).setText(`BUILDING  ${Math.round(progress * 100)}%`);
+    }
     if (!building) this.construction.clear();
     if (frame.homeBuilt) {
       this.home.setTexture(frame.homeStyle, 'content');

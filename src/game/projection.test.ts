@@ -27,6 +27,29 @@ describe('the three-lane boardwalk camera', () => {
     },
   );
 
+  it.each([[960, 640], [1440, 900], [1920, 1080]])(
+    'leaves ocean visible beside the desktop road at %sx%s', (width, height) => {
+      const camera = routeLayout(width, height);
+      const bottomRelative = LOOK_AHEAD * (1 - Math.sqrt((height - camera.horizonY) / (camera.baselineY - camera.horizonY)));
+      const left = projectRoute(-1.5, bottomRelative, 0, camera);
+      const right = projectRoute(1.5, bottomRelative, 0, camera);
+      expect(left.y).toBeCloseTo(height);
+      expect(left.x).toBeGreaterThanOrEqual(width * 0.20);
+      expect(right.x).toBeLessThanOrEqual(width * 0.80);
+      expect(right.x - left.x).toBeLessThanOrEqual(781);
+      expect(camera.laneSpacing).toBeGreaterThan(100);
+    },
+  );
+
+  it.each([[320, 640], [390, 844], [844, 390]])(
+    'preserves the reviewed mobile road width at %sx%s', (width, height) => {
+      const camera = routeLayout(width, height);
+      const left = projectRoute(-1.5, 0, 0, camera);
+      const right = projectRoute(1.5, 0, 0, camera);
+      expect(right.x - left.x).toBeCloseTo(width * 0.94);
+    },
+  );
+
   it('projects moving road, hazards, and pickups to the same contact line', () => {
     const camera = routeLayout(390, 844);
     const before = projectRoute(1, 48, 30, camera);

@@ -201,7 +201,8 @@ are accepted starting balance settings to tune through playtesting.
 
 Construction occurs when the player deliberately chooses Build with sufficient
 stock. Reserve/deduct the recipe once, persist a five-second construction
-deadline, and show the plot being built. Reveal the completed chosen design and
+deadline, and show the plot being built with a percentage progress bar above
+the structure. Reveal the completed chosen design and
 unlock progression only when construction finishes. Repeated presses cannot
 charge again; reload resumes the original deadline. Run and design changes are
 unavailable during the brief build. Insufficient stock leaves materials intact and shows the exact

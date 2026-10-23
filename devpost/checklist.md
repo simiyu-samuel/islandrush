@@ -63,8 +63,8 @@ implemented refinements have been retried.
 ## Final Review
 
 - [ ] Early-feedback revision: mobile Island/Buildings/Run navigation and separate Buildings screen; retry on phone and tablet.
-- [ ] Early-feedback revision: five-second visible construction and final reveal, with one charge and reload-safe progress.
-- [ ] Early-feedback revision: responsive runner and one coherent moving road with exactly three lanes; retry portrait and landscape.
+- [ ] Early-feedback revision: five-second visible construction and final reveal, with one charge, reload-safe progress, and a percentage progress bar above the structure.
+- [ ] Early-feedback revision: responsive runner and one coherent moving road with exactly three lanes; preserve mobile width, narrow desktop width, and retry the simplified smooth plank movement.
 
 - [ ] Final review complete — feedback resolved and learner confirms ready to ship
 
@@ -93,3 +93,7 @@ Activity mode: Planned focused alternative for an experienced developer, centere
 - Early player feedback requested a clear mobile island with bottom icon navigation and a separate Buildings screen, five seconds of visible construction, and a responsive runner whose three playable lanes occupy the whole moving boardwalk. Implemented these refinements before expanding settlement content: mobile screen navigation, durable five-second construction with staged geometry, and a shared full-width moving boardwalk projection.
 
 - Verification on 23 October: all 56 unit tests pass, including six camera checks and construction/reload/legacy-save coverage. TypeScript and production build pass. Six browser journeys collect with `playwright test --list`; runtime execution and new screenshots were not performed because browser local-preview access was rejected under the tool URL policy. No alternate browser workaround was attempted. The new composition and motion require a player retry; the three feedback items above remain unchecked for that reason.
+
+- Follow-up player feedback rejected the wide desktop road and disruptive texture motion. Replaced the moving road mesh with a continuous painted deck, quiet moving plank joins, and fixed edge strips. Narrowed desktop only; mobile retains its previously reviewed width. Added a percentage progress bar above the construction roofline, including 100% during the final reveal. Browser visual verification remains blocked by the previously reported tool URL policy.
+
+- Follow-up verification: 62 unit tests pass, including desktop road bounds at three sizes and unchanged mobile width at three sizes. Production build and TypeScript pass. No new browser run or screenshot is claimed.

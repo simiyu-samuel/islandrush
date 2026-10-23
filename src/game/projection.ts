@@ -17,7 +17,12 @@ export function routeLayout(width: number, height: number): RouteLayout {
   const mobile = width < 960;
   const horizonY = height * (mobile ? 0.245 : 0.2);
   const baselineY = height - (mobile ? Math.max(132, height * 0.17) : height * 0.18);
-  const stageWidth = width * (mobile ? 0.94 : 0.91);
+  const horizonWidth = Math.max(12, Math.min(36, width * 0.025));
+  // Size at the bottom of the viewport, rather than letting perspective expand
+  // a nearly full-width contact line beyond both screen edges.
+  const bottomWidth = Math.min(width * 0.58, 780);
+  const bottomDepth = (height - horizonY) / (baselineY - horizonY);
+  const stageWidth = mobile ? width * 0.94 : horizonWidth + (bottomWidth - horizonWidth) / bottomDepth;
   return {
     width,
     height,
@@ -26,7 +31,7 @@ export function routeLayout(width: number, height: number): RouteLayout {
     horizonY,
     baselineY,
     laneSpacing: stageWidth / 3,
-    horizonWidth: Math.max(12, Math.min(36, width * 0.025)),
+    horizonWidth,
     mobile,
   };
 }

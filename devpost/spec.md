@@ -170,8 +170,10 @@ rather than a frame-smoothed value that stretches runs on slower renderers.
 
 RunScene renders route layers, the adult courier, grounded obstacles, and floating
 pickups with correct depth/shadow cues. One camera spans all three boardwalk
-lanes; a moving perspective surface replaces misleading fixed seams in the
-reference art. Scenery preserves its aspect ratio on narrow screens. Readable spacing must leave achievable
+lanes. Use a continuous stable deck with subtle moving plank joins and straight
+curbs, avoiding warped texture tiles and moving ropes/posts. The desktop road
+leaves ocean visible on both sides (bottom width at most 58% of the viewport,
+capped at 780px); preserve the reviewed mobile width. Scenery preserves its aspect ratio on narrow screens. Readable spacing must leave achievable
 choices. Recalculate projection after resizing without resetting the run.
 
 Implements PRD > Timed Run, Timed Running and Collisions, and Material Availability
@@ -187,7 +189,8 @@ shortfalls and eligible purchases, and sends explicit Buy/Build commands.
 Revalidate against latest progress, explain failures, and animate confirmed
 successes. A persisted pendingConstruction record reserves cost once and stores
 startedAt/completesAt (5,000ms apart). The scene shows foundation, framing, roof
-work, and final reveal; completion alone marks the building built and unlocks
+work, and final reveal, with a percentage progress bar above the roofline;
+completion alone marks the building built and unlocks
 the next level. Existing v1 saves without this optional field remain valid.
 Locked plots show their home-completion unlock condition.
 
