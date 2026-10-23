@@ -15,7 +15,7 @@ One short course and three buildings to unlock. The end-to-end demonstration is:
 
 ## Planning still to complete
 
-This records the chosen idea and subsequent feedback. The complete scope was approved on 22 October 2026. Product requirements are approved. The technical plan and build checklist are approved; implementation is next.
+This records the chosen idea and subsequent feedback. The complete scope was approved on 22 October 2026. Product requirements are approved. The technical plan and build checklist are approved; implementation is complete and accepted in the 23 October player playtest; shipping preparation is next.
 
 ## Visual feedback from the first study
 

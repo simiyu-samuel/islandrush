@@ -360,9 +360,20 @@ Approved in the technical review: Phaser 4, TypeScript, Vite, HTML/CSS controls,
 fixed-view 2D perspective/isometric scenes, deterministic game-rule modules,
 localStorage, fresh asset generation, and local-first delivery.
 
-Exact compatible dependency patches are a first-build preflight and will be
-pinned before implementation relies on them. The asset/playability uncertainty
-are being checked in the early slice above. First-slice code/assets are
-implemented and mechanical verification is underway. The 5-build checklist
-defines the remaining working steps,
-including art QA, player review, and the learning wrap-up.
+Compatible versions are pinned in package.json/package-lock.json. The complete
+one-course/two-level settlement, original art, purchases, construction, and
+short guidance are implemented. At source commit cf9590f, 72 unit/controller
+checks and the production build pass. The player reported a successful hands-on
+test and accepted the game on 23 October 2026. Automated browser journeys remain
+unexecuted under the recorded tool URL-policy limitation. The checklist and
+app map record the actual revisions and reference code route.
+
+## Sharing and Submission
+
+- Public repository: https://github.com/simiyu-samuel/islandrush
+- Default branch: codex/island-rush. Public readability verified without credentials through the GitHub repository API on 23 October 2026.
+- Technical setup: README.md. Planning artifacts: devpost/scope.md, prd.md, and spec.md. Offline code guide: devpost/app-map.html.
+- Demo video: not yet supplied or verified. Official rules require a publicly visible YouTube/Vimeo video under three minutes showing the working project.
+- Live deployment: optional, not requested or performed. The local Vite game remains the demonstrated implementation.
+- License: the repository currently has no root license. MIT proposal prepared for the owner's choice; not applied or published without that choice.
+- Submission status and confirmed requirements: devpost/shipping.md. Submission text and exit-survey answers belong to the learner. No Devpost form has been submitted by the agent.

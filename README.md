@@ -100,4 +100,10 @@ browser tool rejected local-preview access under its URL policy. New layout,
 art composition, and motion still require browser/player review. No alternate
 browser access was attempted. The five browser journeys and captures in
 `design/checkpoints/` belong to the earlier playable snapshot and do not verify
-this checkpoint. Final hands-on review and the learning wrap-up remain pending.
+this checkpoint. On 23 October the player reported testing the current game
+successfully and accepted it. That confirmation does not mean the ten automated
+browser cases or every device/edge case were exercised.
+
+The offline [app map](devpost/app-map.html) explains the Build action and where
+to change the road, recipes, and controls. [Shipping status](devpost/shipping.md)
+tracks the remaining demo and submission steps.
