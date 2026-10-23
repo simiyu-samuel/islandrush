@@ -1,7 +1,7 @@
-import { createProgress, getLevel, chooseStyle, beginConstruction, finishConstruction, settleRun, selectTarget, purchaseMaterials, canTarget, isSettlementComplete } from './model/progress';
+import { createProgress, getLevel, chooseStyle, beginConstruction, finishConstruction, settleRun, selectTarget, purchaseMaterials, canTarget, isSettlementComplete, completeTutorialStep, skipTutorial } from './model/progress';
 import { createRun, advanceRun, moveRun, jumpRun, pauseRun, resumeRun } from './model/run';
 import { loadProgress, saveProgress } from './model/save';
-import type { ActiveRun, BuildingId, CommandResult, Progress, StorageAdapter, StyleId, Material } from './model/types';
+import type { ActiveRun, BuildingId, CommandResult, Progress, StorageAdapter, StyleId, Material, TutorialStep } from './model/types';
 import { BUILDINGS } from './model/catalog';
 import type { Frame, GameBridge } from './game/bridge';
 
@@ -48,7 +48,17 @@ export class IslandController {
     });
     if (this.progress.pendingConstruction && Date.now() >= this.progress.pendingConstruction.completesAt) {
       const finished = finishConstruction(this.progress);
-      if (finished.ok) { this.progress = finished.progress; this.persist(); }
+      if (finished.ok) {
+        this.progress = finished.progress;
+        if (this.progress.buildings.home.built) this.recordTutorial('build');
+        this.persist();
+      }
+    }
+    // Existing islands from before guidance was introduced remain returning-player saves.
+    if (saved.status === 'ok' && !this.progress.tutorial.skipped && this.progress.tutorial.completed.length === 0 &&
+      (this.progress.buildings.home.built || this.progress.settledRunIds.length > 0 || Object.values(this.progress.wallet).some(value => value > 0))) {
+      this.progress = skipTutorial(this.progress).progress;
+      this.persist();
     }
     this.selectedPlot = this.progress.pendingConstruction?.buildingId ?? this.progress.target ?? 'home';
     window.addEventListener('blur', () => this.pause());
@@ -89,7 +99,29 @@ export class IslandController {
     this.toast(result.message);
     return result.ok;
   }
-  chooseStyle(style: StyleId) { this.apply(chooseStyle(this.progress, this.selectedPlot, style)); }
+  private recordTutorial(...steps: TutorialStep[]) {
+    if (this.progress.tutorial.skipped) return false;
+    let changed = false;
+    for (const step of steps) {
+      if (this.progress.tutorial.completed.includes(step)) continue;
+      this.progress = completeTutorialStep(this.progress, step).progress;
+      changed = true;
+    }
+    if (changed) this.persist();
+    return changed;
+  }
+  get guideStep(): 'choose-style' | 'first-run' | 'build' | null {
+    if (this.progress.tutorial.skipped || this.progress.buildings.home.built || this.progress.pendingConstruction) return null;
+    if (this.progress.wallet.timber >= BUILDINGS.home.recipe.timber) return 'build';
+    return this.progress.tutorial.completed.includes('choose-style') ? 'first-run' : 'choose-style';
+  }
+  skipGuide() { this.apply(skipTutorial(this.progress)); }
+  chooseStyle(style: StyleId) {
+    if (this.apply(chooseStyle(this.progress, this.selectedPlot, style))) {
+      this.recordTutorial('welcome', 'choose-style');
+      this.emit();
+    }
+  }
   selectPlot(id: BuildingId) {
     if (this.view !== 'island') return;
     if (this.progress.pendingConstruction) {
@@ -120,6 +152,7 @@ export class IslandController {
   }
   openSettlement() {
     if (this.view !== 'island') return;
+    this.recordTutorial('welcome');
     if (this.progress.pendingConstruction) this.selectedPlot = this.progress.pendingConstruction.buildingId;
     else if (this.progress.target && this.progress.buildings[this.selectedPlot].built) this.selectedPlot = this.progress.target;
     this.settlementOpen = true;
@@ -137,7 +170,8 @@ export class IslandController {
     const job = this.progress.pendingConstruction;
     if (!job) return;
     if (Date.now() >= job.completesAt) {
-      this.apply(finishConstruction(this.progress));
+      const home = job.buildingId === 'home';
+      if (this.apply(finishConstruction(this.progress)) && home) { this.recordTutorial('build'); this.emit(); }
       return;
     }
     if (Date.now() - this.lastConstructionUpdate >= 100) {
@@ -148,6 +182,7 @@ export class IslandController {
   startRun() {
     if (!this.ready || this.error || this.modal !== 'none') return;
     if (this.progress.pendingConstruction) { this.toast('Construction will be finished in a moment.'); return; }
+    this.recordTutorial('welcome', 'choose-style', ...(this.view === 'results' ? ['results' as const] : []));
     this.settlementOpen = false;
     this.run = createRun(this.progress);
     this.view = 'run';
@@ -156,11 +191,15 @@ export class IslandController {
   }
   move(direction: -1 | 1) {
     if (this.view !== 'run' || !this.run || this.modal !== 'none') return;
+    const previous = this.run;
     this.run = moveRun(this.run, direction);
+    if (this.run !== previous && this.recordTutorial('first-run')) this.emit();
   }
   jump() {
     if (this.view !== 'run' || !this.run || this.modal !== 'none') return;
+    const previous = this.run;
     this.run = jumpRun(this.run);
+    if (this.run !== previous && this.recordTutorial('first-run')) this.emit();
   }
   tick(dt: number) {
     this.updateConstruction();
@@ -172,6 +211,7 @@ export class IslandController {
         this.progress = result.progress;
         this.persist();
       } else this.notice = result.message;
+      this.recordTutorial('first-run');
       this.run = { ...this.run, phase: 'settled' };
       this.view = 'results';
       this.emit();
@@ -196,6 +236,7 @@ export class IslandController {
   }
   island() {
     if (this.view === 'run' && this.run?.phase === 'active') return;
+    if (this.view === 'results') this.recordTutorial('results');
     this.view = 'island';
     this.settlementOpen = false;
     this.run = null;

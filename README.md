@@ -13,13 +13,14 @@ visible progress on your island.
 - Home, workshop, and lookout, each with two original designs. Home unlocks level 2; the other two projects can be completed in either order. Build reserves its recipe once and shows five seconds of foundation/framing/roof work before the final building reveal, with a percentage bar above the structure. Pending construction survives reload.
 - A narrower desktop road with a continuous deck and subtle moving plank joins; mobile road width is preserved.
 - Mobile Island/Buildings/Run bottom navigation, a separate Buildings screen, and phone portrait/landscape controls.
+- Short contextual first-play guidance: choose a design, gather supplies, then build. Skip at any point; completed actions are remembered.
 - Pause/focus handling and same-browser saves, with guarded save recovery and restart controls.
 
 The material shop exchanges 10 coins for 5 timber, or 15 coins for 5 stone after
 level 2 unlocks. Only materials relevant to the active unfinished project are
 offered. Surplus survives construction. Finishing all three landmarks completes
-the starter island; coin-only replays remain available. The short onboarding
-journey is the next approved checkpoint. Full rules are in [the PRD](devpost/prd.md).
+the starter island; coin-only replays remain available. Full rules are in
+[the PRD](devpost/prd.md).
 
 ## Run locally
 
@@ -87,15 +88,16 @@ Build progress, player feedback, and remaining work are tracked in
 
 ## Verification
 
-For the 23 October responsive/construction revision, all 66 unit tests pass,
-covering run settlement, construction timing and reservation, save recovery,
-legacy saves, camera geometry, desktop road bounds, preserved mobile width, and controller purchase/run/build/reload journeys in both settlement orders. TypeScript and the production build pass.
-The eight updated Playwright journeys collect successfully, but were not executed:
-the browser tool rejected local-preview access under its URL policy. New mobile
-composition, construction motion, and boardwalk rendering still need visual
-review. No alternate browser access was attempted.
+For the 23 October settlement and guidance checkpoint, all 72 unit/controller
+checks pass. They cover collision/timeout settlement, exact construction
+reservation and timing, both settlement orders, purchases and stone contacts,
+reload during and after construction, saved designs, legacy islands, guide
+milestones and skipping, focus pause, corrupt-save preservation, session-only
+play, and responsive camera geometry. TypeScript and the production build pass.
 
-The five browser journeys and captures in `design/checkpoints/` belong to the
-previous playable checkpoint. They do not verify this revision. Early player
-feedback has been implemented; the affected screens await a player retry.
-The settlement is implemented, with browser/player review pending. Guided onboarding remains in progress.
+All ten Playwright journeys collect successfully but remain unexecuted: the
+browser tool rejected local-preview access under its URL policy. New layout,
+art composition, and motion still require browser/player review. No alternate
+browser access was attempted. The five browser journeys and captures in
+`design/checkpoints/` belong to the earlier playable snapshot and do not verify
+this checkpoint. Final hands-on review and the learning wrap-up remain pending.

@@ -314,3 +314,41 @@ for (const order of [['workshop', 'lookout'], ['lookout', 'workshop']] as const)
     }});
   });
 }
+
+
+test('first-play guidance follows real actions and stays skipped after reload', async ({ page }) => {
+  await openIsland(page);
+  await expect(page.getByRole('complementary', { name: 'Getting started' })).toBeVisible();
+  await page.getByRole('button', { name: 'Palm Bungalow', exact: true }).click();
+  await expect(page.getByText('Bring supplies home', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Gather supplies', exact: true }).click();
+  const hint = page.getByRole('complementary', { name: 'First run guidance' });
+  await expect(hint).toBeVisible();
+  await page.getByRole('button', { name: 'Move right', exact: true }).click();
+  await expect(hint).toHaveCount(0);
+  await page.reload();
+  await waitForWorld(page);
+  await page.getByRole('button', { name: 'Skip guide', exact: true }).click();
+  await page.reload();
+  await waitForWorld(page);
+  await expect(page.getByRole('complementary', { name: 'Getting started' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Palm Bungalow', exact: true })).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('unreadable saves survive session play and restart cancellation until explicit reset', async ({ page }) => {
+  await openIsland(page);
+  await page.evaluate(key => localStorage.setItem(key, '{unreadable'), SAVE_KEY);
+  await page.reload();
+  await waitForWorld(page);
+  await page.getByRole('button', { name: 'Play this session', exact: true }).click();
+  await page.getByRole('button', { name: 'Palm Bungalow', exact: true }).click();
+  expect(await page.evaluate(key => localStorage.getItem(key), SAVE_KEY)).toBe('{unreadable');
+  await page.getByRole('button', { name: 'Start over', exact: true }).click();
+  await page.getByRole('button', { name: 'Keep my island', exact: true }).click();
+  expect(await page.evaluate(key => localStorage.getItem(key), SAVE_KEY)).toBe('{unreadable');
+  await page.getByRole('button', { name: 'Start over', exact: true }).click();
+  await page.getByRole('button', { name: 'Yes, start a fresh island', exact: true }).click();
+  const fresh = await page.evaluate(key => JSON.parse(localStorage.getItem(key)!), SAVE_KEY);
+  expect(fresh.wallet).toEqual({ timber: 0, stone: 0, coins: 0 });
+  expect(fresh.buildings.home).toEqual({ built: false, style: 'cottage' });
+});

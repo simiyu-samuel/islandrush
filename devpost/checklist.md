@@ -13,6 +13,16 @@ Git: local initialization and project commits authorized on 22 October 2026.
 Remote: https://github.com/simiyu-samuel/islandrush.git (provided by the learner).
 Save each verified slice as a local commit; keep private context and secrets ignored.
 
+## Current checkpoint
+
+Implementation for slices 1–3 is present. The settlement expansion is saved as
+`42c7703`; contextual guidance and final recovery checks follow it. All 72
+unit/controller checks and the production build pass. Ten browser journeys
+collect but remain unexecuted under the tool URL-policy block. Slice boxes
+remain open for outstanding browser/hands-on verification; resume with that
+review and any reported fixes, rather than recreating implemented features.
+Final review, the learning activity, and the app map are not marked complete.
+
 ## Slices
 
 - [ ] **1. A run earns supplies that build your first home**
@@ -99,3 +109,5 @@ Activity mode: Planned focused alternative for an experienced developer, centere
 - Follow-up verification: 62 unit tests pass, including desktop road bounds at three sizes and unchanged mobile width at three sizes. Production build and TypeScript pass. No new browser run or screenshot is claimed.
 
 - The learner said “proceed” after the road correction. Continued into slice 2: six building designs, stone pickups, target selection, explicit material purchases, both level-two project orders, and settlement completion are implemented. All 66 unit/controller checks and the production build pass. Eight browser journeys collect but remain unexecuted under the existing URL-policy block. Slice/player verification boxes stay open until hands-on retry; no readiness claim is made.
+
+- Slice 3 implementation: integrated skippable contextual design/run/build guidance, persistent actual-action milestones, a first-run control hint that clears after input, returning-island compatibility, completion actions, and recovery coverage. All 72 unit/controller checks and production build pass; ten browser journeys collect only. Final hands-on review and visual QA are pending under the recorded browser access limitation.

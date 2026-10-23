@@ -112,3 +112,110 @@ describe('playable settlement commands', () => {
     },
   );
 });
+
+describe('guidance and save recovery', () => {
+  it('remembers actual first-play actions, supports skipping, and never grants resources for guidance', () => {
+    let c = ready();
+    expect(c.guideStep).toBe('choose-style');
+    c.openSettlement();
+    expect(c.progress.tutorial.completed).toContain('welcome');
+    c.chooseStyle('bungalow');
+    expect(c.guideStep).toBe('first-run');
+    c.startRun();
+    c.move(1);
+    expect(c.progress.tutorial.completed).toContain('first-run');
+    expect(c.progress.wallet).toEqual({ timber: 0, stone: 0, coins: 0 });
+    c = ready();
+    expect(c.view).toBe('island');
+    expect(c.run).toBeNull();
+    expect(c.progress.buildings.home.style).toBe('bungalow');
+    expect(c.progress.tutorial.completed).toContain('choose-style');
+    c.skipGuide();
+    expect(c.guideStep).toBeNull();
+    c = ready();
+    expect(c.progress.tutorial.skipped).toBe(true);
+    expect(c.guideStep).toBeNull();
+    c.startRun();
+    expect(c.view).toBe('run');
+    expect(c.progress.wallet.timber).toBe(0);
+  });
+
+  it('advances from the first banked run to building and completes the guide only after construction', () => {
+    const c = ready();
+    c.chooseStyle('cottage');
+    c.startRun();
+    c.run!.entities = [0,1,2,3,4,5].map(i => ({ id: String(i), kind: 'timber' as const, lane: 0 as const, z: 5 + i * 5 }));
+    c.tick(60);
+    expect(c.progress.wallet.timber).toBe(30);
+    expect(c.guideStep).toBe('build');
+    c.island();
+    expect(c.progress.tutorial.completed).toContain('results');
+    c.build();
+    expect(c.progress.tutorial.completed).not.toContain('build');
+    expect(c.guideStep).toBeNull();
+    finish(c);
+    expect(c.progress.tutorial.completed).toContain('build');
+    expect(c.guideStep).toBeNull();
+    expect(c.progress.wallet.timber).toBe(0);
+  });
+
+  it('completes an expired construction on reopen without another material charge', () => {
+    const c = ready();
+    c.chooseStyle('bungalow');
+    c.progress.wallet.timber = 35;
+    c.build();
+    vi.advanceTimersByTime(6_000);
+    const reloaded = ready();
+    expect(reloaded.progress.buildings.home).toEqual({ style: 'bungalow', built: true });
+    expect(reloaded.progress.pendingConstruction).toBeNull();
+    expect(reloaded.progress.wallet.timber).toBe(5);
+    expect(reloaded.progress.tutorial.completed).toContain('build');
+    expect(reloaded.guideStep).toBeNull();
+  });
+
+  it('recognizes an older returning island without replaying newly introduced guidance', () => {
+    const fixture = createProgress();
+    fixture.wallet.timber = 15;
+    saves.set(SAVE_KEY, JSON.stringify(fixture));
+    const c = ready();
+    expect(c.progress.wallet.timber).toBe(15);
+    expect(c.progress.tutorial.skipped).toBe(true);
+    expect(c.guideStep).toBeNull();
+  });
+
+  it('preserves corrupt save data through session play until a confirmed fresh start', () => {
+    saves.set(SAVE_KEY, '{unreadable');
+    const c = ready();
+    expect(c.modal).toBe('save-recovery');
+    c.continueSession();
+    c.chooseStyle('bungalow');
+    c.skipGuide();
+    expect(saves.get(SAVE_KEY)).toBe('{unreadable');
+    expect(c.saveMessage).toContain('previous save preserved');
+    c.freshStart();
+    expect(validateProgress(saved())).toBe(true);
+    expect(saved().wallet).toEqual({ timber: 0, stone: 0, coins: 0 });
+    expect(c.guideStep).toBe('choose-style');
+  });
+
+  it('keeps the run paused on focus loss until explicit resume and survives unavailable saving', () => {
+    Object.defineProperty(window, 'localStorage', { value: {
+      getItem: () => { throw new Error('unavailable'); },
+      setItem: () => { throw new Error('unavailable'); },
+    }, configurable: true });
+    const c = ready();
+    c.startRun();
+    c.run!.entities = [];
+    c.tick(1);
+    const blur = vi.mocked(window.addEventListener).mock.calls.find(([name]) => name === 'blur')![1] as () => void;
+    blur();
+    c.tick(20);
+    expect(c.run!.elapsed).toBe(1);
+    expect(c.run!.phase).toBe('paused');
+    c.resume();
+    c.tick(1);
+    expect(c.run!.elapsed).toBe(2);
+    expect(c.saveMessage).toContain('Session only');
+    expect(saves.size).toBe(0);
+  });
+});
