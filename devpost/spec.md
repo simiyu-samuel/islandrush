@@ -375,5 +375,5 @@ app map record the actual revisions and reference code route.
 - Technical setup: README.md. Planning artifacts: devpost/scope.md, prd.md, and spec.md. Offline code guide: devpost/app-map.html.
 - Demo video: not yet supplied or verified. Official rules require a publicly visible YouTube/Vimeo video under three minutes showing the working project.
 - Live deployment: optional, not requested or performed. The local Vite game remains the demonstrated implementation.
-- License: the repository currently has no root license. MIT proposal prepared for the owner's choice; not applied or published without that choice.
+- License: MIT, explicitly approved by the owner on 23 October 2026; root LICENSE and package metadata added. Third-party dependencies retain their own licenses.
 - Submission status and confirmed requirements: devpost/shipping.md. Submission text and exit-survey answers belong to the learner. No Devpost form has been submitted by the agent.

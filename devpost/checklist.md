@@ -25,7 +25,7 @@ confirmation supplies the reported runtime evidence, not automated-suite results
 
 The focused learning activity used the actual road feedback/revision. The app
 map is generated, statically checked, linked, and queued to open in Codex.
-Shipping now needs the demo, license choice, human-written form answers, and
+Shipping now needs the demo, human-written form answers, and
 actual submission; see `shipping.md`.
 
 ## Slices
@@ -117,3 +117,5 @@ Activity mode: Actual feedback/revision investigation plus brief evidence-based 
 - Slice 3 implementation: integrated skippable contextual design/run/build guidance, persistent actual-action milestones, a first-run control hint that clears after input, returning-island compatibility, completion actions, and recovery coverage. All 72 unit/controller checks and production build pass; ten browser journeys collect only. Final hands-on review and visual QA are pending under the recorded browser access limitation.
 
 - On 23 October the player explicitly reported: “Perfect its working have tested lets proceed.” Marked implementation, hands-on acceptance, and feedback resolution complete on that evidence; no specific device/edge-case coverage is inferred. Created the offline app map from `cf9590f`, statically checked its links/anchors, and queued it to open. Continued into shipping preparation; no deployment or submission was performed.
+
+- The owner approved MIT on 23 October. Added the exact reviewed license text as root LICENSE, set matching package metadata, and updated sharing records. The hackathon requirements were checked again while answering whether the game fits the brief; no runtime AI feature is stated as a project requirement. Demo/form/submission remain pending.

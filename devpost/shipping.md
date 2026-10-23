@@ -18,9 +18,10 @@ for this checkpoint due to the tool's URL-policy rejection. The player's report
 is the actual recent runtime evidence; no unreported device matrix or specific
 edge-case coverage is claimed.
 
+- [x] MIT license approved by the owner on 23 October and added as root LICENSE; package metadata identifies MIT. Third-party packages retain their own licenses.
+
 ## Remaining
 
-- [ ] Owner's open-source license choice. No root LICENSE currently exists; an MIT proposal was prepared separately for review. Third-party packages retain their own licenses.
 - [ ] Record a working demo; obtain a publicly visible YouTube or Vimeo link and verify it without signing in.
 - [ ] Confirm the exact required prompts in the signed-in Devpost form. The public project-management page exposes a registration/login wall, so its private field list and exit survey have not been verified.
 - [ ] Learner writes the project name, short description, project answers, and exit-survey responses. The chosen name is already Island Rush. The agent may identify missing information and correct spelling/grammar; no answers have been drafted.

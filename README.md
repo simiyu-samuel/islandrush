@@ -68,6 +68,11 @@ ignored.
 - `tests/`: deterministic rule checks and focused browser journeys.
 - `devpost/`: approved scope, PRD, technical plan, and live build checklist.
 
+## License
+
+This project is licensed under the [MIT License](LICENSE). Third-party packages
+retain their respective licenses.
+
 ## Original artwork and dependencies
 
 The thirteen runtime PNGs were generated for this project with the built-in
