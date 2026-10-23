@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { Frame, GameBridge, PlotId } from '../bridge';
+import { drawConstruction } from '../construction';
 
 type PlotView = {
   id: PlotId;
@@ -16,6 +17,7 @@ export class IslandScene extends Phaser.Scene {
   private island!: Phaser.GameObjects.Image;
   private home!: Phaser.GameObjects.Image;
   private homeShadow!: Phaser.GameObjects.Ellipse;
+  private construction!: Phaser.GameObjects.Graphics;
   private plots: PlotView[] = [];
   private builtBefore = false;
   private reveal = 1;
@@ -26,6 +28,7 @@ export class IslandScene extends Phaser.Scene {
     this.water = this.add.graphics().setDepth(-10);
     this.island = this.add.image(0, 0, 'island').setDepth(0);
     this.homeShadow = this.add.ellipse(0, 0, 120, 36, 0x294d37, 0.17).setDepth(8);
+    this.construction = this.add.graphics().setDepth(11);
     this.home = this.add.image(0, 0, 'cottage', 'content').setOrigin(0.5, 0.91).setDepth(10);
     this.plots = [
       { id: 'home' as const, x: 0.29, y: 0.55 },
@@ -64,15 +67,18 @@ export class IslandScene extends Phaser.Scene {
     const width = this.scale.width;
     const height = this.scale.height;
     const desktop = width >= 960;
-    const availableHeight = desktop ? height * 0.76 : Math.max(180, height - 430);
-    const availableWidth = desktop ? Math.max(420, width - 356) : width * 0.96;
+    const availableHeight = desktop ? height * 0.76 : Math.max(180, height - 180);
+    // Mobile buildings now live in a separate sheet: keep the island spacious
+    // rather than shrinking it to a strip above a permanently visible panel.
+    const availableWidth = desktop ? Math.max(420, width - 356) : width * 1.55;
     const islandWidth = Math.min(availableWidth * (desktop ? 1.03 : 1), availableHeight * 1.5, 1150);
     const islandHeight = islandWidth * 2 / 3;
     const centerX = desktop ? (width - 350) / 2 : width / 2;
     const centerY = desktop ? height * 0.58 : 90 + availableHeight / 2;
     const left = centerX - islandWidth / 2;
     const top = centerY - islandHeight / 2;
-    const motion = frame.reducedMotion ? 0 : time / 1000;
+    const motion = frame.reducedMotion || (!desktop && frame.settlementOpen) ? 0 : time / 1000;
+    const building = typeof frame.constructionProgress === 'number' && !frame.homeBuilt;
     this.paintWater(width, height, motion);
     this.island.setPosition(centerX, centerY).setDisplaySize(islandWidth, islandHeight);
     const markerSize = Math.max(54, Math.min(105, islandWidth * 0.13));
@@ -88,19 +94,27 @@ export class IslandScene extends Phaser.Scene {
       plot.ground.setSize(markerSize * 0.84, markerSize * 0.34);
       plot.label.setY(markerSize * 0.34 + 7);
       plot.container.setAlpha(plot.id === 'home' || frame.homeBuilt ? 1 : 0.77);
-      plot.label.setText(plot.id === 'home' && frame.homeBuilt ? 'HOME SWEET HOME' : plot.id === 'home' ? 'YOUR HOME' : `${plot.id.toUpperCase()}${frame.homeBuilt ? '' : ' · LV2'}`);
+      plot.label.setText(plot.id === 'home' && frame.homeBuilt ? 'HOME SWEET HOME' : plot.id === 'home' && building ? `BUILDING · ${Math.round((frame.constructionProgress ?? 0) * 100)}%` : plot.id === 'home' ? 'YOUR HOME' : `${plot.id.toUpperCase()}${frame.homeBuilt ? '' : ' · LV2'}`);
+      if (plot.container.input) plot.container.input.enabled = !(building || (!desktop && frame.settlementOpen));
       if (plot.id === 'home') {
         plot.container.setDepth(frame.homeBuilt ? 6 : 20);
-        plot.container.getAt<Phaser.GameObjects.Text>(2).setVisible(!frame.homeBuilt);
+        plot.container.getAt<Phaser.GameObjects.Text>(2).setVisible(!frame.homeBuilt && !building);
+        plot.halo.setVisible(!building);
+        plot.ground.setVisible(!building);
         this.home.setPosition(x, y + islandHeight * 0.025);
         this.homeShadow.setPosition(x, y + islandHeight * 0.024).setSize(islandWidth * 0.17, islandWidth * 0.047);
+        if (building) drawConstruction(this.construction, x, y + islandHeight * 0.025,
+          islandWidth * (frame.homeStyle === 'bungalow' ? 0.235 : 0.22),
+          frame.constructionProgress ?? 0, frame.homeStyle, frame.reducedMotion);
       }
     }
     if (frame.homeBuilt && !this.builtBefore) this.reveal = frame.reducedMotion ? 1 : 0;
     this.builtBefore = frame.homeBuilt;
     this.reveal = Math.min(1, this.reveal + dt * 3.8);
     this.home.setVisible(frame.homeBuilt);
-    this.homeShadow.setVisible(frame.homeBuilt);
+    this.homeShadow.setVisible(frame.homeBuilt || building);
+    this.construction.setVisible(building);
+    if (!building) this.construction.clear();
     if (frame.homeBuilt) {
       this.home.setTexture(frame.homeStyle, 'content');
       const houseWidth = islandWidth * (frame.homeStyle === 'bungalow' ? 0.235 : 0.22);

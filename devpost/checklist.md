@@ -49,17 +49,22 @@ Save each verified slice as a local commit; keep private context and secrets ign
 
 - [ ] Early usable behavior explored — after slice 1, before expanding the settlement art/content; collect feedback on motion, readability, adult character, controls, and island space.
 - [ ] Final kick-the-tires exploration and feedback completed — after slice 3 and before recording readiness.
-Slice 1 mechanical verification: 26 rule tests and all 5 browser journeys pass,
+Previous slice 1 snapshot verification: 26 rule tests and all 5 browser journeys passed,
 including replay/deduplication, build/save, pause/resume, slowed-frame timing,
 and phone controls/layout. Typecheck and production build pass. Reviewed captures
-are in design/checkpoints/. The implementation snapshot is committed for player
-review; the slice and early-feedback boxes remain unchecked until feedback is
-received and addressed. This is a review snapshot, not a completed learner check.
+are in design/checkpoints/. These checks and images predate the early-feedback
+revision and do not verify its new layout or renderer. Player feedback has now
+been received; the slice and early-feedback boxes remain unchecked until the
+implemented refinements have been retried.
 
 - In learn mode, also perform the slice 2 learner check before committing that slice.
 - Record actual feedback and verification here as checkpoints happen; do not infer a player review from automated checks.
 
 ## Final Review
+
+- [ ] Early-feedback revision: mobile Island/Buildings/Run navigation and separate Buildings screen; retry on phone and tablet.
+- [ ] Early-feedback revision: five-second visible construction and final reveal, with one charge and reload-safe progress.
+- [ ] Early-feedback revision: responsive runner and one coherent moving road with exactly three lanes; retry portrait and landscape.
 
 - [ ] Final review complete — feedback resolved and learner confirms ready to ship
 
@@ -84,3 +89,7 @@ Activity mode: Planned focused alternative for an experienced developer, centere
 - Browser QA found Phaser delta smoothing stretched active run time on slow rendering. Disabled smoothing so the existing model receives real elapsed time, and aligned obstacle artwork height with physical jump clearance.
 - Added the matching Node 22 type declarations for the browser-test screenshot helpers; application/runtime dependencies are unchanged.
 - Desktop screenshot review also exposed a clipped run CTA and a compositor artifact from the heavy panel shadow. Compacted spacing, removed the diffuse shadow, and cleared intro text from foliage; browser viewport checks and fresh captures verify the result.
+
+- Early player feedback requested a clear mobile island with bottom icon navigation and a separate Buildings screen, five seconds of visible construction, and a responsive runner whose three playable lanes occupy the whole moving boardwalk. Implemented these refinements before expanding settlement content: mobile screen navigation, durable five-second construction with staged geometry, and a shared full-width moving boardwalk projection.
+
+- Verification on 23 October: all 56 unit tests pass, including six camera checks and construction/reload/legacy-save coverage. TypeScript and production build pass. Six browser journeys collect with `playwright test --list`; runtime execution and new screenshots were not performed because browser local-preview access was rejected under the tool URL policy. No alternate browser workaround was attempted. The new composition and motion require a player retry; the three feedback items above remain unchecked for that reason.

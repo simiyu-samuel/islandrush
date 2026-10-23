@@ -1,4 +1,5 @@
 import { BUILDING_IDS, BUILDINGS } from './catalog';
+import { CONSTRUCTION_DURATION_MS } from './progress';
 import type { LoadResult, Progress, SaveResult, StorageAdapter, TutorialStep } from './types';
 
 export const SAVE_KEY = 'island-rush:progress:v1';
@@ -11,10 +12,14 @@ const nonnegativeInteger = (value: unknown) => Number.isSafeInteger(value) && (v
 const validId = (value: unknown): value is string => typeof value === 'string' && value.length > 0 && value.length <= 200;
 
 export function validateProgress(value: unknown): value is Progress {
-  if (!record(value) || !keysAre(value, [
+  if (!record(value)) return false;
+  const hasConstruction = Object.hasOwn(value, 'pendingConstruction');
+  const expectedKeys = [
     'version', 'wallet', 'buildings', 'target', 'tutorial',
     'lastSettledRunId', 'settledRunIds', 'updatedAt',
-  ]) || value.version !== 1 || !nonnegativeInteger(value.updatedAt)) return false;
+    ...(hasConstruction ? ['pendingConstruction'] : []),
+  ];
+  if (!keysAre(value, expectedKeys) || value.version !== 1 || !nonnegativeInteger(value.updatedAt)) return false;
   const wallet = value.wallet;
   if (!record(wallet) || !keysAre(wallet, ['timber', 'stone', 'coins']) ||
     !Object.values(wallet).every(nonnegativeInteger)) return false;
@@ -34,6 +39,16 @@ export function validateProgress(value: unknown): value is Progress {
     if (!BUILDING_IDS.includes(value.target as typeof BUILDING_IDS[number])) return false;
     const target = value.target as typeof BUILDING_IDS[number];
     if (built(target) || (target !== 'home' && !built('home'))) return false;
+  }
+  if (hasConstruction && value.pendingConstruction !== null) {
+    const pending = value.pendingConstruction;
+    if (!record(pending) || !keysAre(pending, ['buildingId', 'startedAt', 'completesAt']) ||
+      !BUILDING_IDS.includes(pending.buildingId as typeof BUILDING_IDS[number]) ||
+      !nonnegativeInteger(pending.startedAt) || !nonnegativeInteger(pending.completesAt) ||
+      (pending.completesAt as number) > 8_640_000_000_000_000 ||
+      (pending.completesAt as number) - (pending.startedAt as number) !== CONSTRUCTION_DURATION_MS) return false;
+    const buildingId = pending.buildingId as typeof BUILDING_IDS[number];
+    if (value.target !== buildingId || built(buildingId) || (buildingId !== 'home' && !built('home'))) return false;
   }
   const tutorial = value.tutorial;
   if (!record(tutorial) || !keysAre(tutorial, ['completed', 'skipped']) || typeof tutorial.skipped !== 'boolean' ||

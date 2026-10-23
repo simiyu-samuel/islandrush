@@ -8,23 +8,44 @@ export interface RouteLayout {
   horizonY: number;
   baselineY: number;
   laneSpacing: number;
+  horizonWidth: number;
+  mobile: boolean;
 }
 
-/** One camera calculation drives scenery, pickups, hazards, and the courier. */
+/** The complete boardwalk is three equal lanes at the courier's contact line. */
 export function routeLayout(width: number, height: number): RouteLayout {
-  const stageWidth = Math.min(width, Math.max(760, height * 1.05));
+  const mobile = width < 960;
+  const horizonY = height * (mobile ? 0.245 : 0.2);
+  const baselineY = height - (mobile ? Math.max(132, height * 0.17) : height * 0.18);
+  const stageWidth = width * (mobile ? 0.94 : 0.91);
   return {
     width,
     height,
     stageWidth,
     centerX: width / 2,
-    horizonY: height * 0.18,
-    baselineY: height * 0.82,
-    laneSpacing: stageWidth * 0.27,
+    horizonY,
+    baselineY,
+    laneSpacing: stageWidth / 3,
+    horizonWidth: Math.max(12, Math.min(36, width * 0.025)),
+    mobile,
   };
 }
 
-/** Sprite rectangles never enter the collision model. This is presentation only. */
+/** The panorama keeps its native aspect, with its waterline at our horizon. */
+export function sceneryTransform(layout: RouteLayout) {
+  const scale = Math.max(layout.width / 1024, layout.height / 1536);
+  return {
+    scale,
+    x: (layout.width - 1024 * scale) / 2,
+    y: layout.horizonY - 267 * scale,
+  };
+}
+
+/**
+ * Lane centers are -1, 0, 1; dividers are -0.5/+0.5; edges are -1.5/+1.5.
+ * All road texture, rails, hazards, pickups, and boots use this same projection.
+ * Sprite rectangles never enter the collision model.
+ */
 export function projectRoute(
   lane: number,
   z: number,
@@ -32,12 +53,13 @@ export function projectRoute(
   layout: RouteLayout,
 ): { x: number; y: number; scale: number; visible: boolean } {
   const relative = z - distance;
-  const t = Math.max(0, Math.min(1.06, 1 - relative / LOOK_AHEAD));
+  const t = Math.max(0, 1 - relative / LOOK_AHEAD);
   const depth = t * t;
+  const roadWidth = layout.horizonWidth + (layout.stageWidth - layout.horizonWidth) * depth;
   return {
-    x: layout.centerX + lane * layout.laneSpacing * (0.035 + depth * 0.965),
+    x: layout.centerX + lane * roadWidth / 3,
     y: layout.horizonY + (layout.baselineY - layout.horizonY) * depth,
-    scale: 0.08 + depth * 0.92,
+    scale: roadWidth / layout.stageWidth,
     visible: relative >= -5 && relative < LOOK_AHEAD,
   };
 }

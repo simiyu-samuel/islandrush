@@ -46,8 +46,12 @@ The island is the dominant scene, with the adult courier near the dock, clear
 paths, and three fixed building plots. Level, stored materials, and coins sit
 in compact status areas. The current goal and a main Run action remain easy to find.
 
-Selecting an available plot opens a compact construction panel while keeping
-the island visible. It previews the building designs, material costs, stored
+On desktop, selecting an available plot opens a compact construction panel
+while keeping the island visible. On screens narrower than 960px, the island is
+unobstructed by default. A bottom icon bar provides Island, Buildings, and Run;
+Buildings opens a separate scrollable settlement screen with designs and costs,
+and closing it returns to the island. The Run action remains easy to reach.
+The construction view previews the building designs, material costs, stored
 amounts, and what is still missing. An integrated material-purchase area shows
 eligible bundles, coin prices, and the remaining coin balance before purchase.
 Build is actionable when affordable. Locked level-2 plots explain that finishing
@@ -58,7 +62,10 @@ the home unlocks them.
 The route, character, obstacles, and floating pickups dominate. The compact HUD
 shows time remaining, this run's materials and coins, and Pause. Group the loot
 counters compactly so they do not crowd the route. The course has
-three lanes. The player runs forward automatically and controls lane changes
+exactly three lanes. The two visible dividers, pickups, obstacles, and courier
+share the same road perspective; the entire road surface moves, including
+both outer lanes. Portrait and landscape layouts keep the HUD and touch
+controls clear of the play area. The player runs forward automatically and controls lane changes
 and jumps. Controls use the keyboard on desktop and swipes on
 touch devices; clear hints explain both where relevant.
 
@@ -94,7 +101,8 @@ panels, clear silhouettes, and sufficiently strong separation between action
 and scenery. Preserve the mature character proportions from the revised study.
 
 Pickup animation should gently bob/rotate, then give a short collection cue.
-Construction should visibly change the plot into the chosen building. Level
+Construction shows five seconds of foundation, framing, and roof work on the
+plot before revealing the chosen building; it must not merely swap an image. Level
 unlocks should clearly reveal the new projects and resource type. Keep motion
 brief and purposeful; reduced-motion presentation should retain the same cues
 without relying on effects. Concept art is a visual reference, not a substitute
@@ -192,8 +200,11 @@ Each material pickup initially contributes five units of its material. These
 are accepted starting balance settings to tune through playtesting.
 
 Construction occurs when the player deliberately chooses Build with sufficient
-stock. Deduct the recipe once and replace that plot's preview with the selected
-completed design. Insufficient stock leaves materials intact and shows the exact
+stock. Reserve/deduct the recipe once, persist a five-second construction
+deadline, and show the plot being built. Reveal the completed chosen design and
+unlock progression only when construction finishes. Repeated presses cannot
+charge again; reload resumes the original deadline. Run and design changes are
+unavailable during the brief build. Insufficient stock leaves materials intact and shows the exact
 shortfall. Resources are never silently spent after a run. Design changes before
 construction do not consume materials.
 

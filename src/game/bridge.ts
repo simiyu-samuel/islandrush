@@ -21,6 +21,10 @@ export interface Frame {
   wallet: Resources;
   loot: Resources;
   homeBuilt: boolean;
+  /** Five-second construction clock, or null when no build is underway. */
+  constructionProgress: number | null;
+  /** The mobile settlement sheet is open; desktop keeps its side panel. */
+  settlementOpen: boolean;
   homeStyle: 'cottage' | 'bungalow';
   selectedPlot: PlotId;
   reducedMotion: boolean;

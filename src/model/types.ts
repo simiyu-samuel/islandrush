@@ -5,6 +5,7 @@ export type StyleId = 'cottage' | 'bungalow' | 'forge' | 'studio' | 'lighthouse'
 export type Lane = -1 | 0 | 1;
 export interface Wallet { timber: number; stone: number; coins: number }
 export interface BuildingState { style: StyleId; built: boolean }
+export interface PendingConstruction { buildingId: BuildingId; startedAt: number; completesAt: number }
 export type TutorialStep = 'welcome' | 'choose-style' | 'first-run' | 'results' | 'build';
 export interface TutorialState { completed: TutorialStep[]; skipped: boolean }
 export interface Progress {
@@ -12,6 +13,8 @@ export interface Progress {
   wallet: Wallet;
   buildings: Record<BuildingId, BuildingState>;
   target: BuildingId | null;
+  /** Optional for compatibility with existing version-one islands. */
+  pendingConstruction?: PendingConstruction | null;
   tutorial: TutorialState;
   lastSettledRunId: string | null;
   /** Ledger also guards stale result events after another run has settled. */

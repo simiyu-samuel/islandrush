@@ -42,7 +42,7 @@
       "x": 0.5,
       "y": 0.18
     },
-    "notes": "Lane projection is independent of decorative plank seams; road spans full bottom width."
+    "notes": "Sky and coast retain native aspect. Boardwalk.ts samples clean wood from this unchanged PNG into a moving Mesh2D road; all three lane centers, two dividers, rails, and actors share one projection."
   },
   "courier": {
     "path": "/assets/courier/run-v1.png",

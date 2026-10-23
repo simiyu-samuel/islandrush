@@ -1,4 +1,4 @@
-import { createProgress, getLevel, chooseStyle, buildBuilding, settleRun, selectTarget } from './model/progress';
+import { createProgress, getLevel, chooseStyle, beginConstruction, finishConstruction, settleRun, selectTarget } from './model/progress';
 import { createRun, advanceRun, moveRun, jumpRun, pauseRun, resumeRun } from './model/run';
 import { loadProgress, saveProgress } from './model/save';
 import type { ActiveRun, BuildingId, CommandResult, Progress, StorageAdapter, StyleId } from './model/types';
@@ -9,6 +9,9 @@ export class IslandController {
   run: ActiveRun | null = null;
   view: 'island' | 'run' | 'results' = 'island';
   selectedPlot: BuildingId = 'home';
+  compact = window.matchMedia('(max-width: 959px)').matches;
+  settlementOpen = false;
+  private lastConstructionUpdate = 0;
   ready = false;
   error = '';
   notice = '';
@@ -35,6 +38,16 @@ export class IslandController {
     } else if (saved.status === 'unavailable') {
       this.writable = false;
       this.saveMessage = 'Session only · browser storage unavailable';
+    }
+    const layout = window.matchMedia('(max-width: 959px)');
+    layout.addEventListener('change', event => {
+      this.compact = event.matches;
+      this.settlementOpen = false;
+      this.emit();
+    });
+    if (this.progress.pendingConstruction && Date.now() >= this.progress.pendingConstruction.completesAt) {
+      const finished = finishConstruction(this.progress);
+      if (finished.ok) { this.progress = finished.progress; this.persist(); }
     }
     window.addEventListener('blur', () => this.pause());
     document.addEventListener('visibilitychange', () => { if (document.hidden) this.pause(); });
@@ -76,6 +89,7 @@ export class IslandController {
   }
   chooseStyle(style: StyleId) { this.apply(chooseStyle(this.progress, 'home', style)); }
   selectPlot(id: BuildingId) {
+    if (this.compact) this.settlementOpen = true;
     if (id !== 'home') {
       this.toast(this.progress.buildings.home.built
         ? 'Level 2 unlocked. Your workshop and lookout are the next projects.'
@@ -87,12 +101,40 @@ export class IslandController {
     else this.emit();
   }
   build() {
-    if (this.apply(buildBuilding(this.progress, 'home'))) {
-      this.toast('Welcome home! Level 2 is now unlocked.');
+    if (this.apply(beginConstruction(this.progress, 'home'))) {
+      this.settlementOpen = false;
+      this.toast('Building your home. Watch your island come to life.');
+    }
+  }
+  openSettlement() {
+    if (this.view !== 'island') return;
+    this.settlementOpen = true;
+    this.emit();
+  }
+  closeSettlement() { this.settlementOpen = false; this.emit(); }
+  get constructionProgress(): number | null {
+    const job = this.progress.pendingConstruction;
+    return job ? Math.max(0, Math.min(1, (Date.now() - job.startedAt) / (job.completesAt - job.startedAt))) : null;
+  }
+  get constructionRemaining(): number {
+    return Math.max(0, Math.ceil(((this.progress.pendingConstruction?.completesAt ?? Date.now()) - Date.now()) / 1000));
+  }
+  private updateConstruction() {
+    const job = this.progress.pendingConstruction;
+    if (!job) return;
+    if (Date.now() >= job.completesAt) {
+      this.apply(finishConstruction(this.progress));
+      return;
+    }
+    if (Date.now() - this.lastConstructionUpdate >= 100) {
+      this.lastConstructionUpdate = Date.now();
+      this.emit(false);
     }
   }
   startRun() {
     if (!this.ready || this.error || this.modal !== 'none') return;
+    if (this.progress.pendingConstruction) { this.toast('Your home is being built. It will be ready in a moment.'); return; }
+    this.settlementOpen = false;
     // First checkpoint proves home construction; after home, replay remains coin-only.
     const routeProgress = this.progress.buildings.home.built ? { ...this.progress, target: null } : this.progress;
     this.run = createRun(routeProgress);
@@ -109,6 +151,7 @@ export class IslandController {
     this.run = jumpRun(this.run);
   }
   tick(dt: number) {
+    this.updateConstruction();
     if (this.view !== 'run' || !this.run || this.run.phase !== 'active') return;
     this.run = advanceRun(this.run, dt);
     if (this.run.phase === 'ended') {
@@ -142,6 +185,7 @@ export class IslandController {
   island() {
     if (this.view === 'run' && this.run?.phase === 'active') return;
     this.view = 'island';
+    this.settlementOpen = false;
     this.run = null;
     this.emit();
   }
@@ -158,6 +202,7 @@ export class IslandController {
     this.run = null;
     this.view = 'island';
     this.selectedPlot = 'home';
+    this.settlementOpen = false;
     this.modal = 'none';
     this.writable = true;
     this.persist(true);
@@ -175,6 +220,8 @@ export class IslandController {
       wallet: this.progress.wallet,
       loot: this.run?.loot ?? { timber: 0, stone: 0, coins: 0 },
       homeBuilt: this.progress.buildings.home.built,
+      constructionProgress: this.constructionProgress,
+      settlementOpen: this.compact && this.settlementOpen,
       homeStyle: this.progress.buildings.home.style as 'cottage' | 'bungalow',
       selectedPlot: this.selectedPlot,
       reducedMotion: this.reducedMotion,

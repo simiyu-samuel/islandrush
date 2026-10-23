@@ -169,7 +169,9 @@ uses fps.smoothStep: false so the model receives actual active elapsed time
 rather than a frame-smoothed value that stretches runs on slower renderers.
 
 RunScene renders route layers, the adult courier, grounded obstacles, and floating
-pickups with correct depth/shadow cues. Readable spacing must leave achievable
+pickups with correct depth/shadow cues. One camera spans all three boardwalk
+lanes; a moving perspective surface replaces misleading fixed seams in the
+reference art. Scenery preserves its aspect ratio on narrow screens. Readable spacing must leave achievable
 choices. Recalculate projection after resizing without resetting the run.
 
 Implements PRD > Timed Run, Timed Running and Collisions, and Material Availability
@@ -177,11 +179,17 @@ and Run Results.
 
 ### Island Scene and Construction Interface
 
-Draw the island and three plot states. Selecting a plot opens an HTML panel
-while preserving the world context. The panel previews styles/costs, shows
+Draw the island and three plot states. Desktop keeps an HTML side panel;
+below 960px, keep the map free and use an Island/Buildings/Run bottom bar.
+Buildings opens a separate scrollable screen; plot taps open the same screen.
+Use safe-area-aware layouts for phone portrait and landscape. The panel previews styles/costs, shows
 shortfalls and eligible purchases, and sends explicit Buy/Build commands.
 Revalidate against latest progress, explain failures, and animate confirmed
-successes. Locked plots show their home-completion unlock condition.
+successes. A persisted pendingConstruction record reserves cost once and stores
+startedAt/completesAt (5,000ms apart). The scene shows foundation, framing, roof
+work, and final reveal; completion alone marks the building built and unlocks
+the next level. Existing v1 saves without this optional field remain valid.
+Locked plots show their home-completion unlock condition.
 
 Implements PRD > Island and Construction, Construction and Building Designs,
 and Coins and Material Purchases.
@@ -220,6 +228,7 @@ Persistent ProgressV1:
 - wallet with timber, stone, coins;
 - home/workshop/lookout records: selected style ID and built flag;
 - active unfinished target, or none at completion;
+- optional pending construction with building ID, start time, and deadline;
 - completed/skipped guidance steps;
 - last settled run ID and a settled-run ID ledger to reject delayed stale results.
 

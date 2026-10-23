@@ -10,7 +10,8 @@ visible progress on your island.
 - Floating timber and coins, grounded stone obstacles, and keyboard, swipe, or button controls.
 - A collision ends the run immediately. Both collision and timeout bank collected loot once.
 - Results offer Run again or Return to island; banked supplies survive browser reloads.
-- Two home designs. Explicit construction spends 30 timber and places the chosen home on the island.
+- Two home designs. Build reserves 30 timber once and shows five seconds of foundation/framing/roof work before the final home reveal. Pending construction survives reload.
+- Mobile Island/Buildings/Run bottom navigation, a separate Buildings screen, and phone portrait/landscape controls.
 - Pause/focus handling and same-browser saves, with guarded save recovery and restart controls.
 
 The workshop, lookout, material shop, complete onboarding, and remaining
@@ -83,10 +84,17 @@ respective projects. The official Devpost skill pack is retained in
 Build progress, player feedback, and remaining work are tracked in
 [the build checklist](devpost/checklist.md).
 
-## First-checkpoint verification
+## Verification
 
-The production build and TypeScript checks pass. All 26 rule tests and 5 browser
-journeys pass, including replay deduplication, explicit construction/save,
-pause/resume, slowed-frame timing, and phone controls/layout. Original browser
-captures are in design/checkpoints/. Early player review is pending; the full
-settlement is still in progress.
+For the 23 October responsive/construction revision, all 56 unit tests pass,
+covering run settlement, construction timing and reservation, save recovery,
+legacy saves, and camera geometry. TypeScript and the production build pass.
+The six updated Playwright journeys collect successfully, but were not executed:
+the browser tool rejected local-preview access under its URL policy. New mobile
+composition, construction motion, and boardwalk rendering still need visual
+review. No alternate browser access was attempted.
+
+The five browser journeys and captures in `design/checkpoints/` belong to the
+previous playable checkpoint. They do not verify this revision. Early player
+feedback has been implemented; the affected screens await a player retry.
+The full settlement remains in progress.
