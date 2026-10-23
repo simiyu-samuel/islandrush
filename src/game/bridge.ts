@@ -1,3 +1,5 @@
+import type { BuildingState } from '../model/types';
+
 /** The renderer reads this snapshot; the controller alone changes game rules. */
 export type Resources = { timber: number; stone: number; coins: number };
 export type PlotId = 'home' | 'workshop' | 'lookout';
@@ -20,12 +22,12 @@ export interface Frame {
   entities: RenderEntity[];
   wallet: Resources;
   loot: Resources;
-  homeBuilt: boolean;
+  buildings: Record<PlotId, BuildingState>;
+  constructionBuilding: PlotId | null;
   /** Five-second construction clock, or null when no build is underway. */
   constructionProgress: number | null;
   /** The mobile settlement sheet is open; desktop keeps its side panel. */
   settlementOpen: boolean;
-  homeStyle: 'cottage' | 'bungalow';
   selectedPlot: PlotId;
   reducedMotion: boolean;
 }

@@ -7,19 +7,19 @@ visible progress on your island.
 ## Current playable checkpoint
 
 - One three-lane coastal course with an adult courier, jumping, and 60 seconds of active running.
-- Floating timber and coins, grounded stone obstacles, and keyboard, swipe, or button controls.
+- Floating timber, stone, and coins, grounded stone obstacles, and keyboard, swipe, or button controls.
 - A collision ends the run immediately. Both collision and timeout bank collected loot once.
 - Results offer Run again or Return to island; banked supplies survive browser reloads.
-- Two home designs. Build reserves 30 timber once and shows five seconds of foundation/framing/roof work before the final home reveal, with a percentage bar above the structure. Pending construction survives reload.
+- Home, workshop, and lookout, each with two original designs. Home unlocks level 2; the other two projects can be completed in either order. Build reserves its recipe once and shows five seconds of foundation/framing/roof work before the final building reveal, with a percentage bar above the structure. Pending construction survives reload.
 - A narrower desktop road with a continuous deck and subtle moving plank joins; mobile road width is preserved.
 - Mobile Island/Buildings/Run bottom navigation, a separate Buildings screen, and phone portrait/landscape controls.
 - Pause/focus handling and same-browser saves, with guarded save recovery and restart controls.
 
-The workshop, lookout, material shop, complete onboarding, and remaining
-settlement art are subsequent approved checkpoints. Their full rules are
-described in [the PRD](devpost/prd.md); they are not yet complete in this first
-playable version. After home completion this checkpoint permits coin-only
-replays while the next projects are being added.
+The material shop exchanges 10 coins for 5 timber, or 15 coins for 5 stone after
+level 2 unlocks. Only materials relevant to the active unfinished project are
+offered. Surplus survives construction. Finishing all three landmarks completes
+the starter island; coin-only replays remain available. The short onboarding
+journey is the next approved checkpoint. Full rules are in [the PRD](devpost/prd.md).
 
 ## Run locally
 
@@ -69,7 +69,7 @@ ignored.
 
 ## Original artwork and dependencies
 
-The eight runtime PNGs were generated for this project with the built-in
+The thirteen runtime PNGs were generated for this project with the built-in
 image-generation tool. Their dimensions, frame layouts, sources, and original
 prompts are recorded in [the asset manifest](public/assets/manifest.json) and
 [the runtime art record](design/runtime-art-prompts.md). Concept studies and their
@@ -87,10 +87,10 @@ Build progress, player feedback, and remaining work are tracked in
 
 ## Verification
 
-For the 23 October responsive/construction revision, all 62 unit tests pass,
+For the 23 October responsive/construction revision, all 66 unit tests pass,
 covering run settlement, construction timing and reservation, save recovery,
-legacy saves, camera geometry, desktop road bounds, and preserved mobile width. TypeScript and the production build pass.
-The six updated Playwright journeys collect successfully, but were not executed:
+legacy saves, camera geometry, desktop road bounds, preserved mobile width, and controller purchase/run/build/reload journeys in both settlement orders. TypeScript and the production build pass.
+The eight updated Playwright journeys collect successfully, but were not executed:
 the browser tool rejected local-preview access under its URL policy. New mobile
 composition, construction motion, and boardwalk rendering still need visual
 review. No alternate browser access was attempted.
@@ -98,4 +98,4 @@ review. No alternate browser access was attempted.
 The five browser journeys and captures in `design/checkpoints/` belong to the
 previous playable checkpoint. They do not verify this revision. Early player
 feedback has been implemented; the affected screens await a player retry.
-The full settlement remains in progress.
+The settlement is implemented, with browser/player review pending. Guided onboarding remains in progress.

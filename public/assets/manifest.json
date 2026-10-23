@@ -202,5 +202,95 @@
       0,
       255
     ]
+  },
+  "forge": {
+    "path": "/assets/buildings/workshop-forge-v1.png",
+    "width": 1333,
+    "height": 1180,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-3899e0b9-436c-4eae-826f-bf3c2b4e4b30.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied into project",
+    "solidBounds": {
+      "x": 64,
+      "y": 56,
+      "width": 1223,
+      "height": 1040
+    },
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  "studio": {
+    "path": "/assets/buildings/workshop-studio-v1.png",
+    "width": 1374,
+    "height": 1145,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-afedaacf-cb17-4ace-9809-717a378ded1e.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied into project",
+    "solidBounds": {
+      "x": 81,
+      "y": 13,
+      "width": 1239,
+      "height": 1056
+    },
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  "lighthouse": {
+    "path": "/assets/buildings/lookout-lighthouse-v1.png",
+    "width": 1024,
+    "height": 1536,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-c6b9e6f1-609c-4268-bb67-27103821a8ec.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied into project",
+    "solidBounds": {
+      "x": 266,
+      "y": 31,
+      "width": 508,
+      "height": 1446
+    },
+    "alphaRange": [
+      0,
+      254
+    ]
+  },
+  "watchtower": {
+    "path": "/assets/buildings/lookout-watchtower-v1.png",
+    "width": 1024,
+    "height": 1536,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-01a06e11-4cac-4196-9414-3e6221d3ee7b.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied into project",
+    "solidBounds": {
+      "x": 162,
+      "y": 44,
+      "width": 752,
+      "height": 1387
+    },
+    "alphaRange": [
+      0,
+      254
+    ]
+  },
+  "stone": {
+    "path": "/assets/pickups/stone-v1.png",
+    "width": 1299,
+    "height": 1211,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-47833501-da31-4f4f-a60d-779b3749465e.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied into project",
+    "solidBounds": {
+      "x": 219,
+      "y": 130,
+      "width": 877,
+      "height": 983
+    },
+    "alphaRange": [
+      0,
+      255
+    ]
   }
 }

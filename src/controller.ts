@@ -1,7 +1,8 @@
-import { createProgress, getLevel, chooseStyle, beginConstruction, finishConstruction, settleRun, selectTarget } from './model/progress';
+import { createProgress, getLevel, chooseStyle, beginConstruction, finishConstruction, settleRun, selectTarget, purchaseMaterials, canTarget, isSettlementComplete } from './model/progress';
 import { createRun, advanceRun, moveRun, jumpRun, pauseRun, resumeRun } from './model/run';
 import { loadProgress, saveProgress } from './model/save';
-import type { ActiveRun, BuildingId, CommandResult, Progress, StorageAdapter, StyleId } from './model/types';
+import type { ActiveRun, BuildingId, CommandResult, Progress, StorageAdapter, StyleId, Material } from './model/types';
+import { BUILDINGS } from './model/catalog';
 import type { Frame, GameBridge } from './game/bridge';
 
 export class IslandController {
@@ -49,6 +50,7 @@ export class IslandController {
       const finished = finishConstruction(this.progress);
       if (finished.ok) { this.progress = finished.progress; this.persist(); }
     }
+    this.selectedPlot = this.progress.pendingConstruction?.buildingId ?? this.progress.target ?? 'home';
     window.addEventListener('blur', () => this.pause());
     document.addEventListener('visibilitychange', () => { if (document.hidden) this.pause(); });
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -87,27 +89,39 @@ export class IslandController {
     this.toast(result.message);
     return result.ok;
   }
-  chooseStyle(style: StyleId) { this.apply(chooseStyle(this.progress, 'home', style)); }
+  chooseStyle(style: StyleId) { this.apply(chooseStyle(this.progress, this.selectedPlot, style)); }
   selectPlot(id: BuildingId) {
-    if (this.compact) this.settlementOpen = true;
-    if (id !== 'home') {
-      this.toast(this.progress.buildings.home.built
-        ? 'Level 2 unlocked. Your workshop and lookout are the next projects.'
-        : 'Build your coastal home to unlock this level 2 project.');
+    if (this.view !== 'island') return;
+    if (this.progress.pendingConstruction) {
+      this.toast('Wait for the current building to finish.');
       return;
     }
     this.selectedPlot = id;
-    if (!this.progress.buildings[id].built) this.apply(selectTarget(this.progress, id));
+    if (this.compact) this.settlementOpen = true;
+    if (canTarget(this.progress, id)) this.apply(selectTarget(this.progress, id));
+    else if (!this.progress.buildings[id].built) this.toast('Build your coastal home to unlock this level 2 project.');
     else this.emit();
   }
   build() {
-    if (this.apply(beginConstruction(this.progress, 'home'))) {
+    if (this.apply(beginConstruction(this.progress, this.selectedPlot))) {
       this.settlementOpen = false;
-      this.toast('Building your home. Watch your island come to life.');
+      this.toast('Construction started. Watch your island come to life.');
     }
+  }
+  buy(material: Material) {
+    if (this.view !== 'island' || this.modal !== 'none') return;
+    this.apply(purchaseMaterials(this.progress, material));
+  }
+  get complete() { return isSettlementComplete(this.progress); }
+  get canBuild() {
+    if (this.progress.pendingConstruction || !canTarget(this.progress, this.selectedPlot)) return false;
+    const recipe = BUILDINGS[this.selectedPlot].recipe;
+    return this.progress.wallet.timber >= recipe.timber && this.progress.wallet.stone >= recipe.stone;
   }
   openSettlement() {
     if (this.view !== 'island') return;
+    if (this.progress.pendingConstruction) this.selectedPlot = this.progress.pendingConstruction.buildingId;
+    else if (this.progress.target && this.progress.buildings[this.selectedPlot].built) this.selectedPlot = this.progress.target;
     this.settlementOpen = true;
     this.emit();
   }
@@ -133,11 +147,9 @@ export class IslandController {
   }
   startRun() {
     if (!this.ready || this.error || this.modal !== 'none') return;
-    if (this.progress.pendingConstruction) { this.toast('Your home is being built. It will be ready in a moment.'); return; }
+    if (this.progress.pendingConstruction) { this.toast('Construction will be finished in a moment.'); return; }
     this.settlementOpen = false;
-    // First checkpoint proves home construction; after home, replay remains coin-only.
-    const routeProgress = this.progress.buildings.home.built ? { ...this.progress, target: null } : this.progress;
-    this.run = createRun(routeProgress);
+    this.run = createRun(this.progress);
     this.view = 'run';
     this.notice = '';
     this.emit();
@@ -219,10 +231,10 @@ export class IslandController {
       entities: this.run?.entities.filter(entity => !this.run!.collectedIds.includes(entity.id)) ?? [],
       wallet: this.progress.wallet,
       loot: this.run?.loot ?? { timber: 0, stone: 0, coins: 0 },
-      homeBuilt: this.progress.buildings.home.built,
+      buildings: this.progress.buildings,
+      constructionBuilding: this.progress.pendingConstruction?.buildingId ?? null,
       constructionProgress: this.constructionProgress,
       settlementOpen: this.compact && this.settlementOpen,
-      homeStyle: this.progress.buildings.home.style as 'cottage' | 'bungalow',
       selectedPlot: this.selectedPlot,
       reducedMotion: this.reducedMotion,
     }),

@@ -1,0 +1,114 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { IslandController } from '../src/controller';
+import { createProgress } from '../src/model/progress';
+import { SAVE_KEY, validateProgress } from '../src/model/save';
+import type { BuildingId, Progress } from '../src/model/types';
+
+let saves: Map<string, string>;
+beforeEach(() => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date('2026-10-23T12:00:00Z'));
+  saves = new Map();
+  vi.stubGlobal('window', {
+    matchMedia: (query: string) => ({ matches: query.includes('959px'), addEventListener: vi.fn() }),
+    addEventListener: vi.fn(),
+    localStorage: { getItem: (key: string) => saves.get(key) ?? null, setItem: (key: string, value: string) => saves.set(key, value) },
+  });
+  vi.stubGlobal('document', { addEventListener: vi.fn(), hidden: false });
+});
+afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
+const saved = () => JSON.parse(saves.get(SAVE_KEY)!) as Progress;
+const ready = () => { const controller = new IslandController(); controller.bridge.onReady(); return controller; };
+const finish = (controller: IslandController) => { vi.advanceTimersByTime(5_000); controller.tick(0); };
+
+describe('playable settlement commands', () => {
+  it('keeps locked projects and unaffordable offers from changing stock or the active target', () => {
+    const c = ready();
+    c.selectPlot('lookout');
+    c.chooseStyle('watchtower');
+    c.buy('stone');
+    c.build();
+    expect(c.progress.target).toBe('home');
+    expect(c.progress.buildings.lookout).toEqual({ style: 'lighthouse', built: false });
+    expect(c.progress.wallet).toEqual({ timber: 0, stone: 0, coins: 0 });
+    c.selectPlot('home');
+    c.buy('timber');
+    expect(c.progress.wallet.coins).toBe(0);
+    expect(c.canBuild).toBe(false);
+  });
+
+  it('buys supplies, banks real stone contacts, and resumes the same construction after reload', () => {
+    const fixture = createProgress();
+    fixture.buildings.home.built = true;
+    fixture.target = 'workshop';
+    fixture.wallet = { timber: 30, stone: 15, coins: 25 };
+    saves.set(SAVE_KEY, JSON.stringify(fixture));
+    let c = ready();
+    expect(c.selectedPlot).toBe('workshop');
+    c.chooseStyle('studio');
+    c.buy('timber');
+    c.buy('stone');
+    expect(c.progress.wallet).toEqual({ timber: 35, stone: 20, coins: 0 });
+    c.startRun();
+    expect(c.run!.target).toBe('workshop');
+    expect(c.run!.materials).toEqual(['timber', 'stone']);
+    c.run!.entities = [
+      { id: 't', kind: 'timber', lane: 0, z: 9 },
+      { id: 's', kind: 'stone', lane: 0, z: 18 },
+      { id: 'c', kind: 'coin', lane: 0, z: 27 },
+      { id: 'stop', kind: 'obstacle', lane: 0, z: 36 },
+    ];
+    c.tick(3);
+    expect(c.view).toBe('results');
+    expect(c.progress.wallet).toEqual({ timber: 40, stone: 25, coins: 1 });
+    c.island();
+    expect(c.canBuild).toBe(true);
+    c.build();
+    const deadline = c.progress.pendingConstruction!.completesAt;
+    expect(c.progress.wallet).toEqual({ timber: 0, stone: 5, coins: 1 });
+    vi.advanceTimersByTime(2_000);
+    c = ready();
+    expect(c.selectedPlot).toBe('workshop');
+    expect(c.progress.pendingConstruction!.completesAt).toBe(deadline);
+    expect(c.bridge.read().constructionBuilding).toBe('workshop');
+    c.startRun();
+    expect(c.view).toBe('island');
+    vi.advanceTimersByTime(3_000);
+    c.tick(0);
+    expect(c.progress.buildings.workshop).toEqual({ style: 'studio', built: true });
+    expect(c.progress.wallet).toEqual({ timber: 0, stone: 5, coins: 1 });
+    expect(c.progress.target).toBe('lookout');
+    expect(validateProgress(saved())).toBe(true);
+  });
+
+  it.each([['workshop', 'lookout'], ['lookout', 'workshop']] as BuildingId[][])(
+    'finishes the settlement in %s then %s order and supports a saved coin-only replay', (first, second) => {
+      const c = ready();
+      c.progress.wallet = { timber: 100, stone: 70, coins: 30 };
+      c.build();
+      finish(c);
+      expect(c.level).toBe(2);
+      for (const id of [first, second]) {
+        c.selectPlot(id);
+        c.chooseStyle(id === 'workshop' ? 'studio' : 'watchtower');
+        expect(c.canBuild).toBe(true);
+        c.build();
+        expect(c.progress.buildings[id].built).toBe(false);
+        finish(c);
+        expect(c.progress.buildings[id].built).toBe(true);
+      }
+      expect(c.complete).toBe(true);
+      expect(c.progress.target).toBeNull();
+      expect(c.progress.wallet).toEqual({ timber: 10, stone: 10, coins: 30 });
+      const reloaded = ready();
+      expect(reloaded.complete).toBe(true);
+      expect(reloaded.progress.buildings.workshop.style).toBe('studio');
+      expect(reloaded.progress.buildings.lookout.style).toBe('watchtower');
+      reloaded.buy('timber');
+      expect(reloaded.progress.wallet).toEqual(c.progress.wallet);
+      reloaded.startRun();
+      expect(reloaded.run!.materials).toEqual([]);
+      expect(reloaded.run!.entities.some(entity => entity.kind === 'stone' || entity.kind === 'timber')).toBe(false);
+    },
+  );
+});

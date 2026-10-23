@@ -1,12 +1,13 @@
 import Phaser from 'phaser';
+import { BUILDING_ART } from '../art';
 import type { GameBridge } from '../bridge';
 
 const ASSETS = {
   island: 'world/island-v1.png',
   route: 'world/route-v1.png',
   courier: 'courier/run-v1.png',
-  cottage: 'buildings/home-cottage-v1.png',
-  bungalow: 'buildings/home-bungalow-v1.png',
+  ...Object.fromEntries(Object.entries(BUILDING_ART).map(([key, path]) => [key, path.replace('/assets/', '')])),
+  stone: 'pickups/stone-v1.png',
   timber: 'pickups/timber-v1.png',
   coin: 'pickups/coin-v1.png',
   obstacle: 'pickups/obstacle-v1.png',
@@ -61,7 +62,7 @@ export class BootScene extends Phaser.Scene {
       return;
     }
     try {
-      for (const key of ['cottage', 'bungalow', 'timber', 'coin', 'obstacle']) addContentFrames(this.textures.get(key));
+      for (const key of [...Object.keys(BUILDING_ART), 'timber', 'stone', 'coin', 'obstacle']) addContentFrames(this.textures.get(key));
       addContentFrames(this.textures.get('courier'), 4);
       this.anims.create({
         key: 'courier-run',

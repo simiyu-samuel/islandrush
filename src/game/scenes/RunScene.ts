@@ -126,7 +126,7 @@ export class RunScene extends Phaser.Scene {
   }
 
   private makeEntity(kind: RenderEntity['kind']): EntityView {
-    const key = kind === 'stone' && !this.textures.exists('stone') ? 'timber' : kind;
+    const key = kind;
     const shadow = this.add.ellipse(0, -1, 50, 12, 0x5e4024, 0.2);
     const glow = this.add.ellipse(0, -50, 70, 62, kind === 'coin' ? 0xffdc71 : 0xffefb5, 0.14);
     const sprite = this.add.image(0, -32, key, 'content').setOrigin(0.5, 1);

@@ -98,3 +98,52 @@ Use case: stylized-concept. Asset type: transparent grounded obstacle sprite. Pr
 ## QA notes
 
 All eight images were visually inspected from the built-in generated previews. The island has three broad clear building areas and a perimeter path; no runtime buildings are baked in. The courier has mature adult proportions, a consistent backpack and four rear-view running poses. Timber and coin silhouettes read as floating collectibles; the rock is grey, heavy and grounded. The route is an empty boardwalk with no baked-in entities; its visible plank seams are architectural, so game lane positions should follow the renderer projection rather than treating seams as lane boundaries. All cutouts have real alpha transparency; manifest bounds use an alpha threshold of 200 to exclude faint fringe pixels. Native generated dimensions sometimes differ from requested dimensions and are recorded exactly in the manifest. No generated type or UI is used.
+
+## Settlement expansion — 23 October 2026
+
+Five separate built-in image generation calls. Original PNG bytes copied without image editing; transparency preserved. Runtime trimming uses the existing loader.
+
+### forge
+
+- Project file: `public/assets/buildings/workshop-forge-v1.png`
+- Original source: `/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-3899e0b9-436c-4eae-826f-bf3c2b4e4b30.png`
+
+```text
+Use case: stylized-concept. Asset type: individual transparent PNG sprite for Island Rush, a warm coastal pixel-art island builder. Crisp handcrafted pixel art, isometric three-quarter front view from above, front and right walls visible, roof visible, sun from upper left, warm honey timber, pale sandy cream stone, muted teal and copper accents. Match an attractive sophisticated cozy coastal settlement, not childish. Center a SINGLE complete freestanding building, entire roof and base visible, strong readable silhouette at 120px display width, generous transparent padding. Actual transparent background. No land tile, ocean, sky, text, logo, UI, numbers, characters, sprite sheet, extra buildings, or heavy cast shadow. Harbor Forge: low sturdy cream stone workshop, copper terracotta pitched roof, broad working doorway with an anvil visible, stone chimney and small timber workbench, restrained maritime details.
+```
+
+### studio
+
+- Project file: `public/assets/buildings/workshop-studio-v1.png`
+- Original source: `/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-afedaacf-cb17-4ace-9809-717a378ded1e.png`
+
+```text
+Use case: stylized-concept. Asset type: individual transparent PNG sprite for Island Rush, a warm coastal pixel-art island builder. Crisp handcrafted pixel art, isometric three-quarter front view from above, front and right walls visible, roof visible, sun from upper left, warm honey timber, pale sandy cream stone, muted teal and copper accents. Match an attractive sophisticated cozy coastal settlement, not childish. Center a SINGLE complete freestanding building, entire roof and base visible, strong readable silhouette at 120px display width, generous transparent padding. Actual transparent background. No land tile, ocean, sky, text, logo, UI, numbers, characters, sprite sheet, extra buildings, or heavy cast shadow. Maker Studio: low sunny timber craftsman's workshop with muted teal pitched roof, broad bright windows, wide welcoming double doors, small neat side worktable and timber awning. Distinct from a cottage.
+```
+
+### lighthouse
+
+- Project file: `public/assets/buildings/lookout-lighthouse-v1.png`
+- Original source: `/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-c6b9e6f1-609c-4268-bb67-27103821a8ec.png`
+
+```text
+Use case: stylized-concept. Asset type: individual transparent PNG sprite for Island Rush, a warm coastal pixel-art island builder. Crisp handcrafted pixel art, isometric three-quarter front view from above, front and right walls visible, roof visible, sun from upper left, warm honey timber, pale sandy cream stone, muted teal and copper accents. Match an attractive sophisticated cozy coastal settlement, not childish. Center a SINGLE complete freestanding building, entire roof and base visible, strong readable silhouette at 120px display width, generous transparent padding. Actual transparent background. No land tile, ocean, sky, text, logo, UI, numbers, characters, sprite sheet, extra buildings, or heavy cast shadow. Coast Lighthouse: elegant compact cream stone lighthouse tower, terracotta lantern roof, teal glass lantern and a simple circular gallery, subtle horizontal sandy bands, small arched door. Tower should be tall and slender and visibly unlike a house.
+```
+
+### watchtower
+
+- Project file: `public/assets/buildings/lookout-watchtower-v1.png`
+- Original source: `/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-01a06e11-4cac-4196-9414-3e6221d3ee7b.png`
+
+```text
+Use case: stylized-concept. Asset type: individual transparent PNG sprite for Island Rush, a warm coastal pixel-art island builder. Crisp handcrafted pixel art, isometric three-quarter front view from above, front and right walls visible, roof visible, sun from upper left, warm honey timber, pale sandy cream stone, muted teal and copper accents. Match an attractive sophisticated cozy coastal settlement, not childish. Center a SINGLE complete freestanding building, entire roof and base visible, strong readable silhouette at 120px display width, generous transparent padding. Actual transparent background. No land tile, ocean, sky, text, logo, UI, numbers, characters, sprite sheet, extra buildings, or heavy cast shadow. Timber Watchtower: tall open timber lookout on sturdy four braced posts, stair ladder, elevated square observation platform with safety rails and small thatched pale golden roof, mature architectural proportions.
+```
+
+### stone
+
+- Project file: `public/assets/pickups/stone-v1.png`
+- Original source: `/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-47833501-da31-4f4f-a60d-779b3749465e.png`
+
+```text
+Use case: stylized-concept. Asset type: single transparent pixel-art collectible sprite for warm coastal runner Island Rush. Three neatly stacked smooth cut pale blue-gray stone bricks bound in a simple tan rope, hovering treasure pickup, compact soft rounded silhouette, three-quarter perspective, crisp pixel clusters, subtle teal shadows and sunny cream highlights. Clearly distinct from a dangerous jagged grounded stone obstacle. Entire bundle centered and isolated with generous transparent padding. No glow, no ground plane, no shadow, text, logo, UI, coins, timber, characters or extra objects. True transparent background.
+```

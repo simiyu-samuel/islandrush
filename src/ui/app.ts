@@ -1,5 +1,7 @@
 import type { IslandController } from '../controller';
-import { BUILDINGS, RUN_DURATION } from '../model/catalog';
+import { BUILDINGS, BUILDING_IDS, MATERIALS, PURCHASES, RUN_DURATION } from '../model/catalog';
+import { BUILDING_ART } from '../game/art';
+import { getTargetMaterials } from '../model/progress';
 import type { StyleId, Wallet } from '../model/types';
 
 type IconName = 'wood' | 'stone' | 'coin' | 'arrow' | 'pause' | 'play' | 'check' | 'jump' | 'help' | 'lock' | 'close' | 'home' | 'island' | 'buildings' | 'run';
@@ -31,61 +33,84 @@ export function mountUI(host: HTMLElement, c: IslandController) {
   const ui = host.querySelector<HTMLElement>('#interface')!;
   const live = host.querySelector<HTMLElement>('#live-message')!;
   let lastNotice = '';
-  const loot = (wallet: Wallet) => resource('wood', wallet.timber, 'timber') + resource('coin', wallet.coins, 'coins');
+  const loot = (wallet: Wallet) => resource('wood', wallet.timber, 'timber') + (c.level === 2 || wallet.stone > 0 ? resource('stone', wallet.stone, 'stone') : '') + resource('coin', wallet.coins, 'coins');
   const button = (action: string, label: string, className = 'button primary', extra = '') =>
     '<button class="' + className + '" data-action="' + action + '" ' + extra + '>' + label + '</button>';
 
-  function construction() {
-    const built = c.progress.buildings.home.built;
-    const chosen = c.progress.buildings.home.style;
-    const amount = c.progress.wallet.timber;
-    const pct = Math.min(100, amount / 30 * 100);
-    const building = c.constructionProgress !== null;
-    return '<aside class="construction-panel" aria-label="Home construction">' +
-      '<div class="panel-top"><span class="eyebrow">YOUR SETTLEMENT</span><span class="plot-number">01 / 03</span></div>' +
-      '<div class="project-tabs" aria-label="Settlement projects">' +
-      button('home', icon('home') + 'Home', 'project-tab selected', 'aria-current="true"') +
-      button('workshop', icon(built ? 'check' : 'lock') + 'Workshop', 'project-tab') +
-      button('lookout', icon(built ? 'check' : 'lock') + 'Lookout', 'project-tab') + '</div>' +
-      (built
-        ? '<div class="home-complete"><span class="complete-seal">' + icon('check') + '</span><p class="eyebrow">A PLACE OF YOUR OWN</p><h2>Welcome home.</h2><p>Your chosen home is part of the island now. Level 2 is unlocked.</p><img src="/assets/buildings/home-' + chosen + '-v1.png" alt="Your completed ' + (chosen === 'cottage' ? 'coast cottage' : 'palm bungalow') + '" /><div class="unlock-note">' + icon('lock') + '<span>Next landmarks<br/><strong>Workshop &amp; Lookout</strong></span></div></div>'
-        : building
-          ? '<div class="construction-status"><span class="construction-symbol">' + icon('buildings') + '</span><p class="eyebrow">YOUR HOME IS TAKING SHAPE</p><h2>Building in progress</h2><p data-construction-stage>Laying the foundation</p><div class="construction-meter" role="progressbar" aria-label="Construction progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span data-construction-fill></span></div><strong><span data-construction-seconds>5</span>s remaining</strong><p class="construction-paid">' + icon('check') + 'Materials reserved · paid once</p></div>'
-          : '<div class="project-copy"><h2>Coastal home</h2><p>Every island starts somewhere.<br/>Choose a little place to call yours.</p></div><fieldset class="style-picker"><legend>CHOOSE YOUR DESIGN</legend><div class="style-options">' +
-          BUILDINGS.home.styles.map(style => '<button data-action="style" data-style="' + style.id + '" class="style-option ' + (chosen === style.id ? 'chosen' : '') + '" aria-pressed="' + (chosen === style.id) + '"><span class="style-image"><img src="/assets/buildings/home-' + style.id + '-v1.png" alt="" />' + (chosen === style.id ? '<span class="chosen-tick">' + icon('check') + '</span>' : '') + '</span><strong>' + style.name + '</strong></button>').join('') +
-          '</div></fieldset><div class="material-goal"><div><span>' + icon('wood') + 'Timber needed</span><strong>' + Math.min(amount,30) + '<small> / 30</small></strong></div><div class="progress-track" role="progressbar" aria-label="Home timber" aria-valuemin="0" aria-valuemax="30" aria-valuenow="' + Math.min(amount,30) + '"><span style="width:' + pct + '%"></span></div><p>' + (amount >= 30 ? 'All supplies ready. Let’s build.' : (30-amount) + ' more timber to bring it to life.') + '</p></div>' +
-          button('build', icon('home') + 'Build your home' + (amount < 30 ? icon('lock') : icon('arrow')), 'button build-button', amount < 30 ? 'disabled' : '') +
-          '<p class="unlock-caption">Finish this home to unlock level 2</p>') +
-      '<div class="panel-run">' + button('run', (built ? 'Run for coins' : 'Gather supplies') + icon('arrow'), 'button primary', building ? 'disabled' : '') + '<span>' + icon('play') + '60-second coastal run</span></div></aside>';
+  const runLabel = () => c.complete ? 'Run for coins' : 'Gather supplies';
+  const readyTarget = () => {
+    const target = c.progress.target;
+    return target && !c.progress.pendingConstruction && MATERIALS.every(kind => c.progress.wallet[kind] >= BUILDINGS[target].recipe[kind]) ? target : null;
+  };
+
+  function materialShop() {
+    if (c.progress.pendingConstruction || c.progress.target !== c.selectedPlot) return '';
+    return '<section class="material-shop" aria-label="Material shop"><div class="shop-heading"><span class="eyebrow">SHORT ON SUPPLIES?</span><span>' + icon('coin') + c.progress.wallet.coins + ' coins</span></div><p>Trade coins for a small head start.</p><div class="shop-offers">' +
+      getTargetMaterials(c.progress).map(kind => {
+        const offer = PURCHASES[kind];
+        const balance = c.progress.wallet.coins - offer.coins;
+        return button('buy', icon(kind === 'timber' ? 'wood' : 'stone') + '<span><strong>+ ' + offer.quantity + ' ' + kind + '</strong><small>' + offer.coins + ' coins · ' + (balance < 0 ? 'Need ' + -balance + ' more' : 'Balance after: ' + balance) + '</small></span>', 'shop-offer', 'data-material="' + kind + '" aria-label="Buy ' + offer.quantity + ' ' + kind + ' for ' + offer.coins + ' coins"' + (balance < 0 ? ' disabled' : ''));
+      }).join('') + '</div></section>';
   }
 
+  function construction() {
+    const id = c.selectedPlot;
+    const definition = BUILDINGS[id];
+    const state = c.progress.buildings[id];
+    const building = c.progress.pendingConstruction?.buildingId === id;
+    const locked = definition.level > c.level;
+    const styleName = definition.styles.find(style => style.id === state.style)!.name;
+    const builtCount = BUILDING_IDS.filter(key => c.progress.buildings[key].built).length;
+    let content = '';
+    if (state.built) {
+      content = '<div class="home-complete"><span class="complete-seal">' + icon('check') + '</span><p class="eyebrow">' + (c.complete ? 'YOUR STARTER ISLAND IS COMPLETE' : 'A LITTLE MORE OF YOUR WORLD') + '</p><h2>' + (c.complete ? 'Your coast is complete.' : id === 'home' ? 'Welcome home.' : definition.name + ' complete.') + '</h2><p>' + (c.complete ? 'A home, a workshop, and a lookout. You built it all. Keep exploring the coast for coins, or enjoy your island.' : id === 'home' ? 'Level 2 is unlocked. Choose a workshop or lookout to build next.' : 'Another landmark, another journey made worthwhile.') + '</p><img src="' + BUILDING_ART[state.style] + '" alt="Your completed ' + styleName.toLowerCase() + '" />' +
+        (c.progress.target ? button('next-project', 'Choose your next project' + icon('arrow'), 'button secondary') : '') + '</div>';
+    } else if (building) {
+      content = '<div class="construction-status"><span class="construction-symbol">' + icon('buildings') + '</span><p class="eyebrow">' + escape(definition.name.toUpperCase()) + '</p><h2>Building in progress</h2><p data-construction-stage>Laying the foundation</p><div class="construction-meter" role="progressbar" aria-label="Construction progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span data-construction-fill></span></div><strong><span data-construction-seconds>5</span>s remaining</strong><p class="construction-paid">' + icon('check') + 'Materials reserved · paid once</p></div>';
+    } else if (locked) {
+      content = '<div class="locked-project"><span class="complete-seal">' + icon('lock') + '</span><h2>' + definition.name + '</h2><p>Build your coastal home to unlock level 2 and this project.</p><img src="' + BUILDING_ART[state.style] + '" alt="Locked ' + definition.name.toLowerCase() + ' preview" />' + button('home', 'Back to your home' + icon('arrow'), 'button secondary') + '</div>';
+    } else {
+      content = '<div class="project-copy"><h2>' + (id === 'home' ? 'Coastal home' : definition.name) + '</h2><p>' + (id === 'home' ? 'Every island starts somewhere.<br/>Choose a little place to call yours.' : id === 'workshop' ? 'A place to make great things.<br/>Choose your island workshop.' : 'Give your coast a landmark.<br/>Choose a view worth the run.') + '</p></div><fieldset class="style-picker"><legend>CHOOSE YOUR DESIGN</legend><div class="style-options">' +
+        definition.styles.map(style => '<button data-action="style" data-style="' + style.id + '" class="style-option ' + (state.style === style.id ? 'chosen' : '') + '" aria-pressed="' + (state.style === style.id) + '"><span class="style-image"><img src="' + BUILDING_ART[style.id] + '" alt="" />' + (state.style === style.id ? '<span class="chosen-tick">' + icon('check') + '</span>' : '') + '</span><strong>' + style.name + '</strong></button>').join('') + '</div></fieldset>' +
+        MATERIALS.filter(kind => definition.recipe[kind] > 0).map(kind => {
+          const amount = c.progress.wallet[kind], required = definition.recipe[kind];
+          return '<div class="material-goal"><div><span>' + icon(kind === 'timber' ? 'wood' : 'stone') + (kind === 'timber' ? 'Timber' : 'Stone') + ' needed</span><strong>' + Math.min(amount,required) + '<small> / ' + required + '</small></strong></div><div class="progress-track" role="progressbar" aria-label="' + definition.name + ' ' + kind + '" aria-valuemin="0" aria-valuemax="' + required + '" aria-valuenow="' + Math.min(amount,required) + '"><span style="width:' + Math.min(100,amount/required*100) + '%"></span></div><p>' + (amount >= required ? 'Supplies ready.' : required-amount + ' more ' + kind + ' needed.') + '</p></div>';
+        }).join('') + button('build', icon('home') + (id === 'home' ? 'Build your home' : 'Build ' + definition.name.toLowerCase()) + icon(c.canBuild ? 'arrow' : 'lock'), 'button build-button', c.canBuild ? '' : 'disabled') +
+        (id === 'home' ? '<p class="unlock-caption">Finish this home to unlock level 2</p>' : '') + materialShop();
+    }
+    return '<aside class="construction-panel" aria-label="' + (id === 'home' ? 'Home' : definition.name) + ' construction"><div class="panel-top"><span class="eyebrow">YOUR SETTLEMENT</span><span class="plot-number">' + builtCount + ' / 03 BUILT</span></div><div class="project-tabs" aria-label="Settlement projects">' +
+      BUILDING_IDS.map(key => button(key, icon(c.progress.buildings[key].built ? 'check' : BUILDINGS[key].level > c.level ? 'lock' : key === 'home' ? 'home' : 'buildings') + (key === 'home' ? 'Home' : BUILDINGS[key].name), 'project-tab ' + (key === id ? 'selected' : ''), (key === id ? 'aria-current="true"' : '') + (c.progress.pendingConstruction ? ' disabled' : ''))).join('') + '</div><div class="construction-content">' + content + '</div>' +
+      '<div class="panel-run">' + button('run', runLabel() + icon('arrow'), 'button primary', c.progress.pendingConstruction ? 'disabled' : '') + '<span>' + icon('play') + (c.progress.target ? 'Gather for ' + BUILDINGS[c.progress.target].name : '60-second coastal run') + '</span></div></aside>';
+  }
 
   function mobileNavigation() {
     const pending = Boolean(c.progress.pendingConstruction);
     return '<nav class="bottom-nav" aria-label="Island navigation">' +
       button('island-nav', icon('island') + '<span>Island</span>', 'nav-item ' + (!c.settlementOpen ? 'active' : ''), !c.settlementOpen ? 'aria-current="page"' : '') +
-      button('buildings-nav', icon('buildings') + '<span>Buildings</span>' + (!c.progress.buildings.home.built && c.progress.wallet.timber >= 30 && !pending ? '<i class="nav-ready" aria-label="Ready to build"></i>' : ''), 'nav-item ' + (c.settlementOpen ? 'active' : ''), c.settlementOpen ? 'aria-current="page"' : '') +
+      button('buildings-nav', icon('buildings') + '<span>Buildings</span>' + (readyTarget() && !pending ? '<i class="nav-ready" aria-label="Ready to build"></i>' : ''), 'nav-item ' + (c.settlementOpen ? 'active' : ''), c.settlementOpen ? 'aria-current="page"' : '') +
       button('run-nav', icon('run') + '<span>Run</span>', 'nav-item nav-run', pending ? 'disabled' : '') + '</nav>';
   }
 
   function buildingsScreen() {
     return '<section id="buildings-screen" class="buildings-screen" role="region" aria-label="Buildings">' +
       '<header class="sheet-header"><div><p class="eyebrow">MAKE IT YOUR OWN</p><h2>Your settlement</h2></div>' + button('close-buildings', icon('close'), 'icon-button', 'aria-label="Close buildings"') + '</header>' +
-      '<div class="sheet-wallet">' + resource('wood',c.progress.wallet.timber,'timber') + resource('coin',c.progress.wallet.coins,'coins') + '<span>Level ' + c.level + '</span></div>' +
+      '<div class="sheet-wallet">' + loot(c.progress.wallet) + '<span>Level ' + c.level + '</span></div>' +
       '<div class="sheet-scroll">' + construction() + '<div class="sheet-settings"><span>' + icon('check') + escape(c.saveMessage) + '</span>' + button('restart','Start over','text-button') + '</div></div>' +
-      '<div class="sheet-cta">' + button('run', (c.progress.buildings.home.built ? 'Run for coins' : 'Gather supplies') + icon('arrow'), 'button primary', c.progress.pendingConstruction ? 'disabled' : '') + '</div></section>';
+      '<div class="sheet-cta">' + button('run', runLabel() + icon('arrow'), 'button primary', c.progress.pendingConstruction ? 'disabled' : '') + '</div></section>';
   }
 
   function islandGoal() {
-    const pending = c.constructionProgress !== null;
-    const built = c.progress.buildings.home.built;
+    const pending = c.progress.pendingConstruction;
+    const target = pending?.buildingId ?? c.progress.target;
+    const definition = target ? BUILDINGS[target] : null;
+    const ready = readyTarget();
+    const goal = definition ? definition.name + ' · ' + MATERIALS.filter(kind => definition.recipe[kind] > 0).map(kind => Math.min(c.progress.wallet[kind],definition.recipe[kind]) + '/' + definition.recipe[kind] + ' ' + kind).join(' · ') : 'All three landmarks are yours';
     return '<div class="island-goal-wrap">' + button('buildings-nav',
-      '<span class="goal-icon">' + icon(pending ? 'buildings' : built ? 'check' : 'home') + '</span><span class="goal-copy"><small>' + (pending ? 'BUILDING YOUR HOME' : built ? 'YOUR SETTLEMENT' : 'YOUR NEXT BUILD') + '</small><strong>' + (pending ? '<span data-construction-stage>Laying the foundation</span>' : built ? 'Home complete · Level 2 unlocked' : 'Coastal home · ' + Math.min(30,c.progress.wallet.timber) + ' / 30 timber') + '</strong></span>' + (pending ? '<span class="goal-clock"><span data-construction-seconds>5</span>s</span>' : icon('arrow')),
-      'island-goal') + '<span class="mobile-save-note">' + escape(c.saveMessage) + '</span></div>';
+      '<span class="goal-icon">' + icon(pending ? 'buildings' : c.complete ? 'check' : 'home') + '</span><span class="goal-copy"><small>' + (pending ? 'BUILDING ' + BUILDINGS[pending.buildingId].name.toUpperCase() : c.complete ? 'SETTLEMENT COMPLETE' : ready ? 'READY TO BUILD' : 'YOUR NEXT BUILD') + '</small><strong>' + (pending ? '<span data-construction-stage>Laying the foundation</span>' : goal) + '</strong></span>' + (pending ? '<span class="goal-clock"><span data-construction-seconds>5</span>s</span>' : icon('arrow')), 'island-goal') + '<span class="mobile-save-note">' + escape(c.saveMessage) + '</span></div>';
   }
 
   function islandView() {
-    return '<div class="island-intro"><span class="eyebrow">' + (c.progress.buildings.home.built ? 'YOUR FIRST CHAPTER' : 'YOUR FIRST LANDING') + '</span><h1>' + (c.progress.buildings.home.built ? 'Look what you<br/>brought home.' : 'A home on<br/>the horizon.') + '</h1><p>' + (c.progress.buildings.home.built ? 'One journey, a handful of supplies,<br/>and a little more of your own world.' : 'A little adventure.<br/>An island that grows with you.') + '</p></div>' +
+    return '<div class="island-intro"><span class="eyebrow">' + (c.complete ? 'SETTLEMENT COMPLETE' : c.progress.buildings.home.built ? 'YOUR NEXT CHAPTER' : 'YOUR FIRST LANDING') + '</span><h1>' + (c.complete ? 'A coast of<br/>your own.' : c.progress.buildings.home.built ? 'Look what you<br/>brought home.' : 'A home on<br/>the horizon.') + '</h1><p>' + (c.progress.buildings.home.built ? 'One journey, a handful of supplies,<br/>and a little more of your own world.' : 'A little adventure.<br/>An island that grows with you.') + '</p></div>' +
       (c.compact ? (c.settlementOpen ? buildingsScreen() : islandGoal()) + mobileNavigation() : construction()) +
       '<footer class="island-footer"><span class="coast-label"><span></span>PIXEL COAST · STARTER ISLAND</span><span class="save-status">' + icon('check') + escape(c.saveMessage) + '</span>' + button('restart','Start over','text-button') + '</footer>';
   }
@@ -103,15 +128,16 @@ export function mountUI(host: HTMLElement, c: IslandController) {
   function results() {
     if (!c.run) return '';
     const collided = c.run.endReason === 'collision';
-    const timber = c.run.loot.timber;
-    return '<section class="modal-card results-card" role="dialog" aria-modal="true" aria-labelledby="result-title"><div class="result-illustration">' + icon(collided ? 'home' : 'check') + '</div><p class="eyebrow">' + (collided ? 'THE COAST CAN BE TRICKY' : 'A RUN WELL SPENT') + '</p><h2 id="result-title">' + (collided ? 'A bump in the road.' : 'Time to head home.') + '</h2><p>' + (collided ? 'The run ends here. Everything you collected is yours to keep.' : 'Your minute is up. Your supplies are safely stored.') + '</p><div class="earned-loot"><span>BROUGHT BACK</span><div>' + loot(c.run.loot) + '</div></div><div class="banked-loot"><span>STORED ON YOUR ISLAND</span><strong>' + c.progress.wallet.timber + ' timber · ' + c.progress.wallet.coins + ' coins</strong></div>' +
-      (c.progress.wallet.timber >= 30 && !c.progress.buildings.home.built ? '<p class="ready-note">' + icon('check') + 'Your home is ready to build.</p>' : timber > 0 ? '<p class="ready-note">A little closer to your next building.</p>' : '') +
+    const earnedMaterials = c.run.loot.timber + c.run.loot.stone;
+    const ready = readyTarget();
+    return '<section class="modal-card results-card" role="dialog" aria-modal="true" aria-labelledby="result-title"><div class="result-illustration">' + icon(collided ? 'home' : 'check') + '</div><p class="eyebrow">' + (collided ? 'THE COAST CAN BE TRICKY' : 'A RUN WELL SPENT') + '</p><h2 id="result-title">' + (collided ? 'A bump in the road.' : 'Time to head home.') + '</h2><p>' + (collided ? 'The run ends here. Everything you collected is yours to keep.' : 'Your minute is up. Your supplies are safely stored.') + '</p><div class="earned-loot"><span>BROUGHT BACK</span><div>' + loot(c.run.loot) + '</div></div><div class="banked-loot"><span>STORED ON YOUR ISLAND</span><strong>' + c.progress.wallet.timber + ' timber · ' + (c.level === 2 ? c.progress.wallet.stone + ' stone · ' : '') + c.progress.wallet.coins + ' coins</strong></div>' +
+      (ready ? '<p class="ready-note">' + icon('check') + 'Your ' + (ready === 'home' ? 'home' : BUILDINGS[ready].name.toLowerCase()) + ' is ready to build.</p>' : earnedMaterials > 0 ? '<p class="ready-note">A little closer to your next building.</p>' : '') +
       '<div class="result-actions">' + button('island', 'Return to island' + icon('arrow')) + button('again', 'Run again', 'button secondary') + '</div><small class="run-duration">Active running time: ' + c.run.elapsed.toFixed(1) + 's</small></section>';
   }
 
   function modal() {
     const paused = c.view === 'run' && c.run?.phase === 'paused';
-    if (c.modal === 'help') return '<section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title"><p class="eyebrow">A LITTLE ADVENTURE</p><h2 id="help-title">Run. Return. Build.</h2><ul class="help-list"><li><strong>Choose your home.</strong> Both designs need 30 timber.</li><li><strong>Run the coast for 60 seconds.</strong> Use ← → or A / D to change lanes. Space or ↑ jumps. On touch, swipe or use the buttons.</li><li><strong>Collect what floats.</strong> Each timber bundle gives 5 timber. Each coin gives 1 coin. Stone blocks stay on the ground.</li><li><strong>A collision ends the run.</strong> Your collected loot is banked immediately. Run again or return to build.</li></ul>' + button('close', 'Back to the coast' + icon('arrow')) + '</section>';
+    if (c.modal === 'help') return '<section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title"><p class="eyebrow">A LITTLE ADVENTURE</p><h2 id="help-title">Run. Return. Build.</h2><ul class="help-list"><li><strong>Choose your home.</strong> Both designs need 30 timber.</li><li><strong>Run the coast for 60 seconds.</strong> Use ← → or A / D to change lanes. Space or ↑ jumps. On touch, swipe or use the buttons.</li><li><strong>Collect what floats.</strong> Each timber or stone bundle gives 5 materials for your selected project. Each coin gives 1 coin. Stone blocks stay on the ground.</li><li><strong>Coins can buy supplies.</strong> Open Buildings to trade 10 coins for 5 timber or, at level 2, 15 coins for 5 stone.</li><li><strong>A collision ends the run.</strong> Your collected loot is banked immediately. Run again or return to build.</li></ul>' + button('close', 'Back to the coast' + icon('arrow')) + '</section>';
     if (c.modal === 'save-recovery') return '<section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="save-title"><p class="eyebrow">YOUR SAVE IS STILL HERE</p><h2 id="save-title">A save we couldn’t read.</h2><p>We’ve left the original data untouched. Play this session without saving, or confirm a fresh island.</p>' + button('session', 'Play this session') + button('fresh-confirm', 'Start a fresh island', 'button secondary') + '</section>';
     if (c.modal === 'restart' || c.modal === 'fresh') return '<section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="restart-title"><p class="eyebrow">A FRESH BEGINNING</p><h2 id="restart-title">Start over?</h2><p>This replaces your saved island, buildings, materials, and coins with a fresh start.</p>' + button('reset', 'Yes, start a fresh island') + button('close', 'Keep my island', 'button secondary') + '</section>';
     if (paused) return '<section class="modal-card pause-card" role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="result-illustration">' + icon('pause') + '</div><p class="eyebrow">TAKE YOUR TIME</p><h2 id="pause-title">The coast can wait.</h2><p>Your timer and supplies are paused.<br/>Continue whenever you’re ready.</p>' + button('resume', 'Resume run' + icon('play')) + '</section>';
@@ -126,8 +152,8 @@ export function mountUI(host: HTMLElement, c: IslandController) {
     const overlay = c.view === 'results' ? results() : modal();
     const world = host.querySelector<HTMLElement>('#world');
     if (world) world.inert = Boolean(overlay || (c.compact && c.settlementOpen && c.view === 'island'));
-    ui.className = 'interface view-' + c.view + (c.compact && c.settlementOpen && c.view === 'island' ? ' sheet-open' : '') + (overlay ? ' has-overlay' : '');
-    ui.innerHTML = '<header class="topbar"><a class="brand" href="#" data-action="island" aria-label="Island Rush, return to island"><span class="brand-symbol"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 28c5-5 19-5 24 0M5 32c8-4 22-4 30 0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="m17 25 5-18m-1 5c-5-5-10-1-11 2 6-1 9 1 11 1m1-3c4-5 10-3 11 0-5-1-8 1-12 3" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span><span><strong>Island Rush<span class="brand-dot">.</span></strong><small>THE COAST IS YOURS</small></span></a><span class="level-badge"><span class="level-orbit">' + c.level + '</span><span><small>YOUR ISLAND</small><strong>Level ' + c.level + '</strong></span></span><div class="top-resources">' + resource('coin',c.progress.wallet.coins,'coins') + resource('wood',c.progress.wallet.timber,'timber') + button('help',icon('help'),'icon-button','aria-label="How to play"') + '</div></header>' +
+    ui.className = 'interface view-' + c.view + (c.progress.pendingConstruction ? ' construction-active' : '') + (c.compact && c.settlementOpen && c.view === 'island' ? ' sheet-open' : '') + (overlay ? ' has-overlay' : '');
+    ui.innerHTML = '<header class="topbar"><a class="brand" href="#" data-action="island" aria-label="Island Rush, return to island"><span class="brand-symbol"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 28c5-5 19-5 24 0M5 32c8-4 22-4 30 0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="m17 25 5-18m-1 5c-5-5-10-1-11 2 6-1 9 1 11 1m1-3c4-5 10-3 11 0-5-1-8 1-12 3" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span><span><strong>Island Rush<span class="brand-dot">.</span></strong><small>THE COAST IS YOURS</small></span></a><span class="level-badge"><span class="level-orbit">' + c.level + '</span><span><small>YOUR ISLAND</small><strong>Level ' + c.level + '</strong></span></span><div class="top-resources">' + resource('coin',c.progress.wallet.coins,'coins') + resource('wood',c.progress.wallet.timber,'timber') + (c.level === 2 ? resource('stone',c.progress.wallet.stone,'stone') : '') + button('help',icon('help'),'icon-button','aria-label="How to play"') + '</div></header>' +
       (c.view === 'island' ? islandView() : runHud()) +
       (overlay ? '<div class="overlay-backdrop">' + overlay + '</div>' : '') +
       (!c.ready && !c.error ? '<div class="loading-screen"><span class="loading-island">' + icon('home') + '</span><p class="eyebrow">ISLAND RUSH</p><h2>Charting your coast…</h2><div class="loading-track"><span></span></div></div>' : '') +
@@ -174,6 +200,8 @@ export function mountUI(host: HTMLElement, c: IslandController) {
       case 'workshop': c.selectPlot('workshop'); break;
       case 'lookout': c.selectPlot('lookout'); break;
       case 'build': c.build(); break;
+      case 'buy': c.buy(target.dataset.material as 'timber' | 'stone'); break;
+      case 'next-project': if (c.progress.target) c.selectPlot(c.progress.target); break;
       case 'run': case 'again': c.startRun(); requestAnimationFrame(() => host.querySelector<HTMLCanvasElement>('canvas')?.focus({preventScroll:true})); break;
       case 'island': c.island(); break;
       case 'left': c.move(-1); host.querySelector<HTMLCanvasElement>('canvas')?.focus({preventScroll:true}); break;

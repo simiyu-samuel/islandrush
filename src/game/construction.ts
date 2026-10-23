@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import type { StyleId } from '../model/types';
 
 type Point = { x: number; y: number };
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -11,10 +12,13 @@ export function drawConstruction(
   y: number,
   width: number,
   progress: number,
-  style: 'cottage' | 'bungalow',
+  style: StyleId,
   reducedMotion: boolean,
 ): void {
   graphics.clear();
+  const roofColor = style === 'studio' ? 0x4e9390 : style === 'cottage' || style === 'forge' || style === 'lighthouse' ? 0xc97543 : 0xc4ac64;
+  const roofHighlight = style === 'studio' ? 0x85bbb0 : style === 'cottage' || style === 'forge' || style === 'lighthouse' ? 0xe09356 : 0xe4ce89;
+  const roofSeam = style === 'studio' ? 0x356e70 : style === 'cottage' || style === 'forge' || style === 'lighthouse' ? 0xaf6139 : 0x9e894d;
   const p = reducedMotion ? Math.min(0.99, Math.floor(progress * 5) / 5) : progress;
   const local = (px: number, py: number): Point => ({ x: x + px * width, y: y + py * width });
   const frontLeft = local(-0.46, -0.04);
@@ -48,7 +52,7 @@ export function drawConstruction(
     graphics.lineStyle(Math.max(1, width * 0.006), 0x676e5a, 0.7).beginPath().moveTo(bx, by).lineTo(bx, by + foundationDepth).strokePath();
   }
   const rise = step(p, 0.16, 0.44);
-  const wallHeight = width * (style === 'cottage' ? 0.43 : 0.35);
+  const wallHeight = width * (style === 'lighthouse' ? 1.8 : style === 'watchtower' ? 1.25 : style === 'cottage' ? 0.43 : 0.35);
   const tops = base.map(point => ({ x: point.x, y: point.y - wallHeight * rise }));
   const [topFrontLeft, topFrontRight, topBackRight, topBackLeft] = tops as [Point, Point, Point, Point];
   if (p >= 0.16) {
@@ -79,7 +83,7 @@ export function drawConstruction(
       beam(ridge, eave, 0xd0a163, 0.019);
     }
   }
-  if (p >= 0.64) {
+  if (p >= 0.64 && style !== 'watchtower') {
     const walls = step(p, 0.64, 0.82);
     const frontTopL = { x: frontLeft.x, y: frontLeft.y - wallHeight * walls };
     const frontTopR = { x: frontRight.x, y: frontRight.y - wallHeight * walls };
@@ -94,13 +98,13 @@ export function drawConstruction(
     const cover = step(p, 0.8, 0.98);
     const frontEave = { x: lerp(ridgeFront.x, topFrontRight.x, cover), y: lerp(ridgeFront.y, topFrontRight.y, cover) };
     const backEave = { x: lerp(ridgeBack.x, topBackRight.x, cover), y: lerp(ridgeBack.y, topBackRight.y, cover) };
-    polygon([ridgeFront, ridgeBack, backEave, frontEave], style === 'cottage' ? 0xc97543 : 0xc4ac64);
-    beam(ridgeFront, ridgeBack, style === 'cottage' ? 0xe09356 : 0xe4ce89, 0.024);
+    polygon([ridgeFront, ridgeBack, backEave, frontEave], roofColor);
+    beam(ridgeFront, ridgeBack, roofHighlight, 0.024);
     for (let i = 1; i <= 4; i++) {
       const t = i / 5;
       beam({ x: lerp(ridgeFront.x, frontEave.x, t), y: lerp(ridgeFront.y, frontEave.y, t) },
         { x: lerp(ridgeBack.x, backEave.x, t), y: lerp(ridgeBack.y, backEave.y, t) },
-        style === 'cottage' ? 0xaf6139 : 0x9e894d, 0.009);
+        roofSeam, 0.009);
     }
   }
   // Temporary scaffold braces make the unfinished state explicit at every stage.

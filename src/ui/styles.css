@@ -184,3 +184,56 @@
 @media (max-width: 959px) and (max-height: 500px) {
   .run-hud { grid-template-columns: 78px 1fr 44px; }
 }
+
+/* The next action stays fixed while project choices and offers can scroll. */
+.construction-panel { display: flex; flex-direction: column; overflow: hidden; }
+.panel-top, .project-tabs, .panel-run { flex-shrink: 0; }
+.construction-content { min-height: 0; overflow-y: auto; scrollbar-width: thin; padding: 2px 2px 4px; }
+.material-goal + .material-goal { margin-top: 10px; }
+.material-shop { margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--line); }
+.shop-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.shop-heading > span:last-child { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #9a762f; }
+.shop-heading .icon { width: 15px; height: 15px; }
+.material-shop > p { font-size: 11px; color: #778570; margin: 6px 0 12px; }
+.shop-offers { display: flex; flex-direction: column; gap: 8px; }
+.shop-offer { display: flex; align-items: center; text-align: left; gap: 10px; border: 1px solid #dedfc8; border-radius: 10px; min-height: 52px; padding: 10px; background: #f0f1df; color: #3c6551; }
+.shop-offer > span { display: flex; flex-direction: column; gap: 5px; }
+.shop-offer strong { font-size: 12px; }
+.shop-offer small { font-size: 10px; color: #7b846c; }
+.shop-offer:hover:not(:disabled) { background: #e3ebd4; border-color: #a8ba90; }
+.shop-offer:disabled { opacity: .62; }
+.locked-project { text-align: center; padding: 18px 0; }
+.locked-project h2 { font: 30px Georgia, serif; margin: 14px 0; }
+.locked-project p { font-size: 12px; line-height: 1.6; color: #78866f; }
+.locked-project > img { width: 100%; height: 155px; object-fit: contain; image-rendering: pixelated; opacity: .65; }
+.locked-project .button, .home-complete > .button { width: 100%; }
+.run-bag > div { gap: 12px; }
+@media (max-width: 959px) {
+  .buildings-screen .construction-panel { overflow: visible; }
+  .buildings-screen .construction-content { overflow: visible; padding: 0; flex-shrink: 0; }
+  .buildings-screen .material-shop { margin-top: 24px; padding-top: 20px; }
+  .buildings-screen .shop-offer { min-height: 60px; }
+  .buildings-screen .shop-offer strong { font-size: 13px; }
+  .buildings-screen .shop-offer small { font-size: 11px; }
+  .sheet-wallet { gap: 14px; flex-wrap: wrap; }
+  .sheet-wallet .resource-name { font-size: 10px; }
+  .sheet-wallet .resource { gap: 4px; }
+  .sheet-wallet > span:last-child:not(.resource) { font-size: 10px; }
+  .top-resources > .stone { display: none; }
+  .run-bag { padding-left: 8px; }
+  .run-bag > div { gap: 9px; }
+  .run-bag .resource { gap: 4px; }
+  .run-bag .resource strong { font-size: 16px; }
+  .run-bag .icon { width: 16px; height: 16px; }
+  .goal-copy > strong { line-height: 1.4; }
+}
+@media (max-width: 400px) {
+  .run-hud { grid-template-columns: 64px minmax(0, 1fr) 44px; gap: 6px; padding: 10px; }
+  .time-track { width: 62px; }
+  .run-bag > div { gap: 4px; justify-content: space-between; }
+  .run-bag .resource { gap: 3px; }
+  .run-bag .resource strong { font-size: 15px; }
+  .run-bag .icon { width: 14px; height: 14px; }
+}
+
+@media (max-width: 959px) { .construction-active .island-intro { visibility: hidden; } }

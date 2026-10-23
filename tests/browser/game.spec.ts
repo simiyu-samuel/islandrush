@@ -139,6 +139,7 @@ test('the selected home stays under construction for five seconds before its sav
   await captureScene(page, 'complete-desktop.png');
   await page.reload();
   await waitForWorld(page);
+  await page.getByRole('button', { name: 'Home', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Welcome home.' })).toBeVisible();
   await expect(page.getByText('Level 2', { exact: true })).toBeVisible();
   await expect(page.getByRole('img', { name: 'Your completed palm bungalow' })).toBeVisible();
@@ -156,7 +157,9 @@ test('reloading during construction preserves the reservation and finishes the s
   await page.reload();
   await waitForWorld(page);
   // Asset loading may span the deadline; the original five-second job is never restarted.
-  await expect(page.getByRole('heading', { name: 'Welcome home.' })).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByText('Level 2', { exact: true })).toBeVisible({ timeout: 10_000 });
+  await page.getByRole('button', { name: 'Home', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Welcome home.' })).toBeVisible();
   await expect(page.getByText('Level 2', { exact: true })).toBeVisible();
   await expect(page.getByLabel('0 timber', { exact: true })).toBeVisible();
   const saved = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), SAVE_KEY);
@@ -277,3 +280,37 @@ test.describe('compact layouts and touch controls', () => {
     }
   });
 });
+
+for (const order of [['workshop', 'lookout'], ['lookout', 'workshop']] as const) {
+  test('material shop and saved settlement: ' + order.join(' then '), async ({ page }) => {
+    await openIsland(page);
+    const fixture = createProgress();
+    fixture.buildings.home.built = true;
+    fixture.target = order[0];
+    fixture.wallet = { timber: 55, stone: 55, coins: 25 };
+    await setSavedFixture(page, fixture);
+    const shop = page.getByRole('region', { name: 'Material shop' });
+    await shop.getByRole('button', { name: 'Buy 5 timber for 10 coins', exact: true }).click();
+    await shop.getByRole('button', { name: 'Buy 5 stone for 15 coins', exact: true }).click();
+    await expect(shop.getByRole('button', { name: 'Buy 5 timber for 10 coins', exact: true })).toBeDisabled();
+    for (const id of order) {
+      await page.getByRole('button', { name: id === 'workshop' ? 'Workshop' : 'Lookout', exact: true }).click();
+      await page.getByRole('button', { name: id === 'workshop' ? 'Maker Studio' : 'Timber Watchtower', exact: true }).click();
+      await page.getByRole('button', { name: 'Build ' + id, exact: true }).click();
+      await expect(page.getByRole('heading', { name: 'Building in progress' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Gather supplies', exact: true })).toBeDisabled();
+      await expect.poll(async () => page.evaluate(({ key, id }) => {
+        const progress = JSON.parse(localStorage.getItem(key) ?? 'null');
+        return progress?.buildings[id].built;
+      }, { key: SAVE_KEY, id }), { timeout: 12_000 }).toBe(true);
+      await page.reload();
+      await waitForWorld(page);
+    }
+    await expect(page.getByRole('heading', { name: 'Your coast is complete.' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Run for coins', exact: true })).toBeEnabled();
+    const completed = await page.evaluate(key => JSON.parse(localStorage.getItem(key)!), SAVE_KEY);
+    expect(completed).toMatchObject({ target: null, wallet: { timber: 0, stone: 0, coins: 0 }, buildings: {
+      workshop: { built: true, style: 'studio' }, lookout: { built: true, style: 'watchtower' },
+    }});
+  });
+}
