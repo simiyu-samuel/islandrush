@@ -26,7 +26,7 @@ export interface CommandResult { ok: boolean; progress: Progress; message: strin
 export type EntityKind = Material | 'coin' | 'obstacle';
 export interface RunEntity { id: string; kind: EntityKind; lane: Lane; z: number }
 export type RunPhase = 'active' | 'paused' | 'ended' | 'settled';
-export type EndReason = 'collision' | 'timeout' | null;
+export type EndReason = 'collision' | 'return' | null;
 export interface ActiveRun {
   id: string;
   seed: number;
@@ -44,6 +44,8 @@ export interface ActiveRun {
   entities: RunEntity[];
   loot: Wallet;
   collectedIds: string[];
+  /** Streamed through this world distance; active runs are never persisted. */
+  generatedUntil: number;
 }
 export interface StorageAdapter {
   getItem(key: string): string | null;

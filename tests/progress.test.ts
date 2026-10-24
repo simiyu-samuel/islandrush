@@ -3,7 +3,7 @@ import {
   beginConstruction, buildBuilding, chooseStyle, createProgress, finishConstruction, getLevel, isSettlementComplete,
   purchaseMaterials, selectTarget, settleRun,
 } from '../src/model/progress';
-import { advanceRun, createRun } from '../src/model/run';
+import { returnRun, advanceRun, createRun } from '../src/model/run';
 
 describe('construction and inventory', () => {
   it('gates level two, preserves the chosen home, and deducts construction once', () => {
@@ -63,10 +63,10 @@ describe('construction and inventory', () => {
 });
 
 describe('run settlement', () => {
-  it('stores collision or timer rewards once, including a stale older result', () => {
+  it('stores collision or voluntary-return rewards once, including a stale older result', () => {
     let progress = createProgress();
     const first = {
-      ...advanceRun({ ...createRun(progress, { id: 'first', seed: 1 }), entities: [] }, 60),
+      ...returnRun(advanceRun({ ...createRun(progress, { id: 'first', seed: 1 }), entities: [], generatedUntil:Infinity }, 60)),
       loot: { timber: 15, stone: 0, coins: 3 },
     };
     progress = settleRun(progress, first).progress;
@@ -169,7 +169,7 @@ describe('five-second construction', () => {
     progress.wallet.timber = 30;
     const pending = beginConstruction(progress, 'home', 1_000).progress;
     const ended = {
-      ...advanceRun({ ...createRun(pending, { id: 'while-building', seed: 1 }), entities: [] }, 60),
+      ...returnRun(advanceRun({ ...createRun(pending, { id: 'while-building', seed: 1 }), entities: [], generatedUntil:Infinity }, 60)),
       loot: { timber: 5, stone: 0, coins: 1 },
     };
     const banked = settleRun(pending, ended).progress;

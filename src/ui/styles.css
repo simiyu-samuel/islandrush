@@ -271,3 +271,10 @@ button:focus-visible, a:focus-visible, canvas:focus-visible { outline: 3px solid
 @media (max-width: 959px) and (max-height: 500px) { .run-objective { top: 104px; } }
 
 .placement-actions { position: sticky; bottom: -1px; background: var(--cream); padding-bottom: 2px; }
+
+.pace-caption { margin-top: 4px; color: #91652a; font-size: 9px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.run-objective { width: 400px; }.run-objective > span { min-width: 0; flex: 1; line-height: 1.5; }
+.bank-button { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 8px; min-height: 44px; min-width: 87px; border: 1px solid #ffdc96; border-radius: 6px; background: #f1bd56; color: #473a1c; font-size: 10px; font-weight: 850; }
+.bank-button .icon { width: 15px; height: 15px; }
+@media (max-width:959px) { .run-objective { width: calc(100% - 24px); top: calc(147px + env(safe-area-inset-top,0px)); }.run-first-hint { top: calc(232px + env(safe-area-inset-top,0px)); }.timer > strong { font-size: 27px; } }
+@media (max-width:959px) and (max-height:500px) { .run-objective { width: min(54vw,400px); top: 108px; }.run-first-hint { top: 75px; }.timer > strong { font-size: 24px; } }

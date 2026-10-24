@@ -2,8 +2,9 @@ import type { BuildingId, Material, StyleId } from './types';
 
 export const BUILDING_IDS: BuildingId[] = ['home', 'workshop', 'lookout'];
 export const MATERIALS: Material[] = ['timber', 'stone'];
-export const RUN_DURATION = 60;
 export const RUN_SPEED = 18;
+export const MAX_RUN_SPEED = 34;
+export const RUN_ACCELERATION = 0.2;
 export const LANE_CHANGE_SECONDS = 0.16;
 export const JUMP_DURATION = 0.75;
 export const JUMP_PEAK = 2.2;

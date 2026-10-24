@@ -1,6 +1,7 @@
+import { runTravel, timeForRunDistance } from './runPace';
 import {
   COIN_PICKUP_UNITS, JUMP_DURATION, JUMP_PEAK, LANE_CHANGE_SECONDS,
-  MATERIAL_PICKUP_UNITS, OBSTACLE_CLEARANCE, RUN_DURATION, RUN_SPEED,
+  MATERIAL_PICKUP_UNITS, OBSTACLE_CLEARANCE,
 } from './catalog';
 import { getTargetMaterials } from './progress';
 import type { ActiveRun, Lane, Progress, RunEntity } from './types';
@@ -18,33 +19,37 @@ const randomGenerator = (seed: number) => {
     return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
   };
 };
-function createCourse(seed: number, materials: ActiveRun['materials']): RunEntity[] {
-  const random = randomGenerator(seed);
-  const entities: RunEntity[] = [];
-  const add = (kind: RunEntity['kind'], lane: Lane, z: number) => {
-    entities.push({ id: 'entity-' + entities.length, kind, lane, z });
+export function createCourseRange(seed:number, materials:ActiveRun['materials'], from:number, through:number):RunEntity[] {
+  const entities:RunEntity[]=[];
+  const add=(kind:RunEntity['kind'],lane:Lane,z:number)=>{
+    if (z>from && z<=through) entities.push({id:`entity-${z}-${kind}-${lane}`,kind,lane,z});
   };
-  const material = () => materials[Math.floor(random() * materials.length)]!;
-  // Three readable pickups come before the first grounded obstacle.
-  for (const z of [16, 44, 72]) {
-    if (materials.length) add(material(), 0, z);
-  }
-  add('coin', 0, 30);
-  add('coin', 0, 58);
-  add('obstacle', 0, FIRST_OBSTACLE_DISTANCE);
-  if (materials.length) add(material(), -1, 124);
-  add('coin', -1, 140);
-  for (let z = 164, row = 0; z < RUN_DURATION * RUN_SPEED - 32; z += 48, row++) {
-    const hazardLane = laneValues[Math.floor(random() * laneValues.length)]!;
-    const hasHazard = row % 3 !== 2;
-    if (hasHazard) add('obstacle', hazardLane, z + 32);
-    const safe = hasHazard ? laneValues.filter(lane => lane !== hazardLane) : laneValues;
-    const pickupLane = safe[Math.floor(random() * safe.length)]!;
-    if (materials.length) add(material(), pickupLane, z);
-    add('coin', pickupLane, z + 14);
+  const intro=randomGenerator(seed);
+  for (const z of [16,44,72]) if (materials.length) add(materials[Math.floor(intro()*materials.length)]!,0,z);
+  add('coin',0,30); add('coin',0,58); add('obstacle',0,FIRST_OBSTACLE_DISTANCE);
+  if (materials.length) add(materials[Math.floor(intro()*materials.length)]!,-1,124);
+  add('coin',-1,140);
+  // Per-row random seeds make streaming deterministic across frame/chunk sizes.
+  const first=Math.max(0,Math.floor((from-164)/48)-1);
+  const last=Math.floor((through-164)/48);
+  for (let row=first;row<=last;row++) {
+    const z=164+row*48;
+    const random=randomGenerator(seed ^ Math.imul(row+1,0x9e3779b9));
+    const hazardLane=laneValues[Math.floor(random()*3)]!;
+    const hasHazard=row>=24 || row%3!==2;
+    if (hasHazard) add('obstacle',hazardLane,z+32);
+    const safe=hasHazard ? laneValues.filter(lane=>lane!==hazardLane) : laneValues;
+    const pickupLane=safe[Math.floor(random()*safe.length)]!;
+    if (materials.length) add(materials[Math.floor(random()*materials.length)]!,pickupLane,z);
+    add('coin',pickupLane,z+14);
   }
   return entities.sort(contactOrder);
 }
+
+export function returnRun(run:ActiveRun):ActiveRun {
+  return run.phase==='active' || run.phase==='paused' ? {...run,phase:'ended',endReason:'return'} : run;
+}
+
 export function createRun(progress: Progress, options: { id?: string; seed?: number } = {}): ActiveRun {
   const seed = (options.seed ?? Math.floor(Math.random() * 4294967296)) >>> 0;
   const id = options.id ?? globalThis.crypto?.randomUUID?.() ?? ('run-' + Date.now() + '-' + Math.random().toString(36).slice(2));
@@ -52,7 +57,7 @@ export function createRun(progress: Progress, options: { id?: string; seed?: num
   return {
     id, seed, phase: 'active', endReason: null, target: progress.target, materials,
     elapsed: 0, distance: 0, lane: 0, targetLane: 0, jumpHeight: 0, jumpElapsed: -1,
-    entities: createCourse(seed, materials), loot: { timber: 0, stone: 0, coins: 0 }, collectedIds: [],
+    entities: createCourseRange(seed, materials, 0, 720), generatedUntil: 720, loot: { timber: 0, stone: 0, coins: 0 }, collectedIds: [],
   };
 }
 export function moveRun(run: ActiveRun, direction: -1 | 1): ActiveRun {
@@ -80,17 +85,25 @@ function motionAt(run: ActiveRun, seconds: number) {
 }
 export function advanceRun(run: ActiveRun, dtSeconds: number): ActiveRun {
   if (run.phase !== 'active' || !Number.isFinite(dtSeconds) || dtSeconds <= 0) return run;
-  const dt = Math.max(0, Math.min(dtSeconds, RUN_DURATION - run.elapsed));
-  const nextDistance = run.distance + dt * RUN_SPEED;
+  const dt = dtSeconds;
+  const nextDistance = run.distance + runTravel(run.elapsed,dt);
+  let generatedUntil=run.generatedUntil;
+  let entities=run.entities;
+  if (nextDistance+230>=generatedUntil) {
+    const through=Math.ceil((nextDistance+345)/480)*480;
+    entities=[...entities,...createCourseRange(run.seed,run.materials,generatedUntil,through)].sort(contactOrder);
+    generatedUntil=through;
+  }
+  let impactDistance=nextDistance;
   let duration = dt;
   let collided = false;
   let loot = run.loot;
   const collected = new Set(run.collectedIds);
-  const contacts = run.entities.filter(entity =>
+  const contacts = entities.filter(entity =>
     (entity.z > run.distance || (run.elapsed === 0 && entity.z === run.distance)) && entity.z <= nextDistance,
   ).sort(contactOrder);
   for (const entity of contacts) {
-    const contactTime = (entity.z - run.distance) / RUN_SPEED;
+    const contactTime = timeForRunDistance(run.elapsed,entity.z-run.distance);
     const motion = motionAt(run, contactTime);
     const sameLane = Math.abs(motion.lane - entity.lane) <= (entity.kind === 'obstacle' ? 0.32 : 0.42);
     if (!sameLane) continue;
@@ -98,6 +111,7 @@ export function advanceRun(run: ActiveRun, dtSeconds: number): ActiveRun {
       if (motion.jumpHeight <= OBSTACLE_CLEARANCE) {
         collided = true;
         duration = contactTime;
+        impactDistance = entity.z;
         break;
       }
       continue;
@@ -109,12 +123,14 @@ export function advanceRun(run: ActiveRun, dtSeconds: number): ActiveRun {
     if (entity.kind === 'coin') loot.coins += COIN_PICKUP_UNITS;
     else loot[entity.kind] += MATERIAL_PICKUP_UNITS;
   }
-  const elapsed = Math.min(RUN_DURATION, run.elapsed + duration);
-  const ended = collided || elapsed >= RUN_DURATION;
+  const elapsed = run.elapsed + duration;
+  // Discard old scenery/collection IDs so long runs keep a bounded live window.
+  entities=entities.filter(entity=>entity.z>=impactDistance-115);
+  const retained=new Set(entities.map(entity=>entity.id));
   return {
-    ...run, ...motionAt(run, duration), elapsed, distance: run.distance + duration * RUN_SPEED,
-    loot, collectedIds: [...collected],
-    phase: ended ? 'ended' : 'active',
-    endReason: collided ? 'collision' : ended ? 'timeout' : null,
+    ...run, ...motionAt(run, duration), elapsed, distance: impactDistance, entities, generatedUntil,
+    loot, collectedIds: [...collected].filter(id=>retained.has(id)),
+    phase: collided ? 'ended' : 'active',
+    endReason: collided ? 'collision' : null,
   };
 }

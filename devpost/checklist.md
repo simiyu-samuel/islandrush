@@ -15,27 +15,29 @@ Save each verified slice as a local commit; keep private context and secrets ign
 
 ## Current checkpoint
 
-24 October placement/coastal-experience revision: the owner requested choosing
-and moving buildings, road-aligned sprites, no floating names, a contained status
-header, coastal jungle runner scenery with a distant island, and clearer
-approaching-object spacing. They explicitly confirmed placement among clear
-grass blocks while keeping roads/water/landscaping clear.
+24 October endless/mobile/direct-move follow-up: the owner said the coastal
+runner is now “perfect” and requested no time limit, progressive speed and
+difficulty, mobile trees outside both outer lanes, and direct relocation by
+tapping a completed building on the map.
 
-Implemented eight-block placement, preview/flip/confirm/cancel, free relocation,
-save-compatible lot/facing fields, occupancy protection, clear map chrome, new
-original coastal/jungle art, stable stone trail, restrained outside parallax,
-gentler depth growth, and staggered encounters. One course, two levels, three
-buildings, recipes, collision/loot rules, and reviewed contact-line widths remain.
+Implemented endless deterministic course streaming, smooth pace growth from
+18 to 34 units/second (cap reached after 80 active seconds), more frequent later
+hazards, distance/pace HUD, and Head home / paused return with once-only loot
+banking. Old entities and collection IDs are pruned during long runs. Foliage
+uses smaller phone sprites and full-image exclusion beyond the road edge.
+Tapping a finished map building opens the existing move preview directly.
+The same three buildings, eight grass blocks, two levels, recipes, and
+construction/save rules remain.
 
-Production build and **84 unit/controller/geometry checks** pass. Ten browser
+Production build and **91 unit/controller/geometry checks** pass. Eleven browser
 journeys collect but remain unexecuted under the recorded URL-policy block.
-Generated assets were inspected directly. New gameplay layout, placement
-gestures, alignment, and motion need player review; no screenshot/device
-coverage or final acceptance is claimed for this revision.
+The coastal art direction has player approval; the new endless behavior,
+mobile lane clearance, and direct map moves still need a player retry.
 
-- [x] Implement and mechanically verify placement, persistence, scenery, and spacing.
-- [ ] Player checks choosing/canceling/confirming a lot, flipping facing, moving a
-  finished building, reload persistence, header separation, and one runner session.
+- [x] Implement and mechanically verify endless pace/course, once-only return,
+  mobile foliage bounds, and direct completed-building move previews.
+- [ ] Player tries a longer run, Head home, the outer lanes on phone, and tapping
+  a finished map building to choose and confirm an available block.
 
 ## Slices
 
@@ -156,3 +158,11 @@ Activity mode: Actual feedback/revision investigation plus brief evidence-based 
   scenery, masked slower foliage, a continuous stone trail, softer projection,
   and separated pickup/hazard depths. All 84 checks and production build pass;
   ten browser journeys collect only. Player review was requested and is pending.
+
+- 24 October player follow-up: the owner accepted the coastal runner direction,
+  then requested endless runs with increasing speed/difficulty, clearer mobile
+  outer lanes, and map-tap moves. Implemented streaming with bounded live data,
+  time-accurate acceleration/contact handling, distance/pace HUD, voluntary return,
+  smaller foliage placed wholly beyond the trail, and direct completed-building
+  relocation. All 91 checks and production build pass; eleven browser journeys
+  collect only. The latest three changes await player review.

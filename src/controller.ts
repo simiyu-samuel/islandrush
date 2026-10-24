@@ -1,6 +1,6 @@
 import { buildingLot, BUILDING_LOTS, lotOccupant, type LotId, type Facing } from './model/placement';
 import { createProgress, getLevel, placeBuilding, chooseStyle, beginConstruction, finishConstruction, settleRun, selectTarget, purchaseMaterials, canTarget, isSettlementComplete, completeTutorialStep, skipTutorial } from './model/progress';
-import { createRun, advanceRun, moveRun, jumpRun, pauseRun, resumeRun } from './model/run';
+import { createRun, advanceRun, returnRun, moveRun, jumpRun, pauseRun, resumeRun } from './model/run';
 import { loadProgress, saveProgress } from './model/save';
 import type { ActiveRun, BuildingId, CommandResult, Progress, StorageAdapter, StyleId, Material, TutorialStep } from './model/types';
 import { BUILDINGS } from './model/catalog';
@@ -232,22 +232,26 @@ export class IslandController {
     this.updateConstruction();
     if (this.view !== 'run' || !this.run || this.run.phase !== 'active') return;
     this.run = advanceRun(this.run, dt);
-    if (this.run.phase === 'ended') {
-      const result = settleRun(this.progress, this.run);
-      if (result.ok) {
-        this.progress = result.progress;
-        this.persist();
-      } else this.notice = result.message;
-      this.recordTutorial('first-run');
-      this.run = { ...this.run, phase: 'settled' };
-      this.view = 'results';
-      this.emit();
-      return;
-    }
+    if (this.run.phase === 'ended') { this.finishRun(); return; }
     if (this.run.elapsed - this.lastHudUpdate > 0.08 || this.run.elapsed < this.lastHudUpdate) {
       this.lastHudUpdate = this.run.elapsed;
       this.emit(false);
     }
+  }
+  bankRun() {
+    if (this.view!=='run' || !this.run || this.modal!=='none') return;
+    this.run=returnRun(this.run);
+    this.finishRun();
+  }
+  private finishRun() {
+    if (!this.run || this.run.phase!=='ended') return;
+    const result=settleRun(this.progress,this.run);
+    if (result.ok) { this.progress=result.progress; this.persist(); }
+    else this.notice=result.message;
+    this.recordTutorial('first-run');
+    this.run={...this.run,phase:'settled'};
+    this.view='results';
+    this.emit();
   }
   pause() {
     if (this.view === 'run' && this.run?.phase === 'active') {
@@ -313,7 +317,7 @@ export class IslandController {
     move: direction => this.move(direction),
     jump: () => this.jump(),
     pause: () => this.pause(),
-    selectPlot: id => this.selectPlot(id),
+    selectPlot: id => { this.selectPlot(id); if (this.progress.buildings[id].built) this.openPlacement(); },
     selectLot: lot => this.selectPlacementLot(lot),
     onReady: () => { this.ready = true; this.emit(); },
     onError: message => { this.error = message; this.emit(); },

@@ -145,7 +145,9 @@ describe('guidance and save recovery', () => {
     c.chooseStyle('cottage');
     c.startRun();
     c.run!.entities = [0,1,2,3,4,5].map(i => ({ id: String(i), kind: 'timber' as const, lane: 0 as const, z: 5 + i * 5 }));
-    c.tick(60);
+    c.run!.generatedUntil=Infinity;
+    c.tick(2);
+    c.bankRun();
     expect(c.progress.wallet.timber).toBe(30);
     expect(c.guideStep).toBe('build');
     c.island();
@@ -246,5 +248,25 @@ describe('placement preview commands', () => {
     expect(c.run).toBeNull();
     expect(c.progress.pendingConstruction).toBeNull();
     expect(c.progress.wallet.timber).toBe(30);
+  });
+});
+
+
+describe('endless return and direct building moves', () => {
+  it('banks a paused run once and reloads the retained loot', () => {
+    const c=ready();c.startRun();
+    c.run!.entities=[{id:'t',kind:'timber',lane:0,z:9},{id:'c',kind:'coin',lane:0,z:18}];
+    c.tick(1);c.pause();c.bankRun();
+    expect(c.view).toBe('results');expect(c.run!.endReason).toBe('return');
+    expect(c.progress.wallet).toEqual({timber:5,stone:0,coins:1});
+    c.bankRun();expect(c.progress.wallet.timber).toBe(5);
+    expect(ready().progress.wallet).toEqual(c.progress.wallet);
+  });
+
+  it('opens relocation directly when a completed building is selected on the map', () => {
+    const c=ready();c.progress.buildings.home.built=true;c.progress.target='workshop';
+    c.bridge.selectPlot('home');
+    expect(c.placement).toMatchObject({id:'home',lot:'harbor'});
+    expect(c.settlementOpen).toBe(false);
   });
 });

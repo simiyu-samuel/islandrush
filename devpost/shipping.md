@@ -5,12 +5,14 @@ entry has been submitted.
 
 ## Current visual-review hold
 
-The 24 October placement/coastal-experience revision adds saved grass-block
-placement and free moves, removes floating building names, contains header text,
-and introduces jungle/coast scenery, a distant island, and staggered encounters.
-The owner confirmed the placement boundary. Production build and all 84 checks
-pass; runtime visual/gesture playtesting remains pending under the recorded
-browser restriction. See `checklist.md > Current checkpoint`.
+The owner approved the coastal runner direction and requested endless runs,
+progressive pace/difficulty, clearer mobile lanes, and direct map-tap relocation.
+The follow-up is implemented: Head home banks supplies at will, speed rises to a
+playable cap, course chunks stream ahead, mobile foliage stays fully outside
+the trail, and completed map buildings open their move previews on tap.
+Production build and all 91 checks pass; eleven browser journeys collect only.
+The new behavior and phone layout await player retry under the existing browser
+restriction. See `checklist.md > Current checkpoint`.
 
 The saved Devpost draft has not been finally submitted. After design acceptance,
 refresh the story/test count and record the demo from this actual version.
@@ -18,14 +20,14 @@ refresh the story/test count and record the demo from this actual version.
 ## Ready
 
 - [x] Working proof of concept: one course, two levels, three buildings, six designs, relevant floating materials, retained loot, explicit coin exchanges, and saved construction.
-- [x] Player reported testing successfully and accepted the current build on 23 October.
+- [x] Player reported testing successfully and accepted the 23 October build before these design follow-ups.
 - [x] 72 unit/controller checks and production build pass at source commit cf9590f.
 - [x] Required scope, PRD, and spec are tracked in the public repository.
 - [x] Offline app map created and statically checked against actual paths and symbols.
 - [x] Public repository accessible without credentials: https://github.com/simiyu-samuel/islandrush (default branch codex/island-rush).
 - [x] History through cf9590f reviewed: six reachable commits and 124 distinct blobs scanned; no credential-pattern findings or private learner-profile/credential file paths found. This is a targeted audit, not a guarantee against every kind of sensitive data.
 
-Ten automated browser journeys are prepared/collected but have not been run
+Eleven automated browser journeys are prepared/collected but have not been run
 for this checkpoint due to the tool's URL-policy rejection. The player's report
 is the actual recent runtime evidence; no unreported device matrix or specific
 edge-case coverage is claimed.

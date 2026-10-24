@@ -4,9 +4,10 @@ A coastal runner and island builder, made as a fresh proof of concept for Build
 With AI: Basics. Run the coast, collect floating supplies, and turn them into
 visible progress on your island.
 
-## Placement and coastal runner — 24 October
+## Endless coastal runs and placement — 24 October
 
-Choose **Choose location** before building, or **Move building** after completion.
+Choose **Choose location** before building. Tap a finished building on the map
+to move it directly, or use **Move building** in its panel.
 Select a highlighted grass block (or its block button), flip the facing, and
 confirm with **Place here**. Cancel keeps the previous layout. Eight clear blocks
 are available; occupied/reserved blocks, roads, water, and gardens stay clear.
@@ -14,21 +15,27 @@ Moves are free and confirmed locations/facing survive reload. Old saves retain
 their original defaults. No new building types or levels were added.
 
 The island has a contained status header and visual site cues without floating
-names. The runner uses a coastal jungle backdrop, a distant island, masked slow
-foliage, a continuous stone trail, softer perspective growth, and encounters at
+names. The runner uses a coastal jungle backdrop, a distant island, slow foliage
+positioned fully outside the trail, softer perspective growth, and encounters at
 separate depths. Pickups float; grounded obstacles have a distinct ground cue.
 
-Production build and all **84 unit/controller/geometry checks** pass. Ten browser
+Runs now continue until collision or **Head home**. Pace rises smoothly from
+1.0× to about 1.9× over 80 active seconds, with more frequent hazards later.
+The HUD shows distance and pace; pausing freezes both. Mobile foliage is smaller
+and its full image stays outside the trail, leaving all three lanes clear.
+
+Production build and all **91 unit/controller/geometry checks** pass. Eleven browser
 journeys collect but remain unexecuted under the recorded local-preview URL-policy
-block. The generated assets were inspected; gameplay/gesture review is pending.
+block. The player approved the coastal runner direction and requested these
+follow-ups; the endless/mobile/direct-move revision still needs player review.
 Exact scenery prompts and implementation notes are in
 [the coastal experience record](design/coastal-experience-v3.md).
 
 ## Current playable checkpoint
 
-- One three-lane coastal course with an adult courier, jumping, and 60 seconds of active running.
+- One endless three-lane coastal course with an adult courier, jumping, gradually increasing speed, and more frequent hazards later.
 - Floating timber, stone, and coins, grounded stone obstacles, and keyboard, swipe, or button controls.
-- A collision ends the run immediately. Both collision and timeout bank collected loot once.
+- A collision ends the run immediately. Head home ends it whenever you choose, including from Pause; either ending banks collected loot once.
 - Results offer Run again or Return to island; banked supplies survive browser reloads.
 - Home, workshop, and lookout, each with two original designs. Home unlocks level 2; the other two projects can be completed in either order. Build reserves its recipe once and shows five seconds of foundation/framing/roof work before the final building reveal, with a percentage bar above the structure. Pending construction survives reload.
 - A narrower desktop road with a continuous stone trail and subtle moving joints; mobile road width is preserved.
@@ -95,7 +102,7 @@ retain their respective licenses.
 
 ## Original artwork and dependencies
 
-The thirteen runtime PNGs were generated for this project with the built-in
+The runtime PNGs were generated for this project with the built-in
 image-generation tool. Their dimensions, frame layouts, sources, and original
 prompts are recorded in [the asset manifest](public/assets/manifest.json) and
 [the runtime art record](design/runtime-art-prompts.md). Concept studies and their
@@ -120,13 +127,14 @@ reload during and after construction, saved designs, legacy islands, guide
 milestones and skipping, focus pause, corrupt-save preservation, session-only
 play, and responsive camera geometry. TypeScript and the production build pass.
 
-All ten Playwright journeys collect successfully but remain unexecuted: the
+All eleven current Playwright journeys collect successfully but remain unexecuted: the
 browser tool rejected local-preview access under its URL policy. New layout,
 art composition, and motion still require browser/player review. No alternate
 browser access was attempted. The five browser journeys and captures in
 `design/checkpoints/` belong to the earlier playable snapshot and do not verify
 this checkpoint. On 23 October the player reported testing the current game
-successfully and accepted it. That confirmation does not mean the ten automated
+successfully and accepted that earlier checkpoint. The 24 October endless/mobile
+follow-ups await review. That confirmation does not mean the automated
 browser cases or every device/edge case were exercised.
 
 The offline [app map](devpost/app-map.html) explains the Build action and where

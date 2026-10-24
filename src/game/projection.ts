@@ -69,3 +69,10 @@ export function projectRoute(
     visible: relative >= -5 && relative < LOOK_AHEAD,
   };
 }
+
+
+/** Keep the complete scenery sprite beyond the trail, not only its trunk. */
+export function routeSceneryX(side:-1|1,relative:number,visualWidth:number,layout:RouteLayout):number {
+  const edge=projectRoute(side*1.7,relative,0,layout);
+  return edge.x+side*(visualWidth/2+Math.max(10,layout.width*0.025));
+}

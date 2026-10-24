@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LOOK_AHEAD, DEPTH_EXPONENT, projectRoute, routeLayout, sceneryTransform } from './projection';
+import { LOOK_AHEAD, DEPTH_EXPONENT, projectRoute, routeSceneryX, routeLayout, sceneryTransform } from './projection';
 
 describe('the three-lane boardwalk camera', () => {
   it.each([[390, 844], [320, 640], [844, 390], [1440, 900]])(
@@ -78,5 +78,18 @@ it('gives separate encounters readable depth and avoids abrupt growth at the con
     const camera=routeLayout(w!,h!);
     expect(projectRoute(0,40,0,camera).y-projectRoute(0,54,0,camera).y).toBeGreaterThan(35);
     expect(projectRoute(0,0,0,camera).scale-projectRoute(0,4,0,camera).scale).toBeLessThan(0.065);
+  }
+});
+
+
+it('keeps the whole foliage image beyond both outer lanes on mobile', () => {
+  for (const [width,height] of [[320,640],[390,844],[768,1024],[844,390]]) {
+    const layout=routeLayout(width!,height!);
+    for (const z of [-18,0,24,72,108]) for (const spriteWidth of [25,100,300]) {
+      const left=routeSceneryX(-1,z,spriteWidth,layout)+spriteWidth/2;
+      const right=routeSceneryX(1,z,spriteWidth,layout)-spriteWidth/2;
+      expect(left).toBeLessThanOrEqual(projectRoute(-1.5,z,0,layout).x-10);
+      expect(right).toBeGreaterThanOrEqual(projectRoute(1.5,z,0,layout).x+10);
+    }
   }
 });

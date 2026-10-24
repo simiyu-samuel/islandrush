@@ -5,7 +5,7 @@ status: approved
 
 # Island Rush
 
-A game where timed runs supply the materials to build and personalize a growing
+A game where endless supply runs supply the materials to build and personalize a growing
 island, with building choices and resources introduced through progression.
 
 ## The Unique Kernel
@@ -25,10 +25,10 @@ action of Subway Surfers and Temple Run.
 
 1. See the buildings and design choices available at the current level, including
    what materials unfinished construction needs.
-2. Play a timed run, avoiding grounded hazards and collecting animated materials
+2. Play a endless supply run, avoiding grounded hazards and collecting animated materials
    and coins floating above the route. Show materials relevant to the current
    progression and available, unfinished buildings.
-3. End the run when time expires or an obstacle is hit. Show the collected loot
+3. End the run by choosing Head home or hitting an obstacle. Show the collected loot
    and retain it for use on the island.
 4. Choose to return to the island and use materials immediately, spend collected
    coins on eligible materials, or run again and collect more before building.
@@ -44,7 +44,7 @@ materials and coins that buy materials during product review. These additions
 preserve the one-course, two-level, three-building boundary.
 
 Advance levels by completing the current level's required construction. This
-connects each timed run to visible island progress and keeps the next goal easy
+connects each endless supply run to visible island progress and keeps the next goal easy
 to explain.
 
 | Level | Available construction | Materials | Completion and unlock |
@@ -55,7 +55,7 @@ to explain.
 This preserves the initial three-building boundary while proving a level change,
 new material availability, and building-style choices. The exact style count and
 resource amounts remain product-design decisions. Collected resources remain
-available between timed runs, and the player may build or run again.
+available between endless supply runs, and the player may build or run again.
 
 The interface can show the current construction goal and remaining materials,
 then clearly announce new buildings and resources when the home is completed.
@@ -86,7 +86,7 @@ refining attractive game interfaces and gameplay experiences through this build.
 ## What "Working" Looks Like
 
 Demonstration: choose an available building design, play a
-complete timed run, collect the needed materials, return to the island, and
+complete endless supply run, collect the needed materials, return to the island, and
 complete construction with a visible result. Another run should retain useful
 progress and respect which buildings and resources are available. Also show
 that the player can run again directly instead of building after each run.
@@ -97,10 +97,11 @@ with the completed scope, PRD, and spec.
 
 ## The POC Boundary
 
-The initial concept was one short course and three buildings. Preserve a small
+The initial concept was one course and three buildings. Preserve a small
 end-to-end game while accommodating the learner's added requirements:
 
-- Timed runs that end on timeout or obstacle impact, retaining collected materials.
+- Endless runs with gradually increasing pace, ending on obstacle impact or
+  voluntary return while retaining collected materials.
 - Collected coins can buy eligible materials within the island's construction flow.
 - A choice of building styles/designs, locations among clear grass blocks, and
   free relocation of finished buildings with either road-facing orientation.
@@ -110,8 +111,8 @@ end-to-end game while accommodating the learner's added requirements:
 - Adult character, readable floating pickups, and a coherent island identity.
 
 The agreed first-version progression has two levels and three buildings on one
-short course. A small set of visual building designs will demonstrate player
-choice. Exact style counts, run duration, and resource amounts will be specified
+streamed course. A small set of visual building designs will demonstrate player
+choice. Exact style counts, pace tuning, and resource amounts will be specified
 in the PRD; the scope does not promise a large content library.
 
 24 October revision: the owner explicitly requested player-chosen locations and
@@ -119,6 +120,12 @@ confirmed using clear grass blocks while keeping roads/water/landscaping clear.
 This adds a small placement/move interface within the existing three-building
 scope. The runner adopts a coastal jungle presentation and spaced encounters;
 the one-course loop, collision/loot rules, recipes, and levels are retained.
+
+24 October follow-up: the owner approved the coastal runner direction and
+explicitly replaced the 60-second limit with endless running, increasing speed,
+and increasing difficulty. Head home lets players return with supplies whenever
+they choose. They also requested clear mobile outer lanes and direct map-tap
+relocation for completed buildings. No buildings or levels were added.
 
 ## Later
 
@@ -134,6 +141,6 @@ explicitly cut.
 ## Details for the PRD
 
 The scope is approved. Define the first-use journey, building-style counts,
-placement controls, exact resource recipes, run duration and failure behavior,
+placement controls, exact resource recipes, run pace and failure behavior,
 and screen/animation design in the product requirements. Carry forward the
 agreed loop and progression without reopening them.

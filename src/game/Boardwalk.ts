@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { Frame } from './bridge';
-import { LOOK_AHEAD, projectRoute, type RouteLayout } from './projection';
+import { LOOK_AHEAD, projectRoute, routeSceneryX, type RouteLayout } from './projection';
 
 const JOINT_DISTANCE = 16;
 const BACKDROP_WIDTH = 1536;
@@ -15,7 +15,6 @@ export class Boardwalk {
   private readonly trail: Phaser.GameObjects.Graphics;
   private readonly details: Phaser.GameObjects.Graphics;
   private readonly foliage: Phaser.GameObjects.Image[];
-  private readonly canopyMask: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene) {
     this.water = scene.add.graphics().setDepth(-40);
@@ -25,11 +24,8 @@ export class Boardwalk {
     this.blend = scene.add.graphics().setDepth(-34);
     this.trail = scene.add.graphics().setDepth(-25);
     this.details = scene.add.graphics().setDepth(-20);
-    this.canopyMask = scene.make.graphics({ x:0, y:0 }, false);
-    const mask = this.canopyMask.createGeometryMask();
-    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => { mask.destroy(); this.canopyMask.destroy(); });
     this.foliage = Array.from({length:12}, (_,i) => scene.add.image(0,0,'jungleFoliage','content')
-      .setOrigin(0.5,1).setFlipX(i % 2 === 1).setMask(mask));
+      .setOrigin(0.5,1).setFlipX(i % 2 === 1));
   }
 
   paint(frame: Frame, layout: RouteLayout): void {
@@ -47,15 +43,6 @@ export class Boardwalk {
     }
     this.paintTrail(layout);
     this.paintEdges(frame,layout);
-    const farLeft = projectRoute(-1.6,LOOK_AHEAD,0,layout);
-    const farRight = projectRoute(1.6,LOOK_AHEAD,0,layout);
-    const nearLeft = projectRoute(-1.6,-LOOK_AHEAD,0,layout);
-    const nearRight = projectRoute(1.6,-LOOK_AHEAD,0,layout);
-    const mask = this.canopyMask.clear().fillStyle(0xffffff);
-    mask.beginPath().moveTo(0,0).lineTo(farLeft.x,0).lineTo(farLeft.x,farLeft.y)
-      .lineTo(nearLeft.x,nearLeft.y).lineTo(0,height).closePath().fillPath();
-    mask.beginPath().moveTo(width,0).lineTo(farRight.x,0).lineTo(farRight.x,farRight.y)
-      .lineTo(nearRight.x,nearRight.y).lineTo(width,height).closePath().fillPath();
     const travel = frame.reducedMotion ? 0 : frame.distance * 0.48;
     for (let i=0;i<this.foliage.length;i++) {
       const side = i%2===0 ? -1 : 1;
@@ -63,8 +50,10 @@ export class Boardwalk {
       const point = projectRoute(side*1.92,relative,0,layout);
       const tree = this.foliage[i]!;
       tree.setVisible(relative < LOOK_AHEAD && point.y < height+170);
-      const displayHeight = Math.min(340,height*0.42) * point.scale;
-      tree.setPosition(point.x,point.y+12*point.scale).setScale(displayHeight/tree.frame.realHeight)
+      const displayHeight = Math.min(layout.mobile ? 200 : 340,height*(layout.mobile ? 0.26 : 0.42)) * point.scale;
+      tree.setScale(displayHeight/tree.frame.realHeight);
+      const x=routeSceneryX(side,relative,tree.displayWidth,layout);
+      tree.setPosition(x,point.y+6*point.scale)
         .setDepth(point.y-3).setAlpha(Math.min(1,point.scale*3));
     }
   }

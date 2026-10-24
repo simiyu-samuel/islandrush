@@ -29,14 +29,15 @@ water, and landscaping clear. This supersedes the earlier fixed-plot decision.
 ## Runner behavior
 
 The backdrop shows coastal jungle and a distant island. Foliage is a separate
-transparent sprite layer, masked outside the trail and moving at 48% of route
-speed. A continuous weathered-stone trail uses quiet joints and mossy edges.
+transparent sprite layer moving at 48% of route speed. Its full image is
+positioned beyond the trail edge, with smaller mobile sprites to preserve outer
+lane visibility; the follow-up replaces the earlier graphics-mask approach. A continuous weathered-stone trail uses quiet joints and mossy edges.
 The three lane centers, trail, hazards, pickups, and courier share one projection.
 Desktop road width and mobile contact-line width are retained. Projection depth
 uses exponent 1.6 rather than 2 for gentler near-player growth.
 
 The first material/coin chain is spaced at z=16,30,44,58,72, with the first
-grounded obstacle at 100 (about 5.6 seconds at the unchanged run speed). Later
+grounded obstacle at 100 (about 5.4 seconds with the new gradual acceleration). Later
 material, coin, and hazard encounters have distinct depths, at least 14 units
 apart. They move at the same world speed; clarity comes from spacing, perspective,
 silhouette, lift, and ground shadows. Coins are smaller and lower than material
@@ -57,22 +58,33 @@ No source-image editing, resampling, or downloaded third-party assets.
 
 Originals are under `/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/`.
 The old route panorama is archived and no longer loaded. Backdrop framing/crop,
-foliage alpha trimming, masking, and scene composition happen only at runtime.
+foliage alpha trimming, placement, and scene composition happen only at runtime.
 
 ## Verification and remaining review
 
-Production build and all 84 unit/controller/geometry checks pass. New checks cover
+Production build and all 91 unit/controller/geometry checks pass. Checks cover
 placement/facing through construction/reload, free relocation, occupied/reserved
 blocks, invalid metadata, legacy defaults, canceled previews, command guards,
-staggered encounters, and readable projection spacing. Ten browser journeys
-collect; their first-obstacle helper now uses the actual course constant.
+staggered encounters, readable projection spacing, endless chunk boundaries,
+pace/contact timing, bounded long-run data, once-only voluntary return, mobile
+foliage bounds, and direct map moves. Eleven browser journeys collect; their
+first-obstacle helper uses the actual course constant and acceleration model.
 They remain unexecuted under the recorded browser local-preview URL-policy block.
 The generated art has been inspected directly; no fresh gameplay screenshot or
-successful runtime gesture/device test is claimed. Player playtest is pending.
+successful automated runtime gesture/device test is claimed. The player approved
+the coastal runner direction; the endless/mobile/direct-move follow-up awaits retry.
 
 Try: choose a location, change block and facing, cancel once, confirm once, build,
 move the finished building, reload, and play a run. Check header separation,
 building grounding, clear road edges, and approaching-object readability.
+Then keep running past a minute, notice the rising pace, and use Head home.
+
+24 October follow-up: runs no longer time out. Speed ramps from 18 to 34 route
+units/second over 80 active seconds, capped for playability. Deterministic chunks
+stream ahead; later rows include hazards more often while preserving clear lanes.
+The HUD shows distance and pace, and Head home banks supplies whenever chosen.
+Collision still ends the run immediately and preserves all collected loot.
+Completed buildings now open the existing move preview directly on map tap.
 
 ## Generation prompts
 

@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { FIRST_OBSTACLE_DISTANCE } from '../../src/model/run';
-import { RUN_SPEED } from '../../src/model/catalog';
+import { timeForRunDistance } from '../../src/model/runPace';
 import { createProgress } from '../../src/model/progress';
 import { SAVE_KEY } from '../../src/model/save';
 import type { Progress } from '../../src/model/types';
@@ -58,10 +58,10 @@ async function expectPastFirstObstacle(page: Page) {
     if (await page.getByRole('dialog', { name: 'A bump in the road.' }).isVisible()) {
       const duration = await page.getByText(/Active running time:/).textContent();
       // A later collision is valid gameplay only after passing the first block.
-      return Number(duration?.match(/([0-9.]+)s/)?.[1] ?? 0) > FIRST_OBSTACLE_DISTANCE / RUN_SPEED;
+      return Number(duration?.match(/([0-9.]+)s/)?.[1] ?? 0) > timeForRunDistance(0,FIRST_OBSTACLE_DISTANCE);
     }
-    const seconds = Number((await page.locator('#time-left').textContent())?.replace('s', ''));
-    return seconds <= Math.floor(60 - FIRST_OBSTACLE_DISTANCE / RUN_SPEED);
+    const distance=Number((await page.locator('#run-distance').textContent())?.replace('m',''));
+    return distance>FIRST_OBSTACLE_DISTANCE;
   }, { timeout: 12_000, message: 'Actual controls steer past the first center-lane obstacle' }).toBe(true);
 }
 
@@ -172,17 +172,17 @@ test('reloading during construction preserves the reservation and finishes the s
   });
 });
 
-test('the pause overlay freezes the visible timer until explicit resume', async ({ page }) => {
+test('the pause overlay freezes the visible distance until explicit resume', async ({ page }) => {
   await openIsland(page);
   await page.getByRole('button', { name: 'Gather supplies' }).click();
-  const timer = page.locator('#time-left');
+  const distance = page.locator('#run-distance');
   await page.getByRole('button', { name: 'Pause run', exact: true }).click();
   const paused = page.getByRole('dialog', { name: 'The coast can wait.' });
   await expect(paused).toBeVisible();
-  const frozenTime = await timer.textContent();
+  const frozenDistance = await distance.textContent();
   // This elapsed real time is the behavior under test, not a wait for the page to load.
   await page.waitForTimeout(1_200);
-  await expect(timer).toHaveText(frozenTime!);
+  await expect(distance).toHaveText(frozenDistance!);
   await expect(page.getByRole('dialog', { name: 'A bump in the road.' })).toHaveCount(0);
   await paused.getByRole('button', { name: 'Resume run', exact: true }).click();
   await expect(paused).toHaveCount(0);
@@ -190,10 +190,10 @@ test('the pause overlay freezes the visible timer until explicit resume', async 
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('Space');
   await expect.poll(async () => {
-    const timerAdvanced = await timer.textContent() !== frozenTime;
+    const distanceAdvanced = await distance.textContent() !== frozenDistance;
     const reachedResult = await page.getByRole('dialog', { name: 'A bump in the road.' }).count() > 0;
-    return timerAdvanced || reachedResult;
-  }, { timeout: 15_000, message: 'The timer advances or the run ends after explicit resume' }).toBe(true);
+    return distanceAdvanced || reachedResult;
+  }, { timeout: 15_000, message: 'Distance advances or the run ends after explicit resume' }).toBe(true);
   await expectPastFirstObstacle(page);
 });
 
@@ -207,8 +207,8 @@ test('active time advances at a low rendering frame rate', async ({ page }) => {
   await openIsland(page);
   await page.getByRole('button', { name: 'Gather supplies' }).click();
   await expect.poll(async () => {
-    const visibleSeconds = Number((await page.locator('#time-left').textContent())?.replace('s', ''));
-    return visibleSeconds < 60;
+    const visibleDistance = Number((await page.locator('#run-distance').textContent())?.replace('m', ''));
+    return visibleDistance > 0;
   }, { timeout: 3_000, message: 'Active time follows elapsed time even when frames are delayed' }).toBe(true);
   await page.getByRole('button', { name: 'Pause run', exact: true }).click();
   await expect(page.getByRole('dialog', { name: 'The coast can wait.' })).toBeVisible();
@@ -353,4 +353,17 @@ test('unreadable saves survive session play and restart cancellation until expli
   const fresh = await page.evaluate(key => JSON.parse(localStorage.getItem(key)!), SAVE_KEY);
   expect(fresh.wallet).toEqual({ timber: 0, stone: 0, coins: 0 });
   expect(fresh.buildings.home).toEqual({ built: false, style: 'cottage' });
+});
+
+
+test('an endless run can bank supplies without a collision', async ({page}) => {
+  await openIsland(page);
+  await page.getByRole('button',{name:'Gather supplies',exact:true}).click();
+  await expect.poll(async()=>Number((await page.locator('#run-distance').textContent())?.replace('m',''))).toBeGreaterThan(20);
+  await page.getByRole('button',{name:'Return with supplies',exact:true}).click();
+  const result=page.getByRole('dialog',{name:'A run worth bringing home.'});
+  await expect(result).toBeVisible();
+  const timber=result.locator('.earned-loot [aria-label$=" timber"]');
+  await expect(timber).toBeVisible();
+  expect(Number.parseInt((await timber.getAttribute('aria-label'))!,10)).toBeGreaterThanOrEqual(5);
 });

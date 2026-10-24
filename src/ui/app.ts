@@ -1,6 +1,7 @@
+import { runSpeedAt } from '../model/runPace';
 import { BUILDING_LOTS, LOT_IDS, lotOccupant, type LotId } from '../model/placement';
 import type { IslandController } from '../controller';
-import { BUILDINGS, BUILDING_IDS, MATERIALS, PURCHASES, RUN_DURATION } from '../model/catalog';
+import { BUILDINGS, BUILDING_IDS, MATERIALS, PURCHASES, RUN_SPEED } from '../model/catalog';
 import { BUILDING_ART } from '../game/art';
 import { MAP_CAMERA_EVENT } from '../game/islandMap';
 import { getTargetMaterials } from '../model/progress';
@@ -98,7 +99,7 @@ export function mountUI(host: HTMLElement, c: IslandController) {
     }
     return '<aside class="construction-panel" aria-label="' + (id === 'home' ? 'Home' : definition.name) + ' construction"><div class="panel-top"><span class="eyebrow">YOUR SETTLEMENT</span><span class="plot-number">' + builtCount + ' / 03 BUILT</span></div><div class="project-tabs" aria-label="Settlement projects">' +
       BUILDING_IDS.map(key => button(key, icon(c.progress.buildings[key].built ? 'check' : BUILDINGS[key].level > c.level ? 'lock' : key === 'home' ? 'home' : 'buildings') + (key === 'home' ? 'Home' : BUILDINGS[key].name), 'project-tab ' + (key === id ? 'selected' : ''), (key === id ? 'aria-current="true"' : '') + (c.progress.pendingConstruction ? ' disabled' : ''))).join('') + '</div><div class="construction-content">' + guidance() + content + '</div>' +
-      '<div class="panel-run">' + (c.canBuild ? buildAction() + button('run', 'Run for more supplies', 'text-button extra-run') : button('run', icon('run') + runLabel() + icon('arrow'), 'button primary', c.progress.pendingConstruction ? 'disabled' : '')) + '<span>' + icon(c.canBuild ? 'check' : 'play') + (c.canBuild ? 'Supplies ready · Your island is about to grow' : '60 seconds · Keep everything you collect') + '</span></div></aside>';
+      '<div class="panel-run">' + (c.canBuild ? buildAction() + button('run', 'Run for more supplies', 'text-button extra-run') : button('run', icon('run') + runLabel() + icon('arrow'), 'button primary', c.progress.pendingConstruction ? 'disabled' : '')) + '<span>' + icon(c.canBuild ? 'check' : 'play') + (c.canBuild ? 'Supplies ready · Your island is about to grow' : 'Endless run · Return whenever you like') + '</span></div></aside>';
   }
 
   function mobileNavigation() {
@@ -142,8 +143,8 @@ export function mountUI(host: HTMLElement, c: IslandController) {
   function runHud() {
     const target = c.progress.target;
     return '<div class="run-info"><span class="eyebrow">JUNGLE COAST / SUPPLY RUN</span><strong>' + (target ? 'Bringing ' + BUILDINGS[target].name.toLowerCase() + ' to life' : 'A little adventure, just for you') + '</strong></div>' +
-      '<div class="run-hud" aria-label="Run progress"><div class="timer"><span>TIME LEFT</span><strong id="time-left">60<small>s</small></strong><div class="time-track"><span id="time-bar"></span></div></div><div class="run-bag"><span>IN YOUR BACKPACK</span><div id="run-loot"></div></div>' + button('pause', icon('pause'), 'icon-button pause-button', 'aria-label="Pause run"') + '</div>' +
-      '<div class="run-objective" aria-label="Current supply goal">' + (target ? '<img src="' + BUILDING_ART[c.progress.buildings[target].style] + '" alt="" />' : icon('coin')) + '<span>' + (target ? 'BUILDING YOUR ISLAND<strong id="supply-goal"></strong>' : 'Settlement complete<strong>Collect coins. Enjoy the coast.</strong>') + '</span></div>' +
+      '<div class="run-hud" aria-label="Run progress"><div class="timer"><span>DISTANCE</span><strong id="run-distance">0<small>m</small></strong><div class="pace-caption" id="run-pace">1.0× pace</div></div><div class="run-bag"><span>IN YOUR BACKPACK</span><div id="run-loot"></div></div>' + button('pause', icon('pause'), 'icon-button pause-button', 'aria-label="Pause run"') + '</div>' +
+      '<div class="run-objective" aria-label="Current supply goal">' + (target ? '<img src="' + BUILDING_ART[c.progress.buildings[target].style] + '" alt="" />' : icon('coin')) + '<span>' + (target ? 'BUILDING YOUR ISLAND<strong id="supply-goal"></strong>' : 'Settlement complete<strong>Collect coins. Enjoy the coast.</strong>') + '</span>' + button('bank', 'Head home' + icon('arrow'), 'bank-button', 'aria-label="Return with supplies"') + '</div>' +
       '<div class="run-controls" aria-label="Running controls">' +
       button('left', '<span class="flip">' + icon('arrow') + '</span><span class="control-name">Left</span><kbd>← A</kbd>', 'control-button', 'aria-label="Move left"') +
       button('jump', icon('jump') + '<span class="control-name">Jump</span><kbd>SPACE</kbd>', 'control-button jump-control', 'aria-label="Jump"') +
@@ -156,17 +157,17 @@ export function mountUI(host: HTMLElement, c: IslandController) {
     const collided = c.run.endReason === 'collision';
     const earnedMaterials = c.run.loot.timber + c.run.loot.stone;
     const ready = readyTarget();
-    return '<section class="modal-card results-card" role="dialog" aria-modal="true" aria-labelledby="result-title"><div class="result-illustration">' + icon(collided ? 'home' : 'check') + '</div><p class="eyebrow">' + (collided ? 'THE COAST CAN BE TRICKY' : 'A RUN WELL SPENT') + '</p><h2 id="result-title">' + (collided ? 'A bump in the road.' : 'Time to head home.') + '</h2><p>' + (collided ? 'The run ends here. Everything you collected is yours to keep.' : 'Your minute is up. Your supplies are safely stored.') + '</p><div class="earned-loot"><span>BROUGHT BACK</span><div>' + loot(c.run.loot) + '</div></div><div class="banked-loot"><span>STORED ON YOUR ISLAND</span><strong>' + c.progress.wallet.timber + ' timber · ' + (c.level === 2 ? c.progress.wallet.stone + ' stone · ' : '') + c.progress.wallet.coins + ' coins</strong></div>' +
+    return '<section class="modal-card results-card" role="dialog" aria-modal="true" aria-labelledby="result-title"><div class="result-illustration">' + icon(collided ? 'home' : 'check') + '</div><p class="eyebrow">' + (collided ? 'THE COAST CAN BE TRICKY' : 'A RUN WELL SPENT') + '</p><h2 id="result-title">' + (collided ? 'A bump in the road.' : 'A run worth bringing home.') + '</h2><p>' + (collided ? 'The run ends here. Everything you collected is yours to keep.' : 'You chose your moment. Everything you collected is safely stored.') + '</p><div class="earned-loot"><span>BROUGHT BACK</span><div>' + loot(c.run.loot) + '</div></div><div class="banked-loot"><span>STORED ON YOUR ISLAND</span><strong>' + c.progress.wallet.timber + ' timber · ' + (c.level === 2 ? c.progress.wallet.stone + ' stone · ' : '') + c.progress.wallet.coins + ' coins</strong></div>' +
       (ready ? '<p class="ready-note">' + icon('check') + 'Your ' + (ready === 'home' ? 'home' : BUILDINGS[ready].name.toLowerCase()) + ' is ready to build.</p>' : earnedMaterials > 0 ? '<p class="ready-note">A little closer to your next building.</p>' : '') +
       (!c.progress.tutorial.skipped && !c.progress.tutorial.completed.includes('results') ? '<p class="result-guidance">Your loot is already stored. Head to the island to build, or run again to collect more.</p>' : '') + '<div class="result-actions">' + button('island', 'Return to island' + icon('arrow')) + button('again', 'Run again', 'button secondary') + '</div><small class="run-duration">Active running time: ' + c.run.elapsed.toFixed(1) + 's</small></section>';
   }
 
   function modal() {
     const paused = c.view === 'run' && c.run?.phase === 'paused';
-    if (c.modal === 'help') return '<section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title"><p class="eyebrow">A LITTLE ADVENTURE</p><h2 id="help-title">Run. Return. Build.</h2><ul class="help-list"><li><strong>Make the island yours.</strong> Choose a home design and use Choose location to preview any clear grass block. Flip its facing, then confirm. Completed buildings can be moved for free.</li><li><strong>Run the coast for 60 seconds.</strong> Use ← → or A / D to change lanes. Space or ↑ jumps. On touch, swipe or use the buttons.</li><li><strong>Collect what floats.</strong> Each timber or stone bundle gives 5 materials for your selected project. Each coin gives 1 coin. Stone blocks stay on the ground.</li><li><strong>Coins can buy supplies.</strong> Open Buildings to trade 10 coins for 5 timber or, at level 2, 15 coins for 5 stone.</li><li><strong>A collision ends the run.</strong> Your collected loot is banked immediately. Run again or return to build.</li></ul>' + button('close', 'Back to the coast' + icon('arrow')) + '</section>';
+    if (c.modal === 'help') return '<section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title"><p class="eyebrow">A LITTLE ADVENTURE</p><h2 id="help-title">Run. Return. Build.</h2><ul class="help-list"><li><strong>Make the island yours.</strong> Choose a home design and use Choose location to preview any clear grass block. Flip its facing, then confirm. Completed buildings can be moved for free.</li><li><strong>Run as far as you like.</strong> Speed increases as you go. Head home whenever you want to build. Use ← → or A / D to change lanes. Space or ↑ jumps. On touch, swipe or use the buttons.</li><li><strong>Collect what floats.</strong> Each timber or stone bundle gives 5 materials for your selected project. Each coin gives 1 coin. Stone blocks stay on the ground.</li><li><strong>Coins can buy supplies.</strong> Open Buildings to trade 10 coins for 5 timber or, at level 2, 15 coins for 5 stone.</li><li><strong>A collision ends the run.</strong> Your collected loot is banked immediately. Run again or return to build.</li></ul>' + button('close', 'Back to the coast' + icon('arrow')) + '</section>';
     if (c.modal === 'save-recovery') return '<section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="save-title"><p class="eyebrow">YOUR SAVE IS STILL HERE</p><h2 id="save-title">A save we couldn’t read.</h2><p>We’ve left the original data untouched. Play this session without saving, or confirm a fresh island.</p>' + button('session', 'Play this session') + button('fresh-confirm', 'Start a fresh island', 'button secondary') + '</section>';
     if (c.modal === 'restart' || c.modal === 'fresh') return '<section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="restart-title"><p class="eyebrow">A FRESH BEGINNING</p><h2 id="restart-title">Start over?</h2><p>This replaces your saved island, buildings, materials, and coins with a fresh start.</p>' + button('reset', 'Yes, start a fresh island') + button('close', 'Keep my island', 'button secondary') + '</section>';
-    if (paused) return '<section class="modal-card pause-card" role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="result-illustration">' + icon('pause') + '</div><p class="eyebrow">TAKE YOUR TIME</p><h2 id="pause-title">The coast can wait.</h2><p>Your timer and supplies are paused.<br/>Continue whenever you’re ready.</p>' + button('resume', 'Resume run' + icon('play')) + '</section>';
+    if (paused) return '<section class="modal-card pause-card" role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="result-illustration">' + icon('pause') + '</div><p class="eyebrow">TAKE YOUR TIME</p><h2 id="pause-title">The coast can wait.</h2><p>Your run and supplies are paused.<br/>Continue whenever you’re ready.</p>' + button('resume', 'Resume run' + icon('play')) + button('bank','End run and return','button secondary') + '</section>';
     return '';
   }
 
@@ -206,10 +207,11 @@ export function mountUI(host: HTMLElement, c: IslandController) {
       for (const label of ui.querySelectorAll<HTMLElement>('[data-construction-stage]')) label.textContent = stage;
     }
     if (!c.run) return;
-    const time = ui.querySelector<HTMLElement>('#time-left');
-    if (time) time.innerHTML = Math.max(0,Math.ceil(RUN_DURATION-c.run.elapsed)) + '<small>s</small>';
-    const bar = ui.querySelector<HTMLElement>('#time-bar');
-    if (bar) bar.style.width = Math.max(0,(RUN_DURATION-c.run.elapsed)/RUN_DURATION*100)+'%';
+    const distance=ui.querySelector<HTMLElement>('#run-distance');
+    const value=c.run.distance;
+    if (distance) distance.innerHTML=(value>=1000 ? (value/1000).toFixed(1)+'k' : String(Math.floor(value)))+'<small>m</small>';
+    const pace=ui.querySelector<HTMLElement>('#run-pace');
+    if (pace) pace.textContent=(runSpeedAt(c.run.elapsed)/RUN_SPEED).toFixed(1)+'× pace';
     const bag = ui.querySelector<HTMLElement>('#run-loot');
     if (bag) bag.innerHTML = loot(c.run.loot);
     const goal = ui.querySelector<HTMLElement>('#supply-goal');
@@ -220,7 +222,7 @@ export function mountUI(host: HTMLElement, c: IslandController) {
         Math.min(recipe[kind], c.progress.wallet[kind] + c.run!.loot[kind]) + '/' + recipe[kind] + ' ' + kind
       ).join(' · ');
     }
-    ui.classList.toggle('time-low', RUN_DURATION - c.run.elapsed <= 10);
+
   }
   ui.addEventListener('click', event => {
     const target = (event.target as HTMLElement).closest<HTMLElement>('[data-action]');
@@ -250,6 +252,7 @@ export function mountUI(host: HTMLElement, c: IslandController) {
       case 'left': c.move(-1); host.querySelector<HTMLCanvasElement>('canvas')?.focus({preventScroll:true}); break;
       case 'right': c.move(1); host.querySelector<HTMLCanvasElement>('canvas')?.focus({preventScroll:true}); break;
       case 'jump': c.jump(); host.querySelector<HTMLCanvasElement>('canvas')?.focus({preventScroll:true}); break;
+      case 'bank': c.bankRun(); break;
       case 'pause': c.pause(); break;
       case 'resume': c.resume(); requestAnimationFrame(() => host.querySelector<HTMLCanvasElement>('canvas')?.focus({preventScroll:true})); break;
       case 'help': c.openHelp(); break;

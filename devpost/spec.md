@@ -20,7 +20,7 @@ island uses a fixed isometric projection with bounded map pan and zoom. This is 
 suited to the approved pixel-art direction, with emphasis on composition,
 animation, controls, and feedback.
 
-On collision or timeout, the rules credit materials and coins once, save the
+On collision or voluntary return, the rules credit materials and coins once, save the
 updated island in the browser, and display results. Build and Buy validate the
 same saved progress before changing the visible island or inventory.
 
@@ -31,10 +31,10 @@ Implements PRD > The Core Journey.
 1. Load and validate saved progress, then open the island.
 2. Selecting a plot opens its construction panel, design previews, and costs.
 3. Starting a run creates a unique ID, empty loot, selected target, route seed,
-   and 60-second timer.
+   and starting pace. The route streams ahead without a time limit.
 4. Keyboard/touch input updates movement and jumping. The run model computes
    pickups and contact; Phaser draws the resulting positions.
-5. Collision or timeout ends once. The controller settles loot, records the
+5. Collision or Head home ends once. The controller settles loot, records the
    settled ID, saves progress, and shows results.
 6. Run Again creates a new run. Return to Island shows construction/purchases.
 7. Buying checks eligibility and coins before exchanging the displayed amounts.
@@ -182,30 +182,42 @@ and Level Progression.
 ### Run Model and Perspective Scene
 
 Store run ID/seed, status/end reason, active time, distance, lane/jump position,
-entities, collected IDs, and run loot. Advance with active time and input, then
+entities, generated-ahead distance, collected IDs, and run loot. Advance with active time and input, then
 project model coordinates to the screen.
 
 Evaluate contacts in route/lane space, accounting for current interpolated lane
 position and jump clearance. Transparent sprite padding is not a hitbox. Process
 events in travel order so an obstacle ends collection at impact even across a
-larger frame step. Collision and timeout both use one terminal transition.
-Paused/unfocused runs freeze simulation and timer until explicit Resume. Phaser
+larger frame step. Collision and voluntary return use one terminal transition.
+Paused/unfocused runs freeze simulation and active time until explicit Resume. Phaser
 uses fps.smoothStep: false so the model receives actual active elapsed time
 rather than a frame-smoothed value that stretches runs on slower renderers.
 
 RunScene renders route layers, the adult courier, grounded obstacles, and floating
 pickups with correct depth/shadow cues. One camera spans three weathered-stone
-trail lanes. A separate coastal panorama shows the distant island; masked foliage
-moves at 48% route speed outside the road. The deck remains continuous, with quiet
+trail lanes. A separate coastal panorama shows the distant island; foliage
+moves at 48% route speed outside the road. Smaller phone sprites are positioned
+with their full bounding boxes outside the trail using routeSceneryX(), keeping
+both outer lanes unobstructed without relying on a graphics mask. The deck remains continuous, with quiet
 joints and mossy edges, avoiding animated meshes or overlapping road images.
 Depth exponent 1.6 softens near-player growth. Later material, coin, and obstacle
 positions are staggered at least 14 route units apart. The first obstacle is at
-100 units; speed, jump/contact rules, retained loot, and the 60-second limit remain. The desktop road
+100 units; jump/contact rules and retained loot remain. The desktop road
 leaves ocean visible on both sides (bottom width at most 58% of the viewport,
 capped at 780px); preserve the reviewed mobile width. Scenery preserves its aspect ratio on narrow screens. Readable spacing must leave achievable
 choices. Recalculate projection after resizing without resetting the run.
 
-Implements PRD > Timed Run, Timed Running and Collisions, and Material Availability
+Pace increases linearly from 18 to 34 units/second over 80 active seconds, then
+holds the cap. runPace.ts integrates distance analytically and inverts travel
+time for exact contact ordering, keeping lane/jump rules in active-time space.
+run.ts streams deterministic per-row chunks with stable entity IDs. Later rows
+include a hazard every row rather than two out of three; each hazard row leaves
+two clear lanes. Passed entities and collected IDs are pruned to bound the live
+window. generatedUntil is runtime-only; active runs still do not survive reload.
+Head home calls returnRun() and shares the existing once-only settlement ledger,
+including while paused. The HUD displays distance and current pace.
+
+Implements PRD > Endless Run, Endless Running and Collisions, and Material Availability
 and Run Results.
 
 ### Island Scene and Construction Interface
@@ -345,7 +357,8 @@ sizes. Verify visual contact/collection timing, lane/jump response, collision-
 ended runs, and preserved loot. Obtain player feedback on this scene before
 expanding the complete island art/content.
 
-Meaningful unit checks: collision/timeout credit once, no pickup after impact,
+Meaningful unit checks: collision/return credit once, endless streaming and
+chunk boundaries, bounded live data, pace integration/contact timing, no pickup after impact,
 paused time frozen, purchases/insufficiency, locked stone/buildings, one recipe
 charge, derived progression, and invalid/unavailable saves.
 
@@ -376,7 +389,7 @@ deployment during shipping.
   session-play or confirmed fresh-start path.
 - Overlapping terminal/result actions: one transition and settlement; validate
   latest balances and built flags before any purchase/construction.
-- Stutter, aspect changes, or input loss: preserve timer/pause semantics and
+- Stutter, aspect changes, or input loss: preserve active-time/pause semantics and
   contact order; test actual speed rather than relying only on stills.
 
 ## What Was Kept Small
@@ -406,6 +419,12 @@ checks and the production build pass. The player reported a successful hands-on
 test and accepted the game on 23 October 2026. Automated browser journeys remain
 unexecuted under the recorded tool URL-policy limitation. The checklist and
 app map record the actual revisions and reference code route.
+
+24 October follow-up: the owner approved the coastal runner direction but
+requested endless runs with progressive speed/difficulty, clearer mobile outer
+lanes, and direct map-tap relocation. These changes pass all 91 checks and the
+production build. Eleven browser journeys collect without execution under the
+existing tool restriction; this follow-up still awaits player review.
 
 ## Sharing and Submission
 

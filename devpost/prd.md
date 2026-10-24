@@ -5,7 +5,7 @@ status: approved
 
 # Island Rush — Product Requirements
 
-A timed runner and island-building game for players who enjoy short arcade
+An endless runner and island-building game for players who enjoy short arcade
 sessions and choosing how a small settlement develops.
 
 Source: `scope.md > The Unique Kernel`, `Who It's For`, and `The Core Loop`.
@@ -19,10 +19,10 @@ tuned through playtesting without changing the agreed progression or rules.
 1. On first use, arrive on the island beside an empty home plot. A short welcome
    explains that running earns building materials.
 2. Preview the available home designs, select one, and see its material cost.
-3. Start a timed run. Brief contextual hints introduce movement, collecting a
+3. Start an endless supply run. Brief contextual hints introduce movement, collecting a
    floating timber pickup or coin, and avoiding a grounded obstacle. Guidance is
    skippable; skipping does not grant resources or skip construction.
-4. Collect materials and coins until time expires or an obstacle is hit. End
+4. Collect materials and coins until choosing Head home or hitting an obstacle. End
    the run, preserve its collected loot, and show the result. Choose Return to
    Island or Run Again.
 5. On the island, see the selected building's requirements, available materials,
@@ -65,19 +65,20 @@ than additional buildable projects. Drag and zoom controls explore the map,
 with a reset view and automatic focus when construction begins. Locked level-2 plots explain that finishing
 the home unlocks them.
 
-### Timed Run
+### Endless Run
 
 The route, character, obstacles, and floating pickups dominate. The compact HUD
-shows time remaining, this run's materials and coins, and Pause. Island inventory
+shows distance, current pace, this run's materials and coins, and Pause. Island inventory
 is hidden while running. A supply-goal readout shows saved stock plus the current
 run's loot against the selected building recipe; pickup quantity labels explain
-what was collected. The last ten seconds also receive a distinct color cue. Group the loot
+what was collected. A clear Head home action banks the run at any moment. Group the loot
 counters compactly so they do not crowd the route. The course has
 exactly three lanes. A coastal jungle setting and the island on the horizon
 connect the run to home. The continuous stone trail, floating collectibles, and
 grounded blocks have distinct depth/shadow cues. Encounters are staggered rather
 than placing pickups and obstacles at the same depth. Slow roadside parallax and
-short scene transitions respect reduced motion. Island names/level remain in a
+short scene transitions respect reduced motion. On mobile, smaller foliage sprites
+stay fully outside the trail so all three lanes remain readable. Island names/level remain in a
 contained header; floating building-name labels are removed from the map.
 The two visible dividers, pickups, obstacles, and courier
 share the same road perspective; the entire road surface moves, including
@@ -88,18 +89,18 @@ touch devices; clear hints explain both where relevant.
 
 ### Run Result
 
-Show why the run ended: time expired or an obstacle was hit. Show collected
+Show why the run ended: the player chose to return or hit an obstacle. Show collected
 materials and coins and the resulting stored totals. Offer Return to Island
 and Run Again clearly. Both end reasons preserve the loot. Credit happens once,
 independent of which action the player chooses or how often they press it.
-Run Again starts a new run with a fresh timer and the stored inventory intact;
+Run Again starts a new run at the starting pace with the stored inventory intact;
 it does not resume beyond the collision.
 
 ### Guidance, Pause, and Completion
 
 First-use guidance appears in the relevant scene and clears after the player
-performs the action. Pause provides Resume and ends gameplay movement and the
-countdown while paused. Returning focus to the game does not unexpectedly
+performs the action. Pause freezes motion and active time, with Resume and
+End run and return actions. Returning focus to the game does not unexpectedly
 resume a paused run. Settlement completion celebrates the visible island and
 offers viewing it or restarting with a clear confirmation.
 
@@ -133,7 +134,7 @@ feedback. The coherent pixel-art treatment was accepted with this product plan.
 ### Guided First Play
 
 Keep onboarding within the normal island, construction, run, and result views.
-The countdown starts after the player starts the run; contextual run hints do
+Running starts after the player starts the run; contextual run hints do
 not block movement. Start with a readable, forgiving opening so the first
 collectible and obstacle are not immediately on top of the character.
 
@@ -141,17 +142,20 @@ Remember completed guidance with saved progress. Returning players resume their
 island without repeating onboarding. A skip control dismisses guidance while
 leaving normal project selection, running, and construction available.
 
-### Timed Running and Collisions
+### Endless Running and Collisions
 
-Starting duration: 60 seconds of active play. Pausing or losing focus
-pauses both motion and the timer. Inputs change lanes or jump; obstacles and
-pickups should have visible separation and usable reaction time.
+Runs have no time limit. Pace increases gradually from 18 to 34 route units per
+second over 80 active seconds, then holds a playable cap. Later encounter rows
+include hazards more often. Pausing or losing focus freezes motion, pace, and
+active time until explicit Resume. Inputs change lanes or jump; obstacles and
+pickups have separate depths and usable reaction time. Head home ends the run
+and banks its supplies; the pause panel offers the same return choice.
 
 Learner-specified collision rule: hitting an obstacle immediately ends the
-current run. Stop route motion, controls, further pickups, and the countdown;
+current run. Stop route motion, controls, further pickups, and active time;
 show brief readable impact feedback, then the result with Run Again and Return
-to Island. Preserve all materials collected before impact. Collected coins are preserved as well. Expiry and
-collision share one end-of-run credit operation; simultaneous end triggers or
+to Island. Preserve all materials collected before impact. Collected coins are preserved as well. Voluntary return and
+collision share one end-of-run credit operation; overlapping end triggers or
 repeated inputs cannot credit the same loot twice. There is no continuation of
 the same run after a collision.
 
@@ -161,7 +165,7 @@ At level 1, the unfinished home requires timber. At level 2, the selected
 unfinished building's requirements determine the resource types available.
 Completed or locked projects do not introduce irrelevant pickups. Picking up a
 material updates the run's yield. Coins are an additional floating collectible
-available during runs at both levels. A run ending through expiry or collision
+available during runs at both levels. A run ending through voluntary return or collision
 transfers its materials and coins to stored balances exactly once. Previously
 stored surplus is retained.
 
@@ -264,8 +268,8 @@ explicit revisions supplied by the learner.
 - First use: empty home plot, level 1, zero stored materials/coins, short guidance.
 - Locked content: workshop/lookout identify the home-completion unlock.
 - Insufficient materials: show exact remaining amounts and a clear way to run.
-- Paused or unfocused: character, hazards, collections, and countdown stop.
-- Run expiry or collision: stop once, preserve and credit the loot, show the
+- Paused or unfocused: character, hazards, collections, and pace progression stop.
+- Voluntary return or collision: stop once, preserve and credit the loot, show the
   end reason, and offer Run Again or Return to Island.
 - Insufficient coins: show the bundle price and shortfall without changing stock.
 - Locked material: keep it unavailable until the corresponding level/project unlock.
@@ -279,11 +283,12 @@ explicit revisions supplied by the learner.
 ## Acceptance Criteria
 
 - A fresh player can follow or skip guidance and select an available home design.
-- A run ends after its configured active duration; pause/focus loss stops time.
+- A run continues beyond 60 seconds, with a gradual pace increase and denser later
+  hazards. Pause/focus loss freezes progression; Head home banks a run at will.
 - Pickups visibly float and add only their own material to the run yield.
-- A collision stops the run and timer, prevents further collection, and preserves
+- A collision stops the run and active time, prevents further collection, and preserves
   previously collected materials/coins before showing the two result actions.
-- Repeated result actions or simultaneous timeout/collision cannot grant the
+- Repeated result actions or overlapping return/collision cannot grant the
   same run yield twice.
 - An eligible material purchase exchanges the exact displayed coin price for its
   stated quantity; insufficient coins and locked materials leave balances unchanged.
@@ -291,7 +296,7 @@ explicit revisions supplied by the learner.
 - Completing the home unlocks exactly the two level-2 projects and appropriate
   pickups; completing both finishes the settlement.
 - Run Again preserves banked materials/coins and the selected unfinished target,
-  resetting the timer and course for a genuinely new run.
+  resetting the pace, distance, and course for a genuinely new run.
 - Selected designs appear in the actual completed island, not only in previews.
 - A normal reload restores saved progress, while a partly played run adds no reward.
 - The playable scene, HUD, and construction panel remain legible on desktop and
@@ -299,7 +304,7 @@ explicit revisions supplied by the learner.
 
 ## Product Decisions
 
-Confirmed by the learner: timed runs; building styles/designs; level-appropriate
+Initially confirmed by the learner: timed runs (superseded by their 24 October endless-run request); building styles/designs; level-appropriate
 materials; construction requirements until completion; immediate island use or
 another run; construction-based two-level progression; three buildings; adult
 character; additional island space; floating pickups; Pixel Coast as the leading
@@ -309,13 +314,18 @@ specified that collisions end a run with collected materials retained, and
 added collectible coins that purchase materials.
 
 The learner approved the revised product plan, including the guided opening,
-60-second runs, three lanes plus jumping, desktop/touch controls, two styles per
+60-second runs (superseded on 24 October), three lanes plus jumping, desktop/touch controls, two styles per
 building, initially fixed plots (superseded by the 24 October placement request), starting recipes and exchange prices, retained coins on
 collision, same-browser saving/restart, and coherent pixel-art treatment.
 
+24 October follow-up: after approving the coastal runner direction, the owner
+requested endless runs, progressive pace/difficulty, unobstructed mobile outer
+lanes, and tapping a completed map building to open its move preview directly.
+The Buildings panel remains another way to relocate a completed building.
+
 ## What We're Building and Deferred Work
 
-Build the complete first-use → select design → timed run → collect → result →
+Build the complete first-use → select design → endless run → collect → result →
 build/unlock loop within one course, two levels, and three buildings, with
 collision-ended runs, collectible coins, and material purchases integrated into
 construction. Prioritize readability, coherent identity, responsive controls,

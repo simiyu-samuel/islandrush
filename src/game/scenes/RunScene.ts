@@ -127,7 +127,7 @@ export class RunScene extends Phaser.Scene {
       this.courier.anims.pause();
       if (!grounded) this.courier.setFrame(1);
     }
-    if (!reset && this.previousPhase === 'active' && frame.phase !== 'active' && frame.phase !== 'paused' && frame.elapsed < 59.9 && !frame.reducedMotion) {
+    if (!reset && this.previousPhase === 'active' && frame.phase !== 'active' && frame.phase !== 'paused' && frame.phase === 'settled' && frame.entities.some(entity=>entity.kind==='obstacle' && Math.abs(entity.z-frame.distance)<0.01 && Math.abs(entity.lane-frame.lane)<0.4) && !frame.reducedMotion) {
       this.cameras.main.shake(120, 0.0035);
     }
     this.paintBursts(frame.phase === 'active' ? dt : 0, frame.reducedMotion);
