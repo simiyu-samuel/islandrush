@@ -1,122 +1,93 @@
 # Island Rush — shipping and submission record
 
-Verified 24 October 2026. The app is deployed and the Devpost project is updated.
-**The hackathon entry is still DRAFT (3/5 steps); it has not been finally submitted.**
+Updated **24 October 2026**. The expanded game is live. **Devpost remains a draft
+(3/5 steps); the real video and final submission are still pending.**
 
-## Public links
+- Play: https://island-rush-six.vercel.app — no account required.
+- Source: https://github.com/simiyu-samuel/islandrush — MIT, codex/island-rush.
+- Project: https://devpost.com/software/island-rush
+- Demo video: not yet provided; the required field remains blank.
 
-- **Play:** https://island-rush-six.vercel.app — no login required.
-- **Source:** https://github.com/simiyu-samuel/islandrush — MIT, branch codex/island-rush.
-- **Devpost:** https://devpost.com/software/island-rush
-- **Demo video:** not yet recorded/provided; required field remains blank.
+## Delivered game and evidence
 
-## Completed for the current app
+The sixteen-type expansion replaces the old three-landmark completion cap.
+Repeated building instances, suitable-site placement, free moves, five-second
+construction, individual people/jobs/needs/illness, production chains, visitors,
+rare merchants, shipping, policies, storage, power and connected-islet expansion
+are implemented. Dismantling recovers half base materials without stranding
+occupied land. Version 1 saves migrate with a byte-for-byte original backup.
 
-- [x] Refreshed README, scope, PRD, spec, discovery-note status, app map, and build
-  records for the endless coastal runner and current island UI.
-- [x] Added a complete [game guide](game-guide.md) covering all controls, rewards,
-  recipes, designs, placement/moves, levels, mobile navigation, pause, and saves.
-- [x] All 91 unit/controller/geometry checks, TypeScript, and production build pass.
-- [x] Deployed gameplay 72275d5 plus hosting/docs revision a1d2583 to Vercel.
-- [x] Production is READY. Anonymous requests verified the HTML, three emitted
-  JS/CSS paths, and all 16 manifest PNG paths with HTTP 200 and expected types.
-- [x] Opened the deployed island and runner in the supported browser and saved
-  real screenshots. This is limited public-page evidence, not a complete device
-  playtest or execution of the eleven prepared browser journeys.
-- [x] Saved the updated Devpost tagline, full project story, live URL, GitHub URL,
-  technology tags including Vercel, and Created by contribution. Reload verified
-  the published project page reflects those changes.
-- [x] Uploaded and saved three genuine production screenshots with captions;
-  reopened Project details confirmed all three gallery records persisted.
-- [x] Retained the original generated promotional thumbnail, labelled separately
-  from actual screenshots. Its source/prompt remain documented.
-- [x] Prepared the 332-word [voice-over reading script](demo-voiceover.md) and
-  synchronized [screen-recording guide](demo-recording-guide.md), targeting a
-  roughly 2:40–2:50 video with gameplay from the opening shot.
-- [x] Existing personal Additional info/survey answers were preserved. They are
-  not reproduced in the public repository or invented from project changes.
+All **99 automated model/controller/geometry checks**, TypeScript and the
+production build pass. Eleven updated browser journeys collect but were not run
+as a full suite. Actual public interactions and responsive layout checks are
+listed in [deployment.md](deployment.md), along with anonymous 200/content-type
+checks for HTML, three bundles and twenty PNGs. Current deployed source is
+**dde6c4d**, Vercel status READY; later record-only commits do not change its code.
 
-The full [deployment record](deployment.md) includes build settings, source,
-access checks, upload exclusions, and the manual update path. Deployment used
-the existing Hobby account; no paid add-on or domain purchase was introduced.
+README, scope, PRD, spec, game guide, app map, checklist, design index, submission
+story and contribution reflect the expansion. Discovery notes and older build
+records are explicitly historical. [The 359-word voice-over](demo-voiceover.md)
+and [matched screen-recording guide](demo-recording-guide.md) target roughly
+2:40–2:50, with real gameplay from the opening shot and a full construction reveal.
 
-## Saved submission content
+## Submission content
 
 Name: **Island Rush**.
 
-Elevator pitch: **Run an endless coastal trail, collect supplies, and build an
-island of your own.**
+Elevator pitch: **Run an endless coastal trail and grow a living island settlement.**
 
-The saved [project story](submission-story.md) covers inspiration and audience,
-endless speed/difficulty, Head home and collision loot retention, eight-block
-placement, free map-tap relocation, six designs, two levels, five-second build
-progress, coin exchanges, mobile flow, same-browser saves, the Devpost skill
-workflow, AI-assisted development/artwork, tests, challenges, learning, and limits.
-
-The saved [contribution](contribution.md) describes the owner's product/design
-choices, earlier playtesting, revisions, and direction of AI-assisted building,
-documentation, hosting, and demo preparation. It does not claim wholly manual
-coding/artwork or a completed device matrix.
+[Project story](submission-story.md) explains the combined game, sixteen types,
+detailed systems, unlimited repeat copies subject to land/resources, expansion,
+controls, construction, safe loot/saves, owner-directed revisions, Codex/Devpost
+Learn workflow, original art, stack, challenges and remaining balance testing.
+[Created by contribution](contribution.md) attributes the owner's decisions and
+playtesting without claiming entirely manual implementation or an unperformed
+new device review.
 
 Built With: typescript, phaser.js, vite, html5, css3, codex, vercel.
-Try it out: production game first, public GitHub repository second.
-Gallery sources/captions: `design/devpost/production-captures.md`.
+Try it out: public game first; public GitHub repository second. The existing
+promotional thumbnail is distinct from the genuine gameplay gallery.
 
-This factual AI-assisted project copy was saved under the owner's explicit
-request to update the submission. The owner should review it before final entry.
-No announcement, email, or Discord post was sent.
+Current screenshot source: design/devpost/production-captures.md. Earlier images
+are labelled as the previous prototype rather than presented as the expanded game.
+Existing personal survey answers are preserved; no new answers were invented.
+No announcement, email or Discord message was sent.
 
-## Still to do
+The tagline, story, gallery order/captions and contribution were saved and
+reloaded on Devpost after deployment. Three current captures lead the six-image
+gallery; three older prototype entries remain clearly labelled. The public-page
+proof is design/devpost/settlement-v2-submission-proof.jpg. The final video field
+is still blank and Devpost still reports DRAFT 3/5.
 
-- [ ] Follow the recording guide, record the spoken script, edit the actual game
-  footage, and export below three minutes.
-- [ ] Upload to a publicly visible YouTube/Vimeo video and verify access while
-  signed out. Add the actual URL to the required Devpost video field.
-- [ ] Review the saved story/contribution and existing personal declarations.
-- [ ] Complete final terms and submit. The final terms checkbox was inspected
-  and left unchecked; Submit project was not clicked.
-- [ ] Verify Devpost reports a submitted entry after that final action.
+## Remaining owner steps
 
-Project details remains incomplete because no real video URL exists. A live
-Vercel app and screenshots do not replace that video. No placeholder video,
-invented video URL, or false final-submission confirmation was entered.
+- [ ] Try the expanded settlement and review the story/contribution.
+- [ ] Record narration and real game footage using the updated guide, then export
+  below three minutes. Label later-stage cuts and mobile layout previews.
+- [ ] Upload a publicly visible YouTube/Vimeo video and test it signed out.
+- [ ] Add the actual URL to Devpost's required video field.
+- [ ] Review personal declarations/final terms, complete final submission and
+  verify Devpost reports a submitted entry.
 
-## Verification boundaries
+No placeholder URL, generated mock demo, terms acceptance or final-submission
+confirmation substitutes for those steps. Earlier playtests approved the coastal
+runner direction; the expanded economy and very large islands still need player
+feedback and balance/performance testing. Public-page checks are limited evidence.
 
-The owner accepted the 23 October playable checkpoint and later approved the
-coastal runner direction. The final endless/mobile/direct-map-move follow-up
-still benefits from a player retry; shipping preparation is not a claim of
-unreported device approval. The eleven automated browser journeys were collected,
-not executed as a full suite for this version, under the recorded local-preview
-restriction. The separately requested public Vercel page supplied the current
-screenshots; historical captures remain clearly dated.
+## Organizer alignment
 
-Git/publication reviews excluded the ignored learner profile, local environment
-credentials, .vercel metadata, dependencies, generated output, and reports.
-The staged-file/history checks are targeted credential/path reviews, not a claim
-of detecting every possible sensitive datum. See the revision history for the
-prior public-repo and source audit.
+Checked against the [official rules](https://learn-ai-basics.devpost.com/rules)
+and the organizer's emailed design/presentation checklist on 24 October:
 
-## Organizer criteria and deadline
-
-Checked against the organizer's [overview](https://learn-ai-basics.devpost.com/)
-and [official rules](https://learn-ai-basics.devpost.com/rules) on 24 October.
-
-| Requirement / criterion | Current evidence |
+| Expectation | Evidence |
 | --- | --- |
-| Easy judging access | Public Vercel game opens without an account; GitHub is linked with setup instructions. |
-| Working kernel | Choose design/location → run/collect → retain loot → build/reveal → unlock and relocate. |
-| Design | Owner-directed coastal identity, structured township, readable trail, mobile navigation, construction feedback. |
-| Innovation / idea | Arcade supply runs feed player-directed settlement choices within a deliberately small combined loop. |
-| Audience / impact | Casual players who enjoy short arcade runs with persistent, creative island progress. No market-validation claim is made. |
-| Required planning docs | devpost/scope.md, prd.md, and spec.md are public and reflect current mechanics. |
-| Presentation | Script/shot list ready; required real video remains pending. |
+| Judges can enter quickly | Public game opens directly without sign-in. |
+| Working end-to-end idea | Select recipe → run → bank → build → settlement consequences. |
+| Directed design | Structured coast, original art, deliberate placement, readable trail and mobile management. |
+| Idea and audience | Arcade action contributes to a persistent, creative living settlement. |
+| Planning and public source | Updated scope/prd/spec, assets/run instructions and MIT license in public repo. |
+| Presentation | New narration/shot list ready; actual public video remains required. |
 
-The rules require a video below three minutes, publicly visible on YouTube or
-Vimeo, showing the working project; a public source repo with assets/run
-instructions and an open-source license; and English submission materials or
-translation. Final eligibility declarations belong to the entrant.
-
-Deadline: **Monday 26 October 2026 at 5:00 pm EDT = Tuesday 27 October at 00:00
-in Nairobi**. Finish on Monday before midnight Nairobi. Hosting and optional
-peer feedback do not replace the required repository or video.
+Deadline: **Monday 26 October 2026, 5:00 pm EDT = Tuesday 27 October, 00:00
+Nairobi**. Finish before Monday midnight Nairobi. Final eligibility declarations
+belong to the entrant.

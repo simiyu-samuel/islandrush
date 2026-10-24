@@ -1,3 +1,27 @@
+# Current settlement expansion captures — 24 October 2026
+
+Captured from actual deployed source **dde6c4d** at
+https://island-rush-six.vercel.app through the supported public browser.
+These are unaltered JPEG screenshots, not generated mockups or injected states.
+
+| File | View | Caption |
+| --- | --- | --- |
+| settlement-v2-desktop.jpg | 1366×768 | Expanded settlement: structured coastal island and four-category building catalog. |
+| settlement-v2-phone.jpg | 390×844 | Mobile Build screen with original utility art, fixed actions and bottom navigation. |
+| settlement-v2-runner-phone.jpg | 390×844 | Coastal supply run with a selected building goal and visible mobile controls. |
+
+The save includes a migrated Pioneer Cottage and a Rainwater Collector built
+through normal purchase/construction. Free relocation, saved completion and
+runner banking were observed. The capture is an early settlement, not a claim
+that all sixteen types were built in this browser. Health/resource shortages are
+actual simulation state; balances were not injected for screenshots. Images
+illustrate UI rather than proving every simulation or physical-device behavior.
+
+The older gallery files below show the previous prototype and are labelled as
+historical in Devpost. Promotional thumbnail provenance remains separate.
+
+## Historical capture record
+
 # Current production screenshots — 24 October 2026
 
 Actual browser screenshots from https://island-rush-six.vercel.app, deployed

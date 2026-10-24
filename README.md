@@ -6,7 +6,12 @@ An endless coastal runner connected to a growing island settlement. Supply runs 
 
 [Play the published game](https://island-rush-six.vercel.app) · [Public repository](https://github.com/simiyu-samuel/islandrush) · [Player guide](devpost/game-guide.md)
 
-The sixteen-building settlement revision was requested and approved by the owner on 24 October 2026. The published URL may still serve the preceding version until the current revision is verified and deployed. Current verification and deployment evidence belong in [the checklist](devpost/checklist.md) and [deployment record](devpost/deployment.md); this README does not claim new player approval or browser execution.
+The owner-approved sixteen-building settlement revision is live on Vercel.
+All **99 model/controller/geometry checks**, TypeScript and the production build
+pass. Public desktop/phone observations include catalog navigation, purchases,
+construction, reload, free map-selected moves and collision/overflow banking.
+Eleven updated Playwright journeys collect but were not run as a full browser
+suite. [Release evidence and remaining video steps](devpost/shipping.md).
 
 ## Play
 

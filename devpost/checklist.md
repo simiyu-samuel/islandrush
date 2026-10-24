@@ -28,18 +28,32 @@ The existing coastal runner art, endless pace, impact safety and controls are re
   distinct original building art, individual sites/meters and expandable islets.
 - [x] Reclaim-space action with half-recipe salvage and guards against stranding
   occupied ground by removing an outpost/bridge.
-- [ ] Complete integrated verification and public-page layout/interaction checks.
+- [x] Complete integrated verification and public-page layout/interaction checks.
 - [x] Refresh current README, scope, PRD, spec, guide, app map, story, contribution,
   narration and recording instructions. The new narration contains 359 words.
-- [ ] Publish the verified revision and save/reload matching Devpost content/media.
+- [x] Publish the verified revision and save/reload matching Devpost content/media.
 - [ ] Owner tries the expanded game before recording the demo.
 - [ ] Add the real public video URL, review final declarations and finally submit.
 
-Mechanical evidence: all 99 model/controller/geometry checks pass; TypeScript
-passes and eleven updated Playwright journeys collect without launching a browser.
-Production build passes. Public desktop/phone catalog, purchase, placement and
-construction observations are in progress before delivery. Test collection is not execution; earlier browser/device approvals
-do not establish approval of this settlement expansion.
+Mechanical evidence: all **99 model/controller/geometry checks**, TypeScript
+and production build pass. Eleven updated Playwright journeys collect without
+launching a browser. Public production source **dde6c4d** is READY at
+https://island-rush-six.vercel.app. Anonymous checks passed for HTML, three emitted
+bundles and twenty PNGs. Public UI observations include desktop/phone catalog,
+purchase, placement/construction, completed save/reload, map-selected free moves,
+resident jobs, collision/overflow banking and voluntary return. No client errors
+were reported in the captured browser log. Layout observations cover 1366×768,
+390×844, 320×640 and 844×390; narrow views had no document overflow. These checks
+are not a complete browser suite, physical-device test or economy-balance review.
+
+Devpost saved/reloaded the new tagline, sixteen-type story, contribution and six
+captioned gallery entries, with three current screenshots first and three older
+prototype images explicitly labelled. Existing live/repo links, technology tags
+and personal survey answers are preserved. The entry is still DRAFT 3/5; video
+URL, final terms and submission remain pending. See shipping.md and deployment.md.
+
+Owner review of this new expansion remains open; earlier approvals do not imply
+new device or simulation approval.
 
 ## Historical delivery and review checkpoints
 
