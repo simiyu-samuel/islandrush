@@ -50,4 +50,4 @@ The island remains structured: free choice among suitable open foundations, with
 
 Players can enter without registration, understand the run/build/care loop, construct and move multiple copies, see individual needs and production change over time, expand territory and use a real dock/merchant schedule. Costs, shortage messages, timers, pause behavior, save status and recovery should be clear.
 
-Owner authorization is not a claim of a successful new playtest. Current check results, player review and deployment evidence are tracked separately in [checklist.md](checklist.md) and [deployment.md](deployment.md). Demo/submission materials must describe only the version actually recorded and published.
+The owner confirmed a complete end-to-end playtest on 24 October 2026 and reported that the game works. Building visibility was the remaining visual refinement: larger architecture, wider foundation spacing and closer map zoom. Verification and release evidence are in [checklist.md](checklist.md) and [deployment.md](deployment.md).

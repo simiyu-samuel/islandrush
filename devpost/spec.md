@@ -88,6 +88,16 @@ Save reads/writes are caught; failures show truthful session-only status. Reset 
 
 Run `npm run typecheck`, meaningful model/controller/geometry tests and `npm run build`; collect or execute prepared browser journeys only through allowed browser access. Cover repeat/concurrent construction, tier/terrain/occupancy, move/dismantle expansion safety, production/needs/health, scheduled trade, once-only run credit, overflow and valid/invalid migration including failed backups.
 
-Current results, remaining player/device review, publication and submission status are recorded in [checklist.md](checklist.md), [deployment.md](deployment.md) and [shipping.md](shipping.md). This specification does not claim a fixed test count, completed browser execution, fresh player approval or publication of the new revision.
+The owner confirmed complete manual playtesting on 24 October 2026. Current automated results, publication and submission status are recorded in [checklist.md](checklist.md), [deployment.md](deployment.md) and [shipping.md](shipping.md). Owner playtesting and automated browser execution are recorded separately.
 
 Migration starts newly introduced resident needs at the time of conversion; the old game’s absence does not retroactively cause hunger or illness. Original in-flight construction deadlines are retained.
+
+## Building readability refinement — 24 October
+
+Architecture widths are 0.050–0.084 of one island tile (normal homes 0.070),
+about 2.5× the earlier scale. Foundation diamonds are 0.064 tile width. Cell
+centers spread along the existing isometric block axes with 0.025/0.022 horizontal
+and 0.016 vertical offsets. Saved lot IDs and occupancy rules are unchanged.
+Preview, finished sprites, shadows and construction all share the revised scale.
+Map zoom is bounded from 0.65× to 4× with 0.25 steps. Tests cover readable home
+size on narrow phone/desktop, nonoverlapping foundations and bounded navigation.

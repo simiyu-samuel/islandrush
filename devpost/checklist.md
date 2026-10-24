@@ -32,10 +32,10 @@ The existing coastal runner art, endless pace, impact safety and controls are re
 - [x] Refresh current README, scope, PRD, spec, guide, app map, story, contribution,
   narration and recording instructions. The new narration contains 359 words.
 - [x] Publish the verified revision and save/reload matching Devpost content/media.
-- [ ] Owner tries the expanded game before recording the demo.
+- [x] Owner playtested the complete expanded game and confirmed everything works (24 October).
 - [ ] Add the real public video URL, review final declarations and finally submit.
 
-Mechanical evidence: all **99 model/controller/geometry checks**, TypeScript
+Mechanical evidence: all **100 model/controller/geometry checks**, TypeScript
 and production build pass. Eleven updated Playwright journeys collect without
 launching a browser. Public production source **dde6c4d** is READY at
 https://island-rush-six.vercel.app. Anonymous checks passed for HTML, three emitted
@@ -52,8 +52,15 @@ prototype images explicitly labelled. Existing live/repo links, technology tags
 and personal survey answers are preserved. The entry is still DRAFT 3/5; video
 URL, final terms and submission remain pending. See shipping.md and deployment.md.
 
-Owner review of this new expansion remains open; earlier approvals do not imply
-new device or simulation approval.
+The owner explicitly confirmed on 24 October: “fully tested everything works”
+and “I have done all those and playtested too.” This completes the expanded-game
+manual review checkpoint. That report is recorded as owner playtesting, separate
+from the agent-run automated suite. The same feedback requested larger buildings;
+the follow-up increases architecture about 2.5×, spreads foundations and extends
+zoom to 4× without changing lot IDs or saved building identities.
+
+Latest submission text is prepared in submission-story.md for the owner to paste.
+The owner requested no direct Devpost edits for this follow-up.
 
 ## Historical delivery and review checkpoints
 
@@ -225,3 +232,9 @@ Activity mode: Actual feedback/revision investigation plus brief evidence-based 
   enlarged the phone Help target, cleared migration/completion notices, and
   started newly introduced resident needs at migration time instead of applying
   them retroactively to absence from version 1. Added two regression checks.
+
+- 24 October owner playtest: confirmed the complete expanded game works. Closed
+  the pending manual review checkpoint and updated the public-facing story to
+  report completed playtesting. Follow-up visual feedback enlarged buildings,
+  spread foundations and extended map zoom; recipes, capacity and saved IDs remain.
+  Submission updates for this follow-up are provided as copy, per the owner's request.

@@ -5,7 +5,7 @@ import { drawConstruction } from '../construction';
 import type { BuildingInstance } from '../../model/types';
 import { BUILDINGS } from '../../model/catalog';
 import { BUILDING_LOTS } from '../../model/placement';
-import { islandMapLayout, lotPosition, lotFootprint, regionPosition, MAP_CAMERA_EVENT, type MapCameraCommand, type IslandMap } from '../islandMap';
+import { islandMapLayout, lotPosition, lotFootprint, regionPosition, MAP_CAMERA_EVENT, MIN_MAP_ZOOM, MAX_MAP_ZOOM, MAP_ZOOM_STEP, type MapCameraCommand, type IslandMap } from '../islandMap';
 
 type BuildingView = {
   image: Phaser.GameObjects.Image; shadow: Phaser.GameObjects.Ellipse;
@@ -339,7 +339,7 @@ export class IslandScene extends Phaser.Scene {
       const action = (event as CustomEvent<MapCameraCommand>).detail;
       this.focusTarget = null;
       if (action === 'reset') { this.zoom = 1; this.panX = 0; this.panY = 0; }
-      else if (action === 'in' || action === 'out') this.zoom = Math.max(0.65, Math.min(2.4, this.zoom + (action === 'in' ? 0.15 : -0.15)));
+      else if (action === 'in' || action === 'out') this.zoom = Math.max(MIN_MAP_ZOOM, Math.min(MAX_MAP_ZOOM, this.zoom + (action === 'in' ? MAP_ZOOM_STEP : -MAP_ZOOM_STEP)));
     };
     window.addEventListener(MAP_CAMERA_EVENT, command);
     const down = (pointer: Phaser.Input.Pointer) => {

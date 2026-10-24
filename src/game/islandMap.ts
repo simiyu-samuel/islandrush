@@ -1,4 +1,7 @@
 export const ISLAND_ASPECT = 4 / 3;
+export const MIN_MAP_ZOOM = 0.65;
+export const MAX_MAP_ZOOM = 4;
+export const MAP_ZOOM_STEP = 0.25;
 export const MAP_CAMERA_EVENT = 'island-rush:map-camera';
 export type MapCameraCommand = 'in' | 'out' | 'reset';
 export type MapPoint = { x: number; y: number };
@@ -19,7 +22,7 @@ export function islandMapLayout(width: number, height: number, requestedZoom = 1
     : landscape
       ? { x: 12, y: 80, width: width * 0.66, height: Math.max(160, height - 145) }
       : { x: 12, y: 130, width: width - 24, height: Math.max(150, height - 370) };
-  const zoom = Math.max(0.65, Math.min(2.4, requestedZoom));
+  const zoom = Math.max(MIN_MAP_ZOOM, Math.min(MAX_MAP_ZOOM, requestedZoom));
   const fit = Math.min(viewport.width, viewport.height * ISLAND_ASPECT);
   const mapWidth = fit * (desktop ? 1.2 : landscape ? 1.3 : 1.4) * zoom;
   const mapHeight = mapWidth / ISLAND_ASPECT;
@@ -50,8 +53,8 @@ export function lotPosition(lot: { x: number; y: number; region: number }, map: 
   return { x: origin.x + lot.x * map.mapWidth, y: origin.y + lot.y * map.mapHeight };
 }
 
-/** Keep map hit regions proportional to a single cell rather than a whole block. */
+/** Foundations follow the enlarged architecture while leaving each grass block usable. */
 export function lotFootprint(map: IslandMap): { width: number; height: number } {
-  const width = map.mapWidth * 0.028;
+  const width = map.mapWidth * 0.064;
   return { width, height: width * 0.52 };
 }

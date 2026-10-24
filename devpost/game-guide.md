@@ -105,6 +105,8 @@ Base capacity is **150 of each material and each produced good**. Every complete
 
 Progress is saved in the same browser and origin, including individuals, jobs, services, cargo, construction deadlines and designs. Earlier valid version-1 islands migrate into version 2 with balances, completed/pending structures, appearance and reward ledger preserved; the original record is backed up before replacement. Unreadable data remains untouched until a confirmed fresh start. When saving is blocked, the interface reports session-only play.
 
-Current revision verification is recorded in [the checklist](checklist.md); this guide is not a claim of a completed browser playtest or deployment.
+The developer completed a full manual playtest and confirmed the game works on 24 October 2026. Automated and deployment evidence is recorded in [the checklist](checklist.md).
 
 Migration starts newly introduced resident needs at the time of conversion; the old game’s absence does not retroactively cause hunger or illness. Original in-flight construction deadlines are retained.
+
+Buildings use enlarged architecture and wider-spaced foundations. Use Zoom in for up to 4× close inspection, Zoom out for an overview, and drag to explore. Existing placements and the number of available spaces are preserved.

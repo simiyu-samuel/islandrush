@@ -7,13 +7,13 @@ The current source revision expands the game into a sixteen-type, repeatable liv
 - [Township terrain v2](township-island-v2.md): active connected-road terrain asset and original prompt. Current renderer subdivides its eight clearings into four smaller foundations each and repeats the terrain for connected islets.
 - [UI/UX revision v2](ui-ux-revision-v2.md): intermediate iteration, superseded by later placement, runner and settlement revisions.
 - [Original runtime art prompts](runtime-art-prompts.md): original courier, legacy six building styles, pickups and earlier world assets. Archived world images remain in the manifest and are not all loaded.
-- [Earlier production captures](devpost/production-captures.md): real deployed game screenshots taken before the sixteen-building revision; historical evidence until replaced with new verified captures.
+- [Production captures](devpost/production-captures.md): genuine expanded-game screenshots plus clearly labelled earlier prototype images; captures are dated before the latest building-scale refinement.
 - [Promotional thumbnail](devpost/thumbnail-provenance.md): generated promotional art, separate from actual gameplay captures.
 - `reference/`: exploratory concept studies.
 - `checkpoints/`: historical first-playable captures.
 
 Current presentation uses a contained identity/vitals header, four building categories and Build/Islanders/Supplies/Trade/Council management sections. Phone screens keep the island clear by opening a separate management view with Island/Build/Village/Run navigation. New construction has a preview, explicit resource charge, stage explanation and five-second percentage reveal. Completed buildings move by direct map tap; typography stays in the interface rather than floating names over the island.
 
-The source adds individual islander markers, construction instances, maritime state, expandable map bounds and the four original building atlases. Mechanical state changes and simulation depth do not substitute for testing actual readability, motion, touch controls and sprite alignment on devices. New visual/player review remains a separate checkpoint.
+The source adds individual islander markers, construction instances, maritime state, expandable map bounds and the four original building atlases. Mechanical state changes and simulation depth do not substitute for testing actual readability, motion, touch controls and sprite alignment on devices. The owner completed full-game playtesting and confirmed working functionality on 24 October. Their follow-up requested larger buildings; architecture is now about 2.5× wider with spread foundations and zoom up to 4×.
 
 Original prompts are preserved as written; later source records explain changes without rewriting old intent.

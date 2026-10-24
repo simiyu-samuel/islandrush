@@ -47,9 +47,9 @@ export function buildingVisual(type: string, style = 'island'): BuildingVisual {
   return { key: 'cottage', frame: 'content', path: BUILDING_ART.cottage! };
 }
 
-/** Width follows a settlement microcell; tall towers keep a narrow footprint. */
-export const buildingWidth = (type: string, _style = 'island'): number =>
-  type === 'coastal-lighthouse' || type === 'lookout' ? 0.020
-    : type === 'community-plaza' || type === 'terrace-hamlet' || type === 'archipelago-pier' ? 0.032
-      : type === 'windmill-bakery' || type === 'town-hall' || type === 'storage-depot' ? 0.030
-        : 0.028;
+/** Readable architecture at island scale; narrow towers retain their proportions. */
+export const buildingWidth = (type: string, style = 'island'): number =>
+  type === 'coastal-lighthouse' || type === 'lookout' || style === 'watchtower' ? 0.050
+    : ['community-plaza', 'terrace-hamlet', 'archipelago-pier', 'bridge-link'].includes(type) ? 0.084
+      : ['windmill-bakery', 'town-hall', 'storage-depot'].includes(type) ? 0.078
+        : 0.070;

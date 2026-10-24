@@ -6,12 +6,11 @@ An endless coastal runner connected to a growing island settlement. Supply runs 
 
 [Play the published game](https://island-rush-six.vercel.app) · [Public repository](https://github.com/simiyu-samuel/islandrush) · [Player guide](devpost/game-guide.md)
 
-The owner-approved sixteen-building settlement revision is live on Vercel.
-All **99 model/controller/geometry checks**, TypeScript and the production build
-pass. Public desktop/phone observations include catalog navigation, purchases,
-construction, reload, free map-selected moves and collision/overflow banking.
-Eleven updated Playwright journeys collect but were not run as a full browser
-suite. [Release evidence and remaining video steps](devpost/shipping.md).
+The complete expanded game has been manually playtested end to end by its
+developer, who confirmed on 24 October 2026 that the implemented flows and
+settlement systems work. All **100 model/controller/geometry checks**, TypeScript
+and the production build pass. [Playtest and release record](devpost/shipping.md).
+
 
 ## Play
 
@@ -25,7 +24,7 @@ Use ←/→ or A/D to move and Space/↑/W to jump. Touch supports swipes and vi
 
 ## Settlement revision
 
-- Four categories and sixteen building types, with distinct original transparent sprite artwork.
+- Four categories and sixteen building types, with distinct original transparent sprite artwork, enlarged architecture and close inspection zoom.
 - Instance-based repeat construction, free movement and facing, concurrent five-second construction sites, and dismantling with half-recipe salvage. Expansion structures cannot be removed when that would strand occupied ground.
 - Sixteen open foundations per islet initially; outposts open four more each, up to 32. Every completed bridge adds another expandable islet.
 - Named islanders with homes, jobs, hunger, health and shortage-related fever; automatic essential staffing and manual reassignment.

@@ -33,7 +33,7 @@ export function getLots(progress: Pick<Progress, 'buildings'>): BuildingLot[] {
         const a = cell % 2 ? 1 : -1;
         const b = cell < 2 ? -1 : 1;
         lots.push({ id: `${region}:${block}:${cell}`, name: `${base.name} ${cell + 1}`, region, block,
-          x: base.x + a * .016 + b * .014, y: base.y + a * .010 - b * .010,
+          x: base.x + a * .025 + b * .022, y: base.y + a * .016 - b * .016,
           tags: [...base.tags], unlocked: index < unlockedBlocks || progress.buildings.some(b => b.legacy && b.lot.startsWith(`${region}:${block}:`)) });
       }
     });

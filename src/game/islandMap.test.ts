@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { islandMapLayout, lotPosition, lotFootprint, regionOffset, regionPosition } from './islandMap';
+import { islandMapLayout, lotPosition, lotFootprint, regionOffset, regionPosition, MAX_MAP_ZOOM } from './islandMap';
+import { buildingWidth } from './art';
 import { getLots } from '../model/placement';
 import type { BuildingInstance } from '../model/types';
 
@@ -7,13 +8,13 @@ const sizes = [[320,640],[390,844],[768,1024],[844,390],[960,540],[1280,720],[19
 const island = { buildings: [] as BuildingInstance[] };
 
 describe('expandable archipelago map', () => {
-  it('gives the island 32 distinct small footprints instead of three fixed plots', () => {
+  it('gives the island 32 distinct foundations with room for enlarged buildings', () => {
     const lots = getLots(island);
     expect(lots).toHaveLength(32);
     expect(new Set(lots.map(lot => lot.id)).size).toBe(32);
     const map = islandMapLayout(1280,720);
     const footprint = lotFootprint(map);
-    expect(footprint.width / map.mapWidth).toBeLessThanOrEqual(0.03);
+    expect(footprint.width / map.mapWidth).toBeLessThanOrEqual(0.064);
     for (const lot of lots) {
       const point = lotPosition(lot, map);
       expect(point.x).toBeGreaterThan(map.left);
@@ -26,6 +27,16 @@ describe('expandable archipelago map', () => {
         expect(horizontal + vertical).toBeGreaterThan(1);
       }
     }
+  });
+
+  it('keeps homes readable at normal scale and supports close inspection on a narrow phone', () => {
+    const phone = islandMapLayout(320,640);
+    const desktop = islandMapLayout(1366,768);
+    const close = islandMapLayout(320,640,MAX_MAP_ZOOM);
+    expect(phone.mapWidth * buildingWidth('pioneer-cottage')).toBeGreaterThanOrEqual(28);
+    expect(desktop.mapWidth * buildingWidth('pioneer-cottage')).toBeGreaterThanOrEqual(60);
+    expect(close.mapWidth * buildingWidth('pioneer-cottage')).toBeGreaterThanOrEqual(110);
+    expect(buildingWidth('coastal-lighthouse')).toBeLessThan(buildingWidth('pioneer-cottage'));
   });
 
   it('lets zoom-out reveal a single terrain inside the usable viewport', () => {
@@ -41,7 +52,7 @@ describe('expandable archipelago map', () => {
   it('bounds panning across every connected islet without losing the archipelago', () => {
     for (const [width,height] of sizes) for (const regions of [1,2,4,12,50]) for (const direction of [-1,1]) {
       const map = islandMapLayout(width!,height!,100,100000*direction,100000*direction,regions);
-      expect(map.zoom).toBe(2.4);
+      expect(map.zoom).toBe(MAX_MAP_ZOOM);
       expect(map.left).toBeLessThanOrEqual(map.viewport.x + 1e-8);
       expect(map.top).toBeLessThanOrEqual(map.viewport.y + 1e-8);
       expect(map.left + map.worldWidth).toBeGreaterThanOrEqual(map.viewport.x + map.viewport.width - 1e-8);

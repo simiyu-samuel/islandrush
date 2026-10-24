@@ -17,7 +17,7 @@ rare merchants, shipping, policies, storage, power and connected-islet expansion
 are implemented. Dismantling recovers half base materials without stranding
 occupied land. Version 1 saves migrate with a byte-for-byte original backup.
 
-All **99 automated model/controller/geometry checks**, TypeScript and the
+All **100 automated model/controller/geometry checks**, TypeScript and the
 production build pass. Eleven updated browser journeys collect but were not run
 as a full suite. Actual public interactions and responsive layout checks are
 listed in [deployment.md](deployment.md), along with anonymous 200/content-type
@@ -39,10 +39,9 @@ Elevator pitch: **Run an endless coastal trail and grow a living island settleme
 [Project story](submission-story.md) explains the combined game, sixteen types,
 detailed systems, unlimited repeat copies subject to land/resources, expansion,
 controls, construction, safe loot/saves, owner-directed revisions, Codex/Devpost
-Learn workflow, original art, stack, challenges and remaining balance testing.
+Learn workflow, original art, stack, challenges and completed owner playtesting.
 [Created by contribution](contribution.md) attributes the owner's decisions and
-playtesting without claiming entirely manual implementation or an unperformed
-new device review.
+full-game playtesting while accurately crediting AI-assisted implementation.
 
 Built With: typescript, phaser.js, vite, html5, css3, codex, vercel.
 Try it out: public game first; public GitHub repository second. The existing
@@ -61,7 +60,8 @@ is still blank and Devpost still reports DRAFT 3/5.
 
 ## Remaining owner steps
 
-- [ ] Try the expanded settlement and review the story/contribution.
+- [x] Playtest the complete expanded settlement — owner confirmed all flows work on 24 October.
+- [ ] Paste the latest story/contribution prepared for the owner’s manual Devpost update.
 - [ ] Record narration and real game footage using the updated guide, then export
   below three minutes. Label later-stage cuts and mobile layout previews.
 - [ ] Upload a publicly visible YouTube/Vimeo video and test it signed out.
@@ -70,9 +70,9 @@ is still blank and Devpost still reports DRAFT 3/5.
   verify Devpost reports a submitted entry.
 
 No placeholder URL, generated mock demo, terms acceptance or final-submission
-confirmation substitutes for those steps. Earlier playtests approved the coastal
-runner direction; the expanded economy and very large islands still need player
-feedback and balance/performance testing. Public-page checks are limited evidence.
+confirmation substitutes for those steps. The owner has now reported a full
+end-to-end playtest of the expanded game and confirmed that everything works.
+Automated browser collection remains distinct from that manual playtest.
 
 ## Organizer alignment
 
@@ -91,3 +91,12 @@ and the organizer's emailed design/presentation checklist on 24 October:
 Deadline: **Monday 26 October 2026, 5:00 pm EDT = Tuesday 27 October, 00:00
 Nairobi**. Finish before Monday midnight Nairobi. Final eligibility declarations
 belong to the entrant.
+
+## Owner playtest and building visibility follow-up — 24 October
+
+The owner confirmed full playtesting and working functionality. Buildings are
+now about 2.5× their previous width, with wider foundation spacing and a 4× close
+zoom limit. Existing lot IDs, building identities and capacity are preserved.
+The refreshed submission-story.md and contribution.md are paste-ready copy;
+the owner will update Devpost directly, so this follow-up does not claim those
+latest text changes have already been saved to the external site.
