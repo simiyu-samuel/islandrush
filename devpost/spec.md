@@ -58,8 +58,10 @@ The following stack was accepted in the technical review.
 
 Package versions, engines, and peers were checked against npm metadata on
 22 October 2026. Exact versions are pinned in package.json and package-lock.json;
-Node 22.22.0 is compatible. The first playable is implemented, its production
-build and 26 rule tests pass, and browser QA/player review are in progress.
+Node 22.22.0 is compatible. The current game is implemented, with 91
+unit/controller/geometry checks and the production build passing. Historical
+checkpoints and remaining player/device review are recorded in checklist.md;
+public deployment verification is in deployment.md.
 
 Verified planning references:
 - Official TypeScript/Vite template: https://github.com/phaserjs/template-vite-ts
@@ -302,7 +304,7 @@ become available. Save all progress changes through one record.
 
 ## File Structure
 
-Implemented structure (generated output and private local files are excluded):
+Selected implemented files (generated output and private local files are excluded):
 
     build-with-ai-basics/
     ├── .agents/skills/            # Devpost skill pack
@@ -441,6 +443,6 @@ existing tool restriction; this follow-up still awaits player review.
 - Default branch: codex/island-rush. Public readability verified without credentials through the GitHub repository API on 23 October 2026.
 - Technical setup: README.md. Planning artifacts: devpost/scope.md, prd.md, and spec.md. Offline code guide: devpost/app-map.html.
 - Demo video: not yet supplied or verified. Official rules require a publicly visible YouTube/Vimeo video under three minutes showing the working project.
-- Live deployment: Vercel explicitly requested on 24 October. See deployment.md for the verified URL, source, and access checks.
+- Live deployment: https://island-rush-six.vercel.app, Vercel production READY on 24 October from a1d2583. See deployment.md for anonymous access/asset checks and browser evidence.
 - License: MIT, explicitly approved by the owner on 23 October 2026; root LICENSE and package metadata added. Third-party dependencies retain their own licenses.
 - Submission status and confirmed requirements: devpost/shipping.md. Submission text and exit-survey answers belong to the learner. No Devpost form has been submitted by the agent.

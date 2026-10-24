@@ -7,9 +7,13 @@ Updated 24 October 2026. The owner explicitly requested public Vercel deployment
 - Account scope: `samueldevke` (existing Hobby plan).
 - Project: `island-rush`, created through the authenticated Vercel CLI.
 - Source: https://github.com/simiyu-samuel/islandrush, branch `codex/island-rush`.
-- Gameplay checkpoint: `72275d5`. Deployment configuration/docs are committed
-  separately; no gameplay logic is changed by the hosting work.
-- Public production URL: pending deployment and anonymous verification.
+- Deployed source: `a1d2583` (gameplay checkpoint `72275d5` plus reviewed
+  documentation/hosting configuration). Later documentation-only records do
+  not change that deployed game bundle.
+- Deployment ID: `dpl_E3ghDZ94vjandJeHY4bYKpqeqHwk`.
+- Immutable deployment: https://island-rush-cvnj4acg8-samueldevke.vercel.app
+- Dashboard: https://vercel.com/samueldevke/island-rush/E3ghDZ94vjandJeHY4bYKpqeqHwk
+- Public production URL: **https://island-rush-six.vercel.app**.
 - No paid add-on, custom domain purchase, backend, or runtime AI service is required.
 
 ## Build settings
@@ -67,7 +71,27 @@ pending construction, but discards an unfinished run.
 
 ## Verification record
 
-Deployment is being prepared. Replace this paragraph with actual build state,
-production URL, source revision, unauthenticated asset checks, and any browser
-verification limits after the deployment completes. Do not claim success from
-project creation alone.
+Production deployment completed **READY** on 24 October through Vercel CLI
+65.2.0, on the existing Hobby account and basic build machine. Project settings
+were confirmed as Node 22.x, Vite, npm ci, npm run build, and dist output.
+
+Anonymous standard HTTP requests (without Vercel credentials or bypass links)
+verified the production HTML, **three emitted JS/CSS bundle paths**, and all
+**16 PNG paths in the asset manifest**, including retained archive assets.
+Every request returned HTTP 200 with the expected content type. The production
+alias is publicly reachable even though the deployment result also advertises
+Vercel Authentication protection on deployment URLs; judge access was checked
+against the stable production alias rather than an authenticated share link.
+
+The public island and runner were opened through the supported browser UI.
+Screenshots show actual deployed game states, including phone-sized UI and a
+later runner state with 1.9× pace. They are not generated mockups, a full device
+matrix, or execution of the eleven prepared Playwright journeys. The local
+preview restriction was not retried; this is a separately requested public
+production deployment. Image provenance is in design/devpost/production-captures.md.
+
+The Vercel connector could list the account but failed to create/find this
+project. Its documented CLI fallback succeeded with the existing CLI login;
+no new access permissions or paid services were enabled. The link command
+created a local .env.local OIDC credential automatically; Git and deployment
+ignore rules exclude it. Its contents are not part of the repo or public build.

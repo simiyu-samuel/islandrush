@@ -1,5 +1,9 @@
 # Island Rush UI/UX revision — 24 October
 
+Historical intermediate revision: the current township/coastal/endless design
+is documented in `coastal-experience-v3.md` and `../devpost/game-guide.md`.
+The tests and review status below describe this earlier checkpoint.
+
 ## Player direction
 
 The player requested improvements across visual identity, island building, and

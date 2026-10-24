@@ -3,6 +3,8 @@
 Source: the implemented game at `72275d5`, with deployment/documentation prepared
 on 24 October 2026. This describes current behavior, not future expansion.
 
+**Play: https://island-rush-six.vercel.app** — no account required.
+
 ## What you play
 
 Island Rush combines an endless three-lane coastal runner with a small island

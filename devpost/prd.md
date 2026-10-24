@@ -346,8 +346,10 @@ The full player manual is `game-guide.md`; `demo-voiceover.md` and
 `demo-recording-guide.md` describe the same implemented features. See
 `deployment.md` and `shipping.md` for verified public delivery state.
 
-## Handoff to the Technical Plan
+## Implementation record
 
-The revised PRD is approved. Select an implementation approach in `4-spec`
-without reopening the product rules. Balance tuning can continue during
-playtesting; product-defining changes should return to the learner.
+The product plan was approved on 22 October, with the owner's later revisions
+recorded above. The implementation uses Phaser, TypeScript, and Vite as described
+in spec.md. The current complete behavior is in game-guide.md; deployment and
+submission state are in deployment.md and shipping.md. Historical interview
+notes do not reopen already resolved planning decisions.

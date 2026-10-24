@@ -1,5 +1,7 @@
 # Island Rush — screen-recording guide
 
+**Record here: https://island-rush-six.vercel.app**
+
 Pair this with [the voice-over script](demo-voiceover.md). Record the real deployed
 game, then cut the strongest clips to the narration. Target **2:40–2:50**; keep
 the final export below three minutes. A live link does not replace the video.

@@ -52,7 +52,7 @@ The learner accepted the proposed first-version rule on 22 October 2026:
 complete a chosen home design at level 1 to unlock level 2, then complete a
 workshop and lookout tower to finish the small settlement. Materials are timber
 for level 1 and timber/stone for level 2 as required by construction. See the
-scope draft for the full plan. The complete scope was approved on 22 October 2026.
+approved scope for the full plan. The complete scope was approved on 22 October 2026.
 
 ## Current delivery — 24 October
 

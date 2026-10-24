@@ -70,9 +70,11 @@ pace/contact timing, bounded long-run data, once-only voluntary return, mobile
 foliage bounds, and direct map moves. Eleven browser journeys collect; their
 first-obstacle helper uses the actual course constant and acceleration model.
 They remain unexecuted under the recorded browser local-preview URL-policy block.
-The generated art has been inspected directly; no fresh gameplay screenshot or
-successful automated runtime gesture/device test is claimed. The player approved
-the coastal runner direction; the endless/mobile/direct-move follow-up awaits retry.
+The generated art has been inspected directly. After the owner requested Vercel
+deployment, the public island and runner were opened and genuine screenshots
+were saved in design/devpost; see production-captures.md there. This is not a
+full automated browser-suite or device-gesture test. The player approved the
+coastal runner direction; the endless/mobile/direct-move follow-up awaits retry.
 
 Try: choose a location, change block and facing, cancel once, confirm once, build,
 move the finished building, reload, and play a run. Check header separation,

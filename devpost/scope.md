@@ -53,8 +53,8 @@ to explain.
 | 2 — Small settlement | A workshop and lookout tower, with visual design choices | Timber and stone, according to the selected unfinished building's requirements | Completing both finishes the first playable version's settlement. |
 
 This preserves the initial three-building boundary while proving a level change,
-new material availability, and building-style choices. The exact style count and
-resource amounts remain product-design decisions. Collected resources remain
+new material availability, and building-style choices. The six-style set and exact
+resource amounts are specified in the approved PRD. Collected resources remain
 available between endless supply runs, and the player may build or run again.
 
 The interface can show the current construction goal and remaining materials,
@@ -111,9 +111,9 @@ end-to-end game while accommodating the learner's added requirements:
 - Adult character, readable floating pickups, and a coherent island identity.
 
 The agreed first-version progression has two levels and three buildings on one
-streamed course. A small set of visual building designs will demonstrate player
-choice. Exact style counts, pace tuning, and resource amounts will be specified
-in the PRD; the scope does not promise a large content library.
+streamed course. Six visual building designs demonstrate player choice. Exact
+pace tuning and resource amounts are specified in the PRD; the scope does not
+promise a large content library.
 
 24 October revision: the owner explicitly requested player-chosen locations and
 confirmed using clear grass blocks while keeping roads/water/landscaping clear.
@@ -138,12 +138,13 @@ The first version stays within one course, two levels, and three building types.
 Additional content belongs to later expansion. No other named feature has been
 explicitly cut.
 
-## Details for the PRD
+## Approved product detail
 
-The scope is approved. Define the first-use journey, building-style counts,
-placement controls, exact resource recipes, run pace and failure behavior,
-and screen/animation design in the product requirements. Carry forward the
-agreed loop and progression without reopening them.
+The approved PRD defines the first-use journey, six designs, eight-block
+placement and relocation, exact recipes, endless pace and collision/return
+behavior, responsive screens, and construction animation. The implemented
+controls and limits are collected in game-guide.md; spec.md describes their
+architecture. Later changes carry a dated owner-request record.
 
 ## Delivery revision — 24 October
 

@@ -1,5 +1,10 @@
 # Island Rush runtime art prompts
 
+Historical asset provenance: active world terrain and runner scenery are now
+recorded in `township-island-v2.md` and `coastal-experience-v3.md`. Original
+building, courier, and pickup assets remain in use. See `README.md` here for
+current versus archived design records.
+
 Generation mode: built-in image_gen. Eight separate generation calls; original PNG pixel data is preserved. No image editing, resampling, or image-processing replacements were used. Generated source paths are recorded below. The default island/route and remaining asset files were moved into the project to conserve disk space, retaining the original image bytes. The courier's default save was zero bytes during an ENOSPC error; its complete original tool data URL was recovered without alteration into `/tmp/island-rush-courier-run-v1.png` and copied to the project.
 
 Reference direction: `design/reference/island-rush-visual-study-v2.png`, left Pixel Coast column. That board was inspected as visual guidance; runtime images were newly generated from the prompts below.

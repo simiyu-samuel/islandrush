@@ -30,6 +30,9 @@ The result is one connected loop: run, return, and build. You can play it on Ver
 
 ## Script ends
 
+Live game: https://island-rush-six.vercel.app
+Public source: https://github.com/simiyu-samuel/islandrush
+
 ## Audio recording notes
 
 - Read warmly, like you are showing a friend what you made. Pause briefly between

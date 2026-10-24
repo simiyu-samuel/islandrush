@@ -8,6 +8,7 @@ Learn Skill Pack. It is for players who enjoy arcade runs and choosing how a
 settlement develops. AI assisted development and original art generation; the
 playable game does not call an AI service.
 
+- **[Play Island Rush](https://island-rush-six.vercel.app)** — no account required.
 - [Complete game guide](devpost/game-guide.md)
 - [Voice-over reading script](devpost/demo-voiceover.md)
 - [Screen-recording guide](devpost/demo-recording-guide.md)
@@ -137,6 +138,11 @@ under the recorded browser-tool local-preview restriction. Collect without
 launching a browser using `npx playwright test --list`. On an authorized machine,
 install Playwright Chromium and run `npm run test:browser`, or set
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to an existing executable.
+
+The public Vercel page and all emitted bundles/manifest image paths returned
+HTTP 200 without credentials on 24 October. The deployed island/runner were
+opened in the browser and genuine screenshots are in `design/devpost/`. These
+observations do not establish a full browser-suite pass.
 
 The owner playtested earlier versions and approved the coastal runner direction.
 That does not prove every device/edge case; the final endless/mobile/direct-move

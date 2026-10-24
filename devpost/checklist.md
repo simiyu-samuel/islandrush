@@ -15,6 +15,13 @@ Save each verified slice as a local commit; keep private context and secrets ign
 
 ## Current checkpoint
 
+Delivery checkpoint: production is live at https://island-rush-six.vercel.app
+from a1d2583 (gameplay 72275d5). Anonymous HTML/bundle/PNG access checks pass.
+The Devpost story, tagline, live/repository links, Vercel tag, three genuine
+screenshots, and contribution have been saved and reloaded for verification.
+The 332-word narration and matched recording guide are ready. The required video
+URL and final terms/submission remain pending; see `shipping.md`.
+
 24 October endless/mobile/direct-move follow-up: the owner said the coastal
 runner is now “perfect” and requested no time limit, progressive speed and
 difficulty, mobile trees outside both outer lanes, and direct relocation by
@@ -179,3 +186,11 @@ Activity mode: Actual feedback/revision investigation plus brief evidence-based 
   records while preserving historical decisions. Public video and final submit
   remain pending their real completion. This shipping request does not establish
   an unreported device test or allow invented personal survey responses.
+
+- 24 October delivery verification: Vercel production READY at the stable public
+  alias, with anonymous 200/content-type checks for the HTML, three bundles, and
+  all 16 manifest PNG paths. Opened the public island/runner and preserved three
+  genuine screenshot files; uploaded them to the Devpost gallery. Updated and
+  reloaded the story, tagline, live/repo links, Vercel tag, and contribution.
+  The saved entry remains DRAFT 3/5 because the video field is blank and final
+  terms/submission are unperformed. No personal survey answers were changed.
