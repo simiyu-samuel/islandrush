@@ -49,6 +49,7 @@ in compact status areas. The current goal and a main Run action remain easy to f
 On desktop, selecting an available plot opens a compact construction panel
 while keeping the island visible. On screens narrower than 960px, the island is
 unobstructed by default. A bottom icon bar provides Island, Buildings, and Run;
+Tapping a completed map building opens its move preview directly.
 Buildings opens a separate scrollable settlement screen with designs and costs,
 and closing it returns to the island. The Run action remains easy to reach.
 The construction view previews the building designs, material costs, stored
@@ -58,7 +59,7 @@ Build is actionable when affordable and replaces Gather supplies in the fixed
 construction action area. A larger selected-design preview and its description
 help players compare the two designs. A secondary action still allows running
 for more supplies when a build is affordable. Building sites are numbered isometric
-footprints with survey stakes and selected/locked states, at a smaller scale
+footprints with small tool signs and selected/locked states, at a smaller scale
 within a large connected road-network island. The map has multiple landscaped
 and open blocks, a waterfront, inlet, and footbridge; these are scenery rather
 than additional buildable projects. Drag and zoom controls explore the map,
@@ -335,6 +336,15 @@ Additional courses, levels, and a larger building/design library are deferred by
 the approved scope. Fully unconstrained terrain editing, accounts, and cross-device saving
 remain deferrals to keep this first version focused. No architecture
 or service selection is implied by this product draft.
+
+## Delivery and current documentation
+
+On 24 October the owner requested Vercel deployment and updated submission/demo
+materials. The public game must open without an account. The demo must show the
+actual current run-to-build loop; no video URL is invented before recording.
+The full player manual is `game-guide.md`; `demo-voiceover.md` and
+`demo-recording-guide.md` describe the same implemented features. See
+`deployment.md` and `shipping.md` for verified public delivery state.
 
 ## Handoff to the Technical Plan
 

@@ -41,6 +41,10 @@ mobile lane clearance, and direct map moves still need a player retry.
 
 ## Slices
 
+The original slice contracts below record the 22–23 October build. Later changes
+(including replacing the timer with endless running) are authoritative in Current
+checkpoint and Revisions; checked historical slices are not a fresh device review.
+
 - [x] **1. A run earns supplies that build your first home**
   Becomes usable: Open a coastal island, select a home design, run a 60-second three-lane course, collect floating timber and coins, and return with banked loot. A collision immediately ends the run. Build the selected home when you have 30 timber and see it appear on the island.
   Why now: Proves the distinctive play → collect → build loop and the uncertain visual/gameplay quality before investing in all settlement art. Scaffolding belongs inside this working behavior.
@@ -91,7 +95,8 @@ been received; implemented refinements were accepted in the player’s 23 Octobe
 - [x] Early-feedback revision: five-second visible construction and final reveal, with one charge, reload-safe progress, and a percentage progress bar above the structure.
 - [x] Early-feedback revision: responsive runner and one coherent moving road with exactly three lanes; preserve mobile width, narrow desktop width, and simplify plank movement; accepted in the overall reported playtest.
 
-- [x] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Initial final review complete on 23 October — later revisions and their
+  remaining player checks are tracked in Current checkpoint above.
 
 ## Code Tour and App Map
 
@@ -166,3 +171,11 @@ Activity mode: Actual feedback/revision investigation plus brief evidence-based 
   smaller foliage placed wholly beyond the trail, and direct completed-building
   relocation. All 91 checks and production build pass; eleven browser journeys
   collect only. The latest three changes await player review.
+
+- 24 October shipping request: the owner explicitly requested a full documentation
+  refresh, Vercel production deployment, a complete Devpost content update,
+  a voice-over reading script, and a matching screen-recording guide. Added
+  `game-guide.md` as the comprehensive current manual; refreshed planning/setup
+  records while preserving historical decisions. Public video and final submit
+  remain pending their real completion. This shipping request does not establish
+  an unreported device test or allow invented personal survey responses.

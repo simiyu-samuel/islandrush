@@ -1,7 +1,7 @@
 # Island Rush — product interview notes
 
-These are discovery notes, not an approved PRD. The approved scope remains the
-boundary. Read these notes before drafting `prd.md`.
+These are historical discovery notes from 22 October, not the current PRD. The approved scope remains the
+boundary. The approved `prd.md` and `game-guide.md` now describe the implemented game.
 
 ## First-use experience
 
@@ -56,3 +56,12 @@ The learner replied “yes” to the revised product plan on 22 October 2026.
 and coins, integrated material purchasing, and the previously reviewed defaults.
 Earlier proposal labels in these interview notes are historical; use the
 approved PRD as the current source of truth. Continue with `4-spec`.
+
+## Superseding decisions — 24 October
+
+The owner later replaced fixed plots with eight selectable grass blocks and free
+relocation, then replaced 60-second runs with endless progressive-speed running.
+Head home banks a run whenever chosen. The current coastal runner, larger island,
+mobile navigation, direct map-tap moves, construction progress, shop, and save
+behavior are documented in `prd.md`, `spec.md`, and `game-guide.md`. Earlier
+open questions above were resolved; they do not reopen product approval.

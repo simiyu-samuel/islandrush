@@ -1,0 +1,14 @@
+.git
+.agents
+.codex
+.vercel
+node_modules
+dist
+design
+devpost
+.env
+.env.*
+*.local
+*.log
+playwright-report
+test-results

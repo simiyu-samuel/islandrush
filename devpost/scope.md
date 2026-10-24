@@ -144,3 +144,11 @@ The scope is approved. Define the first-use journey, building-style counts,
 placement controls, exact resource recipes, run pace and failure behavior,
 and screen/animation design in the product requirements. Carry forward the
 agreed loop and progression without reopening them.
+
+## Delivery revision — 24 October
+
+The owner explicitly selected Vercel hosting and requested complete documentation,
+Devpost updates, a voice-over reading script, and a screen-recording guide.
+These share the same proof of concept without adding gameplay content. Public
+hosting supplements the required public repository and recorded demo. The video
+and final submission remain incomplete until their actual steps are performed.

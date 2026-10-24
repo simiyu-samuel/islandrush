@@ -1,142 +1,175 @@
 # Island Rush
 
-A coastal runner and island builder, made as a fresh proof of concept for Build
-With AI: Basics. Run the coast, collect floating supplies, and turn them into
-visible progress on your island.
+Run the coast. Bring supplies home. Build an island that feels like yours.
 
-## Endless coastal runs and placement — 24 October
+Island Rush combines an endless coastal runner with a small island builder,
+created from scratch for **Build With AI: Basics** using Codex and the Devpost
+Learn Skill Pack. It is for players who enjoy arcade runs and choosing how a
+settlement develops. AI assisted development and original art generation; the
+playable game does not call an AI service.
 
-Choose **Choose location** before building. Tap a finished building on the map
-to move it directly, or use **Move building** in its panel.
-Select a highlighted grass block (or its block button), flip the facing, and
-confirm with **Place here**. Cancel keeps the previous layout. Eight clear blocks
-are available; occupied/reserved blocks, roads, water, and gardens stay clear.
-Moves are free and confirmed locations/facing survive reload. Old saves retain
-their original defaults. No new building types or levels were added.
+- [Complete game guide](devpost/game-guide.md)
+- [Voice-over reading script](devpost/demo-voiceover.md)
+- [Screen-recording guide](devpost/demo-recording-guide.md)
+- [Shipping and live-link record](devpost/shipping.md)
+- [Public source](https://github.com/simiyu-samuel/islandrush)
 
-The island has a contained status header and visual site cues without floating
-names. The runner uses a coastal jungle backdrop, a distant island, slow foliage
-positioned fully outside the trail, softer perspective growth, and encounters at
-separate depths. Pickups float; grounded obstacles have a distinct ground cue.
+## Play → collect → return → build
 
-Runs now continue until collision or **Head home**. Pace rises smoothly from
-1.0× to about 1.9× over 80 active seconds, with more frequent hazards later.
-The HUD shows distance and pace; pausing freezes both. Mobile foliage is smaller
-and its full image stays outside the trail, leaving all three lanes clear.
+Choose a home design and preview a clear grass block. Gather floating supplies
+on the three-lane jungle-coast trail. Use **Head home** whenever you want to
+build, or bank the loot when a collision ends your run. Spend supplies only when
+you deliberately choose Build, then watch five seconds of staged construction
+and its overhead percentage bar reveal your chosen design.
 
-Production build and all **91 unit/controller/geometry checks** pass. Eleven browser
-journeys collect but remain unexecuted under the recorded local-preview URL-policy
-block. The player approved the coastal runner direction and requested these
-follow-ups; the endless/mobile/direct-move revision still needs player review.
-Exact scenery prompts and implementation notes are in
-[the coastal experience record](design/coastal-experience-v3.md).
+The home unlocks level 2. Complete the workshop and lookout in either order to
+finish the starter settlement. Each building has two designs. Coins can buy
+materials relevant to the selected unfinished project.
 
-## Current playable checkpoint
+| Building | Level | Timber | Stone | Design choices |
+| --- | --- | --- | --- | --- |
+| Home | 1 | 30 | 0 | Coast Cottage / Palm Bungalow |
+| Workshop | 2 | 40 | 20 | Harbor Forge / Maker Studio |
+| Lookout | 2 | 20 | 40 | Coast Lighthouse / Timber Watchtower |
 
-- One endless three-lane coastal course with an adult courier, jumping, gradually increasing speed, and more frequent hazards later.
-- Floating timber, stone, and coins, grounded stone obstacles, and keyboard, swipe, or button controls.
-- A collision ends the run immediately. Head home ends it whenever you choose, including from Pause; either ending banks collected loot once.
-- Results offer Run again or Return to island; banked supplies survive browser reloads.
-- Home, workshop, and lookout, each with two original designs. Home unlocks level 2; the other two projects can be completed in either order. Build reserves its recipe once and shows five seconds of foundation/framing/roof work before the final building reveal, with a percentage bar above the structure. Pending construction survives reload.
-- A narrower desktop road with a continuous stone trail and subtle moving joints; mobile road width is preserved.
-- Mobile Island/Buildings/Run bottom navigation, a separate Buildings screen, and phone portrait/landscape controls.
-- Short contextual first-play guidance: choose a design, gather supplies, then build. Skip at any point; completed actions are remembered.
-- Pause/focus handling and same-browser saves, with guarded save recovery and restart controls.
+Material bundles grant 5 units; coins grant 1. The shop exchanges 10 coins for
+5 timber, or 15 coins for 5 stone when unlocked and relevant. Surplus remains
+stored. After settlement completion, runs collect coins only.
 
-The material shop exchanges 10 coins for 5 timber, or 15 coins for 5 stone after
-level 2 unlocks. Only materials relevant to the active unfinished project are
-offered. Surplus survives construction. Finishing all three landmarks completes
-the starter island; coin-only replays remain available. Full rules are in
-[the PRD](devpost/prd.md).
+## Endless coastal runner
+
+- No countdown or 60-second limit. The HUD shows distance, pace, and this run's loot.
+- Speed rises smoothly from 18 to 34 route units/second over 80 active seconds,
+  then holds a playable cap. Hazards become more frequent later.
+- One deterministic course streams ahead; passed entities are discarded so a
+  long run does not retain its entire course in memory.
+- An adult courier runs through coastal jungle, with the island on the horizon.
+  Floating pickups and grounded blocks have distinct depth and shadow cues.
+- A continuous stone trail uses quieter moving joints and softer perspective.
+  Desktop road width is bounded; smaller mobile foliage stays outside all lanes.
+- Collisions end immediately and preserve already collected loot. **Head home**
+  does the same by choice; Pause also offers **End run and return**. Each run
+  settles once, regardless of repeated result actions.
+
+## Shape the island
+
+The larger road-network island has eight eligible grass blocks for the same
+three buildings. Roads, water, occupied/reserved blocks, and landscaping stay
+clear. This is block placement, without arbitrary terrain editing.
+
+Use **Choose location**, select a block on the map or by its button, optionally
+**Flip facing**, and confirm **Place here**. Cancel discards the preview.
+Tap a completed building directly on the map to move it, or use **Move building**
+in its panel. Relocation is free and preserves design, completion, and stock.
+Confirmed locations and facing survive reload. Pending construction briefly
+locks placement and running.
+
+Drag/zoom the map and use Reset view to explore. A contained island header keeps
+name and level readable. Below 960px, **Island / Buildings / Run** bottom
+navigation opens a separate scrollable Buildings screen. The runner uses its
+own compact HUD and visible touch controls. Short contextual guidance is skippable.
+
+## Controls and saves
+
+| Action | Desktop | Touch |
+| --- | --- | --- |
+| Change lane | Left / Right arrows or A / D | Horizontal swipe or Left / Right buttons |
+| Jump | Space, Up arrow, or W | Upward swipe or Jump button |
+| Pause | Escape or P | Pause button |
+| Bank and return | Head home | Head home |
+
+Pause/focus loss freezes active time, speed, and motion until explicit Resume.
+Browser localStorage saves the island, stored materials/coins, designs,
+locations/facing, guide milestones, and construction's original deadline.
+An unfinished run is discarded on reload without granting its loot.
+
+Saves belong to this browser and origin: localhost, preview URLs, and production
+have separate progress. There is no account or cloud sync. Unreadable saves are
+preserved until an explicit fresh start; blocked storage offers session-only
+play. Restart requires confirmation. WebGL and JavaScript are required.
 
 ## Run locally
 
-Use Node.js 22.12 or later.
+Use **Node.js 22.12 or later** and npm. Node 22.x is the deployment baseline.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open the Local URL printed by Vite, normally http://127.0.0.1:5173/.
-The game uses WebGL and browser localStorage. It needs no API keys, accounts,
-backend, or real payments. Progress is saved only in this browser and origin;
-an unfinished run is discarded on reload.
-
-Controls: Left/Right or A/D changes lane. Space/Up/W jumps. Escape/P pauses.
-Touch players can swipe horizontally/up or use the visible buttons.
-
-## Check and build
+Open the URL printed by Vite, normally http://127.0.0.1:5173/.
+No account, API key, backend, or real payment is needed.
 
 ```sh
+npm run typecheck
 npm test
 npm run build
 npm run preview
 ```
 
-Focused browser checks use Playwright. Install its Chromium runtime with
-`npx playwright install chromium`, or use an existing Chromium executable:
+The production output is `dist/`; the built preview normally uses
+http://127.0.0.1:4173/. Serve the game over HTTP rather than opening index.html.
 
-```sh
-PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run test:browser
-```
+## Vercel deployment
 
-The production output is `dist/`. Deployment is a later decision; the current
-workflow is local-first. The source and PNG assets are committed; dependencies,
-build output, test reports, local secrets, and the private learner profile are
-ignored.
+Vercel is the owner-selected production host as of 24 October 2026.
+[Deployment instructions and verification](devpost/deployment.md) record the
+project, public URL, source revision, and actual result. `vercel.json` sets the
+Vite framework, `npm ci`, `npm run build`, and `dist` output. No environment
+variables or paid services are required by the game.
 
-## Where changes belong
-
-- `src/model/`: pure run, inventory, construction, progression, and save rules.
-- `src/controller.ts`: one owner for progress, run transitions, reward settlement, and saving.
-- `src/game/`: Phaser scenes, projection, sprite presentation, and game input.
-- `src/ui/`: semantic controls, construction panel, HUD, results, and responsive styling.
-- `tests/`: deterministic rule checks and focused browser journeys.
-- `devpost/`: approved scope, PRD, technical plan, and live build checklist.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE). Third-party packages
-retain their respective licenses.
-
-## Original artwork and dependencies
-
-The runtime PNGs were generated for this project with the built-in
-image-generation tool. Their dimensions, frame layouts, sources, and original
-prompts are recorded in [the asset manifest](public/assets/manifest.json) and
-[the runtime art record](design/runtime-art-prompts.md). Concept studies and their
-prompts are in `design/reference/`. PNG originals are preserved; transparent
-sprite padding is trimmed into runtime frames by the loader.
-
-No existing Zalura game code or artwork was reused. The interface uses system
-fonts and original code-drawn icons/effects. Package versions are pinned in
-`package.json` and `package-lock.json`; dependency licenses remain with their
-respective projects. The official Devpost skill pack is retained in
-`.agents/skills/`.
-
-Build progress, player feedback, and remaining work are tracked in
-[the build checklist](devpost/checklist.md).
+`.vercelignore` excludes private/planning context, design archives, local
+credentials, dependencies, and generated output from CLI source uploads.
+Only the built `dist` is served; the planning documents remain in the public
+GitHub repository. `.vercel/` is local project-link metadata and is Git-ignored.
 
 ## Verification
 
-For the 23 October settlement and guidance checkpoint, all 72 unit/controller
-checks pass. They cover collision/timeout settlement, exact construction
-reservation and timing, both settlement orders, purchases and stone contacts,
-reload during and after construction, saved designs, legacy islands, guide
-milestones and skipping, focus pause, corrupt-save preservation, session-only
-play, and responsive camera geometry. TypeScript and the production build pass.
+At gameplay revision `72275d5`, all **91 unit/controller/geometry checks**,
+TypeScript, and the production build pass. Coverage includes accelerating
+contact timing, endless chunk boundaries and bounded live data, collision and
+voluntary-return settlement, construction reservation/reload, both level-two
+orders, purchases, legacy/corrupt saves, placement/occupancy/facing, guidance,
+focus pause, and mobile road/scenery geometry.
 
-All eleven current Playwright journeys collect successfully but remain unexecuted: the
-browser tool rejected local-preview access under its URL policy. New layout,
-art composition, and motion still require browser/player review. No alternate
-browser access was attempted. The five browser journeys and captures in
-`design/checkpoints/` belong to the earlier playable snapshot and do not verify
-this checkpoint. On 23 October the player reported testing the current game
-successfully and accepted that earlier checkpoint. The 24 October endless/mobile
-follow-ups await review. That confirmation does not mean the automated
-browser cases or every device/edge case were exercised.
+Eleven Playwright journeys collect but have not been executed for this version
+under the recorded browser-tool local-preview restriction. Collect without
+launching a browser using `npx playwright test --list`. On an authorized machine,
+install Playwright Chromium and run `npm run test:browser`, or set
+`PLAYWRIGHT_CHROMIUM_EXECUTABLE` to an existing executable.
 
-The offline [app map](devpost/app-map.html) explains the Build action and where
-to change the road, recipes, and controls. [Shipping status](devpost/shipping.md)
-tracks the remaining demo and submission steps.
+The owner playtested earlier versions and approved the coastal runner direction.
+That does not prove every device/edge case; the final endless/mobile/direct-move
+follow-up still needs a player retry. Historical screenshots in
+`design/checkpoints/` predate the current layout. See the
+[build checklist](devpost/checklist.md) and [shipping record](devpost/shipping.md)
+for current evidence, deployment checks, and remaining video/submission steps.
+
+## Project map and planning
+
+- `src/model/`: pure run pace/simulation, placement, inventory, construction,
+  progression, and save validation.
+- `src/controller.ts`: progress ownership, commands, settlement, and persistence.
+- `src/game/`: Phaser scenes, shared projection, map camera, scenery, and input.
+- `src/ui/`: HTML controls, construction panel, HUD, results, and responsive CSS.
+- `tests/`: deterministic checks and prepared browser journeys.
+- `devpost/`: [scope](devpost/scope.md), [PRD](devpost/prd.md),
+  [technical specification](devpost/spec.md), current guides, and revision records.
+- [Offline app map](devpost/app-map.html): follows Build through interface,
+  controller/model/save, and visible construction; points to pace/streaming too.
+
+## Original art and license
+
+Runtime PNGs were generated for this project with the built-in image tool.
+[The asset manifest](public/assets/manifest.json),
+[runtime art record](design/runtime-art-prompts.md), and
+[coastal experience record](design/coastal-experience-v3.md) record sources,
+prompts, dimensions, and runtime framing. Original image bytes are preserved;
+transparent padding is trimmed into runtime frames by the loader.
+Promotional artwork is labelled as illustration, not a gameplay screenshot.
+
+No existing Zalura code or artwork was reused. Fonts are system fonts; icons
+and interface effects use original code. The project is [MIT licensed](LICENSE);
+third-party dependencies retain their own licenses. Package versions are pinned
+in `package.json` and `package-lock.json`. The Devpost skill pack is retained
+under `.agents/skills/`.

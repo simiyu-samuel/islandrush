@@ -3,7 +3,7 @@
 Checked 24 October 2026. This is a preparation record, not a claim that an
 entry has been submitted.
 
-## Current visual-review hold
+## Current shipping checkpoint
 
 The owner approved the coastal runner direction and requested endless runs,
 progressive pace/difficulty, clearer mobile lanes, and direct map-tap relocation.
@@ -14,14 +14,20 @@ Production build and all 91 checks pass; eleven browser journeys collect only.
 The new behavior and phone layout await player retry under the existing browser
 restriction. See `checklist.md > Current checkpoint`.
 
-The saved Devpost draft has not been finally submitted. After design acceptance,
-refresh the story/test count and record the demo from this actual version.
+The owner explicitly requested Vercel deployment, complete documentation and
+Devpost updates, a voice-over script, and a synchronized recording guide. Hosting
+is in progress; the Devpost story and live link will be refreshed after the
+production URL is verified. The required demo link is still pending recording.
+
+Current delivery documents: [game guide](game-guide.md),
+[deployment record](deployment.md), [voice-over](demo-voiceover.md), and
+[screen-recording guide](demo-recording-guide.md).
 
 ## Ready
 
 - [x] Working proof of concept: one course, two levels, three buildings, six designs, relevant floating materials, retained loot, explicit coin exchanges, and saved construction.
 - [x] Player reported testing successfully and accepted the 23 October build before these design follow-ups.
-- [x] 72 unit/controller checks and production build pass at source commit cf9590f.
+- [x] All 91 current unit/controller/geometry checks, TypeScript, and production build pass at gameplay commit 72275d5.
 - [x] Required scope, PRD, and spec are tracked in the public repository.
 - [x] Offline app map created and statically checked against actual paths and symbols.
 - [x] Public repository accessible without credentials: https://github.com/simiyu-samuel/islandrush (default branch codex/island-rush).
@@ -60,8 +66,9 @@ edge-case coverage is claimed.
   declarations for accuracy, then personally completes final terms/submission.
 - [ ] Verify the entry shows a submitted state after that final action.
 
-Deployment and peer feedback are optional. Neither replaces the demo video.
-No live game URL is currently recorded; the draft's Try it out link is GitHub.
+Vercel deployment is explicitly requested and being prepared; no production
+URL is claimed until it is verified. Peer feedback is optional. Neither hosting
+nor peer feedback replaces the required demo video.
 
 ## Review against the organizer email
 
@@ -70,7 +77,7 @@ pasted recap; it does not claim the recording was watched.
 
 | Email check | Island Rush evidence / next action |
 | --- | --- |
-| Easy access without account creation | The game needs no account or API key. A live playable link would make access quicker; currently judges have the repo and the video is pending. Hosting remains an optional owner decision. |
+| Easy access without account creation | The game needs no account or API key. A live playable link would make access quicker; currently judges have the repo and the video is pending. The owner selected Vercel; verify its public production link before adding it. |
 | Clear opening screen and audience | The approved scope identifies fans of short arcade runs and island building. Devpost's tagline explains the loop. The revised game intro states "Run the coast. Collect supplies. Build your island." and identifies runners/island builders. The revised layout awaits player review. |
 | Working app shown early in video | Start with design choice, a real run, banked loot, and the construction reveal; briefly show planning documents after gameplay. Capture the actual app rather than a simulated demo. |
 | Planning documents match implementation | Approved scope, PRD, and spec are in `devpost/`. They describe one course, two levels, three buildings, design choices, retained loot, coin exchanges, and five-second construction. |
@@ -85,8 +92,9 @@ pasted recap; it does not claim the recording was watched.
 
 ## Mechanical demo preparation
 
-Use the existing local game (`npm run dev`) and record the actual playable
-window. Keep the video below three minutes; a live deployment is not necessary.
+Use the verified production game for recording; local `npm run dev` remains a
+backup. Follow demo-recording-guide.md and read demo-voiceover.md for the
+roughly 2:40–2:50 video. Keep it below three minutes.
 The core behavior to capture is design choice → run and collect → end-of-run
 banking → explicit construction and its visible result. A later-stage island
 can show stone, the shop, level-two choices, and the completed settlement.

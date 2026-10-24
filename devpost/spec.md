@@ -78,29 +78,33 @@ baseline. The first-build registry check established and pinned 4.2.1.
 
 ## Where It Runs and How Someone Tries It
 
-Approved delivery phase: local browser build and recording first. No hosting
-provider is selected. Hosting can be chosen later for the same static build.
+The owner selected Vercel hosting on 24 October 2026. The same static build runs
+locally and in production. See `deployment.md` for the verified live URL and
+project/source record. The public game requires no account, API key, or backend.
 
-Node 22.22.0 and Git were verified during setup. Vite documents Node 20.19+ or
-22.12+; verify exact package requirements at installation.
+Use Node.js 22.12 or later; the deployment baseline is Node 22.x.
 
-Planned commands, to be defined during scaffolding:
-
-    npm install
-    npm run dev -- --host 127.0.0.1 --port 5173
+    npm ci
+    npm run dev
     npm run typecheck
     npm test
     npm run build
-    npm run preview -- --host 127.0.0.1 --port 4173
+    npm run preview
 
 Open http://127.0.0.1:5173 for development or http://127.0.0.1:4173 for the built
-preview. Serve through the local server rather than opening index.html directly.
-The primary target is a modern WebGL-capable desktop/phone browser. Show a clear
-initialization error when the renderer cannot start.
+preview. Serve through HTTP rather than opening index.html directly. Target a
+modern WebGL-capable desktop/phone browser and show a renderer initialization
+error if startup fails.
 
-Output is dist/. Submission requires a short working demo video and public source
-repository; hosting is optional. The approved local-only phase skips Site
-registration, source synchronization, and publication.
+`vercel.json` declares Vite, `npm ci`, `npm run build`, and `dist` output. No
+runtime environment variables are needed. `.vercelignore` excludes private
+context, planning/design archives, dependencies, generated output, and local
+credentials from CLI source uploads; `.vercel/` is Git-ignored. Vercel serves
+only the compiled static output. The three planning docs remain public in GitHub.
+
+Saves are origin-specific. The production domain and localhost have separate
+progress; hosting does not add cloud synchronization. Public hosting supplements,
+and does not replace, the required short video and public source repository.
 
 ## Look and Feel
 
@@ -290,15 +294,15 @@ buildings. Validate rather than maintaining conflicting progression authorities.
 Runtime ActiveRun:
 - unique ID, route seed, status (active/paused/ended/settled), end reason;
 - target/permitted materials, elapsed active seconds, distance;
-- lane/jump position, route entities, collected IDs, and current loot.
+- lane/jump position, live route entities, generated-ahead distance, collected
+  IDs, and current loot.
 
 An active run is discarded on reload. Ended runs settle before result actions
 become available. Save all progress changes through one record.
 
 ## File Structure
 
-Target structure; first-slice code and runtime assets now exist. Later slices
-complete the remaining content and guidance:
+Implemented structure (generated output and private local files are excluded):
 
     build-with-ai-basics/
     ├── .agents/skills/            # Devpost skill pack
@@ -317,7 +321,9 @@ complete the remaining content and guidance:
     │   │   ├── types.ts
     │   │   ├── catalog.ts
     │   │   ├── progress.ts       # Settle/buy/build/unlock
-    │   │   ├── run.ts            # Deterministic simulation
+    │   │   ├── run.ts            # Endless deterministic simulation
+    │   │   ├── runPace.ts        # Acceleration and contact timing
+    │   │   ├── placement.ts      # Blocks, occupancy, legacy defaults
     │   │   └── save.ts           # Validation and storage
     │   ├── game/
     │   │   ├── config.ts
@@ -340,6 +346,8 @@ complete the remaining content and guidance:
     ├── package.json
     ├── package-lock.json
     ├── tsconfig.json
+    ├── vercel.json             # Static production build settings
+    ├── .vercelignore           # Keep private/local context out of uploads
     ├── vite.config.ts
     ├── playwright.config.ts
     ├── .gitignore
@@ -377,9 +385,9 @@ access. Original runtime images use the built-in image tool and are saved under
 public/assets. Record any deliberately introduced third-party font/asset license.
 Do not copy existing Zalura code/art into the new hackathon project.
 
-No hosting provider is selected. The static dist build keeps later hosting
-portable. If the learner later chooses hosting, document its setup and verified
-deployment during shipping.
+Vercel is selected for production. The static dist build remains portable.
+Record the public production URL and actual access checks in deployment.md;
+never treat an authenticated deployment fetch as proof that judges can enter.
 
 ## Important Failure Modes
 
@@ -400,7 +408,8 @@ and an integrated materials purchase panel.
 These have direct homes in the engine, UI, and small rule modules. Additional
 content, accounts, cross-device sync, and fully unconstrained terrain placement
 remain deferred. Block placement/relocation was explicitly added by the owner.
-Local-first delivery is approved, with optional hosting later.
+Local development remains available; Vercel production hosting was authorized
+on 24 October. No paid add-on or new gameplay feature is part of deployment.
 
 ## Decisions and Open Issues
 
@@ -432,6 +441,6 @@ existing tool restriction; this follow-up still awaits player review.
 - Default branch: codex/island-rush. Public readability verified without credentials through the GitHub repository API on 23 October 2026.
 - Technical setup: README.md. Planning artifacts: devpost/scope.md, prd.md, and spec.md. Offline code guide: devpost/app-map.html.
 - Demo video: not yet supplied or verified. Official rules require a publicly visible YouTube/Vimeo video under three minutes showing the working project.
-- Live deployment: optional, not requested or performed. The local Vite game remains the demonstrated implementation.
+- Live deployment: Vercel explicitly requested on 24 October. See deployment.md for the verified URL, source, and access checks.
 - License: MIT, explicitly approved by the owner on 23 October 2026; root LICENSE and package metadata added. Third-party dependencies retain their own licenses.
 - Submission status and confirmed requirements: devpost/shipping.md. Submission text and exit-survey answers belong to the learner. No Devpost form has been submitted by the agent.
