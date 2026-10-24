@@ -17,7 +17,7 @@ rare merchants, shipping, policies, storage, power and connected-islet expansion
 are implemented. Dismantling recovers half base materials without stranding
 occupied land. Version 1 saves migrate with a byte-for-byte original backup.
 
-All **100 automated model/controller/geometry checks**, TypeScript and the
+All **102 automated model/controller/geometry checks**, TypeScript and the
 production build pass. Eleven updated browser journeys collect but were not run
 as a full suite. Actual public interactions and responsive layout checks are
 listed in [deployment.md](deployment.md), along with anonymous 200/content-type
@@ -100,3 +100,12 @@ zoom limit. Existing lot IDs, building identities and capacity are preserved.
 The refreshed submission-story.md and contribution.md are paste-ready copy;
 the owner will update Devpost directly, so this follow-up does not claim those
 latest text changes have already been saved to the external site.
+
+## Video publishing assets and map input correction
+
+The [YouTube title/description](youtube-description.md) and
+[generated closing card](../design/devpost/demo-end-card-v1.png) are ready for the
+owner's edit/upload. Card prompts and source hash are preserved separately.
+The map-tap correction aligns foundation input with the visible diamonds;
+players can choose an empty site directly on the island before **Place here**.
+No YouTube upload or Devpost edit was performed for this follow-up.

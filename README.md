@@ -8,7 +8,7 @@ An endless coastal runner connected to a growing island settlement. Supply runs 
 
 The complete expanded game has been manually playtested end to end by its
 developer, who confirmed on 24 October 2026 that the implemented flows and
-settlement systems work. All **100 model/controller/geometry checks**, TypeScript
+settlement systems work. All **102 model/controller/geometry checks**, TypeScript
 and the production build pass. [Playtest and release record](devpost/shipping.md).
 
 
@@ -63,6 +63,7 @@ Phaser 4 renders the isometric archipelago and perspective runner. TypeScript mo
 - [Sixteen-building art prompts and provenance](design/settlement-art-v4.md)
 - [Asset manifest](public/assets/manifest.json)
 - [Voice-over script](devpost/demo-voiceover.md) and [recording guide](devpost/demo-recording-guide.md)
+- [YouTube description](devpost/youtube-description.md) and [video closing card](design/devpost/demo-end-card-v1.png)
 - [Submission preparation](devpost/shipping.md)
 
 Progress belongs to the current browser and origin; localhost and the public site have separate saves. Unreadable data is preserved until an explicit fresh start. Storage failures switch to session-only play. Up to 30 minutes of settlement time catches up after absence.

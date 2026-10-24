@@ -35,7 +35,7 @@ The existing coastal runner art, endless pace, impact safety and controls are re
 - [x] Owner playtested the complete expanded game and confirmed everything works (24 October).
 - [ ] Add the real public video URL, review final declarations and finally submit.
 
-Mechanical evidence: all **100 model/controller/geometry checks**, TypeScript
+Mechanical evidence: all **102 model/controller/geometry checks**, TypeScript
 and production build pass. Eleven updated Playwright journeys collect without
 launching a browser. Public production source **b3b86e0** is READY at
 https://island-rush-six.vercel.app. Anonymous checks passed for HTML, three emitted
@@ -238,3 +238,9 @@ Activity mode: Actual feedback/revision investigation plus brief evidence-based 
   report completed playtesting. Follow-up visual feedback enlarged buildings,
   spread foundations and extended map zoom; recipes, capacity and saved IDs remain.
   Submission updates for this follow-up are provided as copy, per the owner's request.
+
+- 24 October map-tap correction: replaced the offset circular Container input
+  region with a polygon aligned to the complete drawn foundation. Added two
+  regression checks using Phaser's polygon routine across screen sizes/zoom and
+  updated the prepared move journey to click the canvas instead of the menu.
+  Added the YouTube description and generated video closing card/provenance.

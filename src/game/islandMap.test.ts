@@ -1,8 +1,17 @@
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
+import type Phaser from 'phaser';
 import { describe, expect, it } from 'vitest';
-import { islandMapLayout, lotPosition, lotFootprint, regionOffset, regionPosition, MAX_MAP_ZOOM } from './islandMap';
+import { islandMapLayout, lotPosition, lotFootprint, regionOffset, regionPosition, lotHitPolygon, MAX_MAP_ZOOM } from './islandMap';
 import { buildingWidth } from './art';
 import { getLots } from '../model/placement';
 import type { BuildingInstance } from '../model/types';
+
+// Test against Phaser's actual polygon hit routine, without starting a browser.
+const require = createRequire(import.meta.url);
+const phaserRoot = dirname(dirname(require.resolve('phaser')));
+const Polygon = require(join(phaserRoot,'src/geom/polygon/Polygon.js')) as typeof Phaser.Geom.Polygon;
+const polygonContains = require(join(phaserRoot,'src/geom/polygon/Contains.js')) as typeof Phaser.Geom.Polygon.Contains;
 
 const sizes = [[320,640],[390,844],[768,1024],[844,390],[960,540],[1280,720],[1920,1080]];
 const island = { buildings: [] as BuildingInstance[] };
@@ -76,5 +85,41 @@ describe('expandable archipelago map', () => {
     expect(last.x).toBeGreaterThanOrEqual(map.left);
     expect(last.x + map.mapWidth).toBeLessThanOrEqual(map.left + map.worldWidth + 1e-8);
     expect(last.y + map.mapHeight).toBeLessThanOrEqual(map.top + map.worldHeight + 1e-8);
+  });
+});
+
+describe('map foundation pointer alignment', () => {
+  it('hits each drawn foundation center and its visible sides after Phaser origin normalization', () => {
+    for (const [width,height] of sizes) for(const zoom of [0.65,1,2,4]) {
+      const map=islandMapLayout(width!,height!,zoom,210,-95);
+      const footprint=lotFootprint(map);
+      const area=new Polygon(lotHitPolygon(map));
+      for(const lot of getLots(island).filter(l=>l.unlocked)) {
+        const anchor=lotPosition(lot,map);
+        for(const [dx,dy] of [[0,0],[0.42,0],[-0.42,0],[0,0.42],[0,-0.42]]) {
+          const click={x:anchor.x+dx!*footprint.width,y:anchor.y+dy!*footprint.height};
+          // This normalization is InputManager.pointWithinHitArea's contract.
+          const inputX=click.x-anchor.x+footprint.width/2;
+          const inputY=click.y-anchor.y+footprint.height/2;
+          expect(polygonContains(area,inputX,inputY)).toBe(true);
+        }
+      }
+    }
+  });
+  it('does not turn neighboring foundations or surrounding roads into this site', () => {
+    for(const zoom of [0.65,1,2,4]) {
+      const map=islandMapLayout(1366,768,zoom);
+      const footprint=lotFootprint(map);
+      const area=new Polygon(lotHitPolygon(map));
+      const lots=getLots(island).filter(l=>l.unlocked);
+      for(const lot of lots) {
+        const anchor=lotPosition(lot,map);
+        for(const other of lots.filter(l=>l.id!==lot.id)) {
+          const point=lotPosition(other,map);
+          expect(polygonContains(area,point.x-anchor.x+footprint.width/2,point.y-anchor.y+footprint.height/2)).toBe(false);
+        }
+        expect(polygonContains(area,footprint.width*1.1,footprint.height/2)).toBe(false);
+      }
+    }
   });
 });

@@ -80,3 +80,16 @@ The entry remains a draft until those steps are actually completed.
 [Official rules](https://learn-ai-basics.devpost.com/rules), checked 24 October
 2026. Deadline: Monday 26 October, 5:00 pm EDT = Tuesday 27 October, 00:00
 Nairobi. Aim to finish comfortably before Monday midnight Nairobi.
+
+## Closing card and YouTube description
+
+Use [the generated end-card PNG](../design/devpost/demo-end-card-v1.png) for the
+last 6–7 seconds. Fit it to the 16:9 timeline and retain readable game/source
+links. Include that hold in the below-three-minute export. The card is
+promotional illustration, with [generation provenance](../design/devpost/end-card-provenance.md).
+Paste [the prepared YouTube title and description](youtube-description.md) into
+the upload form. Chapter timestamps can be added after the edit is final.
+
+For the relocation clip, tap a completed building, then tap an outlined empty
+foundation directly on the island. Show the ghost move to that location before
+choosing **Place here**. The card's dropdown remains an alternative.

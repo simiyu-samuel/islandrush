@@ -108,7 +108,13 @@ test('tapping a completed map building opens its free move preview and persists 
   await page.locator('canvas').click({ position: { x: point.x, y: point.y - map.mapWidth * 0.012 } });
   const placement = page.getByRole('complementary', { name: 'Building placement' }); await expect(placement).toBeVisible();
   await expect(placement.getByText('Moves cost no supplies', { exact: true })).toBeVisible();
-  await page.getByRole('combobox', { name: 'Available building space' }).selectOption('0:harbor:1');
+  await page.getByRole('button',{name:'Reset island view',exact:true}).click();
+  await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>resolve())));
+  const destination=getLots(progress).find(lot=>lot.id==='0:harbor:1')!;
+  const pointOnMap=lotPosition(destination,map);
+  // Choose the visible foundation on the canvas, not the card's dropdown.
+  await page.locator('canvas').click({position:{x:pointOnMap.x,y:pointOnMap.y}});
+  await expect(page.getByRole('combobox',{name:'Available building space'})).toHaveValue(destination.id);
   await placement.getByRole('button', { name: 'Place here', exact: true }).click();
   const moved = await saved(page); expect(moved.buildings[0]!.lot).toBe('0:harbor:1'); expect(moved.wallet).toEqual(progress.wallet);
 });

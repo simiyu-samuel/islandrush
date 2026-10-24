@@ -5,7 +5,7 @@ import { drawConstruction } from '../construction';
 import type { BuildingInstance } from '../../model/types';
 import { BUILDINGS } from '../../model/catalog';
 import { BUILDING_LOTS } from '../../model/placement';
-import { islandMapLayout, lotPosition, lotFootprint, regionPosition, MAP_CAMERA_EVENT, MIN_MAP_ZOOM, MAX_MAP_ZOOM, MAP_ZOOM_STEP, type MapCameraCommand, type IslandMap } from '../islandMap';
+import { islandMapLayout, lotPosition, lotFootprint, lotHitPolygon, regionPosition, MAP_CAMERA_EVENT, MIN_MAP_ZOOM, MAX_MAP_ZOOM, MAP_ZOOM_STEP, type MapCameraCommand, type IslandMap } from '../islandMap';
 
 type BuildingView = {
   image: Phaser.GameObjects.Image; shadow: Phaser.GameObjects.Ellipse;
@@ -207,7 +207,7 @@ export class IslandScene extends Phaser.Scene {
       let view = this.lots.get(lot.id);
       if (!view) {
         const graphics = this.add.graphics();
-        const container = this.add.container(0, 0, [graphics]).setDepth(7000).setInteractive(new Phaser.Geom.Circle(0, 0, 18), Phaser.Geom.Circle.Contains);
+        const container = this.add.container(0, 0, [graphics]).setDepth(7000).setInteractive(new Phaser.Geom.Polygon([]), Phaser.Geom.Polygon.Contains);
         container.on('pointerup', () => { if (!this.dragged) this.bridge.selectLot(lot.id); });
         view = { container, graphics }; this.lots.set(lot.id, view);
       }
@@ -221,11 +221,13 @@ export class IslandScene extends Phaser.Scene {
       if (!visible) continue;
       const point = lotPosition(lot, map), footprint = lotFootprint(map);
       view.container.setPosition(point.x, point.y).setAlpha(eligible ? 1 : 0.2);
-      view.container.setSize(Math.max(26, footprint.width), Math.max(24, footprint.height));
-      const neighbors = frame.lots.filter(other => other.id !== lot.id && other.region === lot.region && other.unlocked);
-      const separation = Math.min(...neighbors.map(other => { const anchor = lotPosition(other, map); return Math.hypot(anchor.x - point.x, anchor.y - point.y); }));
-      const pickRadius = Math.min(18, separation * 0.45);
-      if (view.container.input) (view.container.input.hitArea as Phaser.Geom.Circle).setTo(0, 0, pickRadius);
+      view.container.setSize(footprint.width, footprint.height);
+      // InputManager adds displayOrigin to pointer-local coordinates. Center the
+      // input polygon there, matching the diamond drawn around container (0,0).
+      if (view.container.input) {
+        (view.container.input.hitArea as Phaser.Geom.Polygon).setTo(lotHitPolygon(map));
+        view.container.input.cursor = 'pointer';
+      }
       this.paintFootprint(view.graphics, footprint.width, draft?.lot === lot.id, eligible);
       if (suitable && lot.unlocked && !occupied) {
         const color = lot.tags.includes('spring') ? 0x8ad9d2 : lot.tags.includes('forest') ? 0xaedc82 : lot.tags.includes('coast') ? 0x86c8e0 : 0xe9d8aa;

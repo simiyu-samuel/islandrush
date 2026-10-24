@@ -101,3 +101,13 @@ and 0.016 vertical offsets. Saved lot IDs and occupancy rules are unchanged.
 Preview, finished sprites, shadows and construction all share the revised scale.
 Map zoom is bounded from 0.65× to 4× with 0.25 steps. Tests cover readable home
 size on narrow phone/desktop, nonoverlapping foundations and bounded navigation.
+
+## Direct map selection correction — 24 October
+
+Foundation hit regions use the full visible diamond. Phaser normalizes pointer
+coordinates by adding a Container's display origin, so polygon vertices are
+centered on half the container width/height in input space. Graphics stay centered
+on local (0,0). The old (0,0) input circle was offset from the drawn foundation.
+The same geometry is recomputed with pan/zoom and checked against Phaser's actual
+polygon hit routine. The bridge/controller preview and explicit confirmation
+remain shared with the alternative space menu.

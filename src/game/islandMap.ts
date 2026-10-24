@@ -58,3 +58,10 @@ export function lotFootprint(map: IslandMap): { width: number; height: number } 
   const width = map.mapWidth * 0.064;
   return { width, height: width * 0.52 };
 }
+
+/** Phaser tests container input after adding its half-size display origin. */
+export function lotHitPolygon(map: IslandMap): MapPoint[] {
+  const { width, height } = lotFootprint(map);
+  return [{ x: width / 2, y: 0 }, { x: width, y: height / 2 },
+    { x: width / 2, y: height }, { x: 0, y: height / 2 }];
+}

@@ -53,7 +53,7 @@ Each islet contains eight landscaped grass blocks with four foundations each: **
 
 Terrain tags matter: Lumber Yards need forest, piers/lighthouses/bridges need coast, generators need spring, outposts need edge, and hamlets need hill. Other types use any open grass foundation. Roads, water and landscape are kept clear. Both unfinished construction sites and completed structures occupy their spaces.
 
-Tap a finished building to enter its move preview directly. Select another suitable free space, flip facing if desired, then **Place here**. Moving costs no resources and keeps the building's identity and service. Cancel preserves its original position. Moving an outpost is refused if it would close occupied ground.
+Tap a finished building to enter its move preview directly. Tap another highlighted empty foundation directly on the island (or select it in the card), flip facing if desired, then **Place here**. The ghost previews your chosen location before confirmation. Moving costs no resources and keeps the building's identity and service. Cancel preserves its original position. Moving an outpost is refused if it would close occupied ground.
 
 Dismantle completed structures through the explicit reclaim-space action to reclaim the foundation and salvage half the timber/stone recipe, rounded down. Removing an outpost or bridge is refused if its removal would strand occupied land. Plan expansion before filling every suitable coastal or edge space.
 
