@@ -1,7 +1,7 @@
 # Island Rush — technical shipping record
 
-Checked 23 October 2026. This is a preparation record, not Devpost submission
-copy or a claim that an entry has been submitted.
+Checked 24 October 2026. This is a preparation record, not a claim that an
+entry has been submitted.
 
 ## Ready
 
@@ -20,14 +20,47 @@ edge-case coverage is claimed.
 
 - [x] MIT license approved by the owner on 23 October and added as root LICENSE; package metadata identifies MIT. Third-party packages retain their own licenses.
 
+## Saved Devpost draft
+
+- Draft: https://devpost.com/software/island-rush
+- Manage: https://devpost.com/submit-to/30447-build-with-ai-basics/manage/submissions/1253025-island-rush/project-overview
+- The owner explicitly delegated filling the draft, generating the thumbnail,
+  and describing their contribution. Factual AI-assisted draft text was saved
+  under that instruction; the owner should review it before submission.
+- Verified saved: Island Rush name, coastal run/build tagline, project story,
+  Built With tags, public repository link, and Created by contribution.
+- Generated promotional thumbnail uploaded and verified in the overview.
+  Source and prompt: `design/devpost/thumbnail-provenance.md`.
+- Additional info is now populated in the signed-in form. Personal survey
+  responses are intentionally excluded from this public record.
+- Current form status: **DRAFT, 3/5 steps done**. Project details is incomplete
+  because the required video-demo URL is blank. Final submission is incomplete.
+- The agent has not accepted the final terms or clicked Submit project.
+
 ## Remaining
 
-- [ ] Record a working demo; obtain a publicly visible YouTube or Vimeo link and verify it without signing in.
-- [ ] Confirm the exact required prompts in the signed-in Devpost form. The public project-management page exposes a registration/login wall, so its private field list and exit survey have not been verified.
-- [ ] Learner writes the project name, short description, project answers, and exit-survey responses. The chosen name is already Island Rush. The agent may identify missing information and correct spelling/grammar; no answers have been drafted.
-- [ ] Learner submits the entry, or explicitly authorizes a specific final submission after reviewing it. No submission has been made.
+- [ ] Record the working game, upload a publicly accessible YouTube/Vimeo demo,
+  and add its real URL. The owner said they planned to record it; no URL has
+  been supplied or saved yet.
+- [ ] Owner reviews the saved story, contribution, survey answers, and eligibility
+  declarations for accuracy, then personally completes final terms/submission.
+- [ ] Verify the entry shows a submitted state after that final action.
 
 Deployment and peer feedback are optional. Neither replaces the demo video.
+No live game URL is currently recorded; the draft's Try it out link is GitHub.
+
+## Review against the organizer email
+
+The owner supplied the Will It Ship recap on 24 October. This audit uses the
+pasted recap; it does not claim the recording was watched.
+
+| Email check | Island Rush evidence / next action |
+| --- | --- |
+| Easy access without account creation | The game needs no account or API key. A live playable link would make access quicker; currently judges have the repo and the video is pending. Hosting remains an optional owner decision. |
+| Clear opening screen and audience | The approved scope identifies fans of short arcade runs and island building. Devpost's tagline explains the loop. The game intro is poetic ("A home on the horizon" / "A little adventure"); consider a direct run/collect/build sentence. No game code was changed during this review. |
+| Working app shown early in video | Start with design choice, a real run, banked loot, and the construction reveal; briefly show planning documents after gameplay. Capture the actual app rather than a simulated demo. |
+| Planning documents match implementation | Approved scope, PRD, and spec are in `devpost/`. They describe one course, two levels, three buildings, design choices, retained loot, coin exchanges, and five-second construction. |
+| Deliberately directed design | Original coastal pixel assets and the owner's documented revisions cover character proportions, floating supplies, mobile navigation, road width/motion, and construction progress. |
 
 ## Requirements checked against the organizer
 
@@ -47,5 +80,5 @@ Choose which actions to show before recording so the result is easy to follow.
 This is a technical capture checklist, not narration or pitch wording.
 
 Demo URL: not supplied.
-Devpost draft URL: not supplied.
-Final submission confirmation: not supplied.
+Devpost draft URL: https://devpost.com/software/island-rush
+Final submission confirmation: not supplied; draft remains unsubmitted.
