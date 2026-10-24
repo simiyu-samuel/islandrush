@@ -58,8 +58,11 @@ Build is actionable when affordable and replaces Gather supplies in the fixed
 construction action area. A larger selected-design preview and its description
 help players compare the two designs. A secondary action still allows running
 for more supplies when a build is affordable. Building sites are numbered isometric
-footprints with visible survey stakes and selected/locked states on a larger
-island composition. Locked level-2 plots explain that finishing
+footprints with survey stakes and selected/locked states, at a smaller scale
+within a large connected road-network island. The map has multiple landscaped
+and open blocks, a waterfront, inlet, and footbridge; these are scenery rather
+than additional buildable projects. Drag and zoom controls explore the map,
+with a reset view and automatic focus when construction begins. Locked level-2 plots explain that finishing
 the home unlocks them.
 
 ### Timed Run

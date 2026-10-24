@@ -3,7 +3,7 @@ import { BUILDING_ART } from '../art';
 import type { GameBridge } from '../bridge';
 
 const ASSETS = {
-  island: 'world/island-v1.png',
+  island: 'world/island-township-v2.png',
   route: 'world/route-v1.png',
   courier: 'courier/run-v1.png',
   ...Object.fromEntries(Object.entries(BUILDING_ART).map(([key, path]) => [key, path.replace('/assets/', '')])),

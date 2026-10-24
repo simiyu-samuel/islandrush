@@ -1,6 +1,7 @@
 import type { IslandController } from '../controller';
 import { BUILDINGS, BUILDING_IDS, MATERIALS, PURCHASES, RUN_DURATION } from '../model/catalog';
 import { BUILDING_ART } from '../game/art';
+import { MAP_CAMERA_EVENT } from '../game/islandMap';
 import { getTargetMaterials } from '../model/progress';
 import type { StyleId, Wallet } from '../model/types';
 
@@ -123,10 +124,9 @@ export function mountUI(host: HTMLElement, c: IslandController) {
   }
 
   function islandView() {
-    const built = BUILDING_IDS.filter(id => c.progress.buildings[id].built).length;
-    return '<div class="island-intro"><span class="eyebrow">PIXEL COAST / CHAPTER 0' + c.level + '</span><h1>' + (c.complete ? 'You made this.' : c.progress.buildings.home.built ? 'Make room for more.' : 'Small runs. Big beginnings.') + '</h1><p>Run the coast. Collect supplies. Build your island.</p><span class="audience-note">A little escape for runners &amp; island builders.</span></div>' +
+    return '<div class="island-intro"><span class="eyebrow">PIXEL COAST / LEVEL 0' + c.level + '</span><h1>' + (c.complete ? 'You made this.' : c.progress.buildings.home.built ? 'Make room for more.' : 'Your island, unfolding.') + '</h1><p>Run the coast. Collect supplies. Build your island.</p><span class="audience-note">A little escape for runners &amp; island builders.</span></div>' +
       (c.compact ? (c.settlementOpen ? buildingsScreen() : islandGoal()) + mobileNavigation() : construction()) +
-      '<div class="island-chapters" aria-label="Settlement progress"><div><span class="eyebrow">YOUR ISLAND STORY</span><strong>' + built + '<small> / 3 landmarks</small></strong></div>' + BUILDING_IDS.map((id, index) => button(id, '<span class="chapter-number">' + (c.progress.buildings[id].built ? icon('check') : '0' + (index + 1)) + '</span><span><strong>' + (id === 'home' ? 'A place to land' : id === 'workshop' ? 'A place to create' : 'A view to remember') + '</strong><small>' + (c.progress.buildings[id].built ? 'Built by you' : BUILDINGS[id].level > c.level ? 'Unlocks at level 2' : 'Ready for your plans') + '</small></span>', 'chapter ' + (c.progress.buildings[id].built ? 'finished' : c.selectedPlot === id ? 'current' : ''), c.progress.pendingConstruction ? 'disabled' : '')).join('') + '</div>' +
+      '<nav class="map-tools" aria-label="Island map controls">' + button('map-out', '−', 'map-tool', 'aria-label="Zoom island out"') + button('map-reset', icon('island'), 'map-tool', 'aria-label="Reset island view"') + button('map-in', '+', 'map-tool', 'aria-label="Zoom island in"') + '<span>Drag to explore</span></nav>' +
       '<footer class="island-footer"><span class="coast-label"><span></span>YOUR COAST. YOUR PACE.</span><span class="save-status">' + icon('check') + escape(c.saveMessage) + '</span>' + button('restart','Start over','text-button') + '</footer>';
   }
 
@@ -217,6 +217,7 @@ export function mountUI(host: HTMLElement, c: IslandController) {
     if (!target || target.hasAttribute('disabled')) return;
     event.preventDefault();
     switch (target.dataset.action) {
+      case 'map-in': case 'map-out': case 'map-reset': window.dispatchEvent(new CustomEvent(MAP_CAMERA_EVENT, { detail: target.dataset.action.slice(4) })); break;
       case 'buildings-nav': c.openSettlement(); requestAnimationFrame(() => ui.querySelector<HTMLButtonElement>('[data-action="close-buildings"]')?.focus({preventScroll:true})); break;
       case 'close-buildings': c.closeSettlement(); requestAnimationFrame(() => ui.querySelector<HTMLButtonElement>('[data-action="buildings-nav"]')?.focus({preventScroll:true})); break;
       case 'island-nav': c.island(); break;

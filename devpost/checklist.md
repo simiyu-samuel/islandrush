@@ -15,22 +15,26 @@ Save each verified slice as a local commit; keep private context and secrets ign
 
 ## Current checkpoint
 
-24 October visual revision: implementation and mechanical checks are complete;
-**new player visual review is pending**. The owner requested improvements to all
-three areas (overall identity, building experience, and runner), specifically
-calling out the small island and round building markers. The revision enlarges
-the island, introduces isometric marked sites, consolidates the interface theme,
-adds selected-building previews, promotes an affordable Build action, and focuses
-the runner HUD on its current task. The approved gameplay scope is unchanged.
+24 October reference-led island revision: the owner rejected the earlier
+enlarged three-plot composition and supplied a city-builder screenshot as a
+structural reference, explicitly keeping functional buildings and game rules
+unchanged. The active island now uses newly generated connected-road terrain,
+multiple small landscaped/open blocks, waterfront detail, and smaller existing
+building overlays. Removed the three-landmark strip. Added bounded view-only
+drag/zoom/reset controls and automatic framing when construction starts.
 
-All 72 unit/controller checks and the production build pass for this revision.
-The local server is running at http://127.0.0.1:5173/. Browser runtime validation
-and fresh screenshots remain unperformed under the previously recorded browser
-URL-policy block. The 23 October acceptance applies to the earlier build only.
+Production build and **75 unit/controller/map checks** pass. Three new geometry
+checks cover seven viewport sizes; these are not visual browser checks.
+The generated asset was inspected, but runtime/gesture review is still pending
+under the recorded local-preview URL-policy block. Earlier acceptance applies
+to the previous gameplay build, not this island design.
 
-- [x] Implement the requested UI/UX revision and run mechanical verification.
-- [ ] Player reviews larger island, site markers, building choices/actions, and
-  a run on desktop and mobile; record feedback and revise as needed.
+- [x] Generate and inspect original township terrain using the supplied reference
+  for structure, preserve its source and prompt, and integrate it into the scene.
+- [x] Preserve existing rules/saves and verify build plus bounded map geometry.
+- [x] Player approves the generated terrain direction ("Thats okay" on 24 October).
+- [ ] Player reviews the new road-network island and existing buildings, taps a
+  lot, drags/zooms/resets the view, and watches construction on phone and desktop.
 
 ## Slices
 
@@ -133,3 +137,12 @@ Activity mode: Actual feedback/revision investigation plus brief evidence-based 
   Preserved road width/motion, game rules, existing art, and save compatibility.
   Production build and all 72 unit/controller checks pass. New hands-on review
   remains pending; no fresh browser execution or screenshot is claimed.
+
+- 24 October reference-led correction: the owner rejected the first visual pass
+  as too basic and supplied a large city-builder map as structural guidance,
+  explicitly requesting UI work without extra functional buildings. Generated
+  original township terrain, placed existing sprites in small roadside lots,
+  removed the three-landmark strip, and added bounded map exploration. The first
+  two new test failures were floating-point assertion precision (-0 and a
+  subpixel rounding residue); corrected tolerances. Production build and all 75
+  tests now pass. Runtime gesture/layout approval remains pending.

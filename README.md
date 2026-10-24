@@ -4,17 +4,22 @@ A coastal runner and island builder, made as a fresh proof of concept for Build
 With AI: Basics. Run the coast, collect floating supplies, and turn them into
 visible progress on your island.
 
-## UI/UX revision — 24 October
+## Road-network island revision — 24 October
 
-The island is larger, with numbered isometric building sites and survey stakes
-instead of round plus markers. A bold ocean/cream/amber interface includes larger
-selected-design previews and a fixed Build action when supplies are ready. The
-runner focuses on its backpack, timer, and current supply goal, with pickup
-quantity feedback. The opening screen explains the core loop immediately.
+The island is now a larger township landscape with connected roads, smaller
+grass blocks, parks, waterfront paths, an inlet and footbridge. The existing
+home, workshop, and lookout sit at a smaller scale in real lots; no new
+functional buildings or gameplay systems were added. Drag to explore, use +/−
+to zoom, or reset the view with the island button. Starting construction brings
+that lot into view. The former three-landmark map strip has been removed.
 
-Production build and all 72 unit/controller checks pass. This visual revision
-awaits fresh player review; the previous version's acceptance does not validate
-the new layout or motion. Browser runtime checks remain blocked as described below.
+The selected-building preview, fixed affordable Build action, and focused runner
+HUD remain. Source and generation prompt are in
+[the terrain record](design/township-island-v2.md).
+
+Production build and all 75 unit/controller/map checks pass. This reference-led
+composition follows the owner's rejection of the previous visual pass and awaits
+fresh player review. Browser runtime checks remain unperformed as described below.
 
 ## Current playable checkpoint
 

@@ -16,7 +16,7 @@ and unlocks. A small HTML/CSS interface supplies readable controls and panels.
 Vite runs the project locally and produces the distributable browser build.
 
 The runner uses 2D sprites positioned with perspective to suggest depth; the
-island uses a fixed isometric composition. This is a fixed-view 2D implementation plan,
+island uses a fixed isometric projection with bounded map pan and zoom. This is a 2D implementation plan,
 suited to the approved pixel-art direction, with emphasis on composition,
 animation, controls, and feedback.
 
@@ -111,22 +111,28 @@ pickups, and UI accents: turquoise water, warm coastal light, clear silhouettes,
 spacious plots/paths, compact cream/wood-accented panels, and readable lettering.
 The mature courier proportions and floating pickups are required visual cues.
 
-24 October design revision: use bold system sans headings, deep ocean HUDs,
-cream construction surfaces, and amber selection/action accents. The opening
-screen explains the run/collect/build loop and its audience. Enlarge the island
-composition and move compact-layout home/workshop anchors inward. Construction
-sites use numbered isometric footprints with survey stakes, selected/locked
-labels, and completed-state labels rather than circular plus markers. Desktop
-has a three-landmark story strip; mobile retains separate Buildings navigation.
-The construction panel includes a large selected-design preview and the catalog
-description. Its fixed action becomes Build when the selected project is ready;
-otherwise Gather supplies remains available. Mobile uses its fixed sheet action.
-The runner hides island inventory, groups time/backpack/Pause in one HUD, and
-shows progress toward the selected recipe using saved stock plus current loot.
-Quantity labels accompany pickups, respecting reduced motion; they do not grant
-rewards. Preserve the reviewed road projection and continuous deck motion.
-This revision requires fresh player visual review; earlier acceptance does not
-validate it.
+24 October design revision retains the ocean/cream/amber interface, selected
+building preview, catalog description, and fixed affordable Build action. The
+owner rejected merely enlarging the three-plot scene and supplied a city-builder
+image as a structural reference. The island now uses new original 4:3 terrain
+with connected streets, smaller grass blocks, parks, an inlet/bridge, pier, and
+promenade. Existing buildings occupy small roadside lots within the whole map;
+scenery does not introduce extra buildings, unlocks, levels, or currencies.
+
+`game/islandMap.ts` owns the active art aspect, normalized plot anchors, viewport,
+bounded drag offsets, and zoom limits. `IslandScene.ts` applies this transform to
+the terrain, sites, sprites, labels, and construction. Map controls dispatch
+view-only commands; pointer drags suppress plot selection, and newly started
+construction brings its lot into view. This camera state is not persisted.
+The three-landmark map strip has been removed. Mobile retains its separate
+Buildings screen and bottom navigation. The runner UI from the preceding revision
+retains time/backpack/Pause, recipe progress, and reduced-motion-aware pickup
+quantities. Road projection, game rules, and saves are unchanged.
+
+The new terrain asset was inspected directly. Mechanical camera tests cover
+initial plot bounds, overview, and bounded pan/zoom across seven viewport sizes.
+New player visual/gesture review is pending; no fresh browser screenshots or
+automated browser execution are claimed.
 
 Archived concept references:
 - design/reference/island-rush-visual-study-v1.png

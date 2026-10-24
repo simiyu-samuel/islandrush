@@ -7,10 +7,12 @@ entry has been submitted.
 
 On 24 October the owner requested another UI/UX pass across the island, building
 experience, and runner, including a larger island and non-round plot markers.
-That revision is implemented and passes the production build and 72 unit tests,
-but needs fresh player visual review. Earlier acceptance below is historical.
+The owner rejected the first composition and supplied a city-builder reference.
+The resulting connected-road terrain and map exploration pass the production
+build and 75 unit/controller/map checks, but need fresh player visual review. Earlier acceptance below is historical.
 The existing Devpost draft is saved; no final submission has been made.
-See `checklist.md > Current checkpoint` for the active review state.
+See `checklist.md > Current checkpoint` for the active review state. Refresh
+submission media and the draft test count after the player approves this design.
 
 ## Ready
 

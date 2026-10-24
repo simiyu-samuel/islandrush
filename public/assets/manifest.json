@@ -1,36 +1,4 @@
 {
-  "island": {
-    "path": "/assets/world/island-v1.png",
-    "width": 1536,
-    "height": 1024,
-    "source": "/home/simiyusamuel/.codex/generated_images/01a1625c-d908-7f11-ae43-3c3b1ad19184/exec-9351044c-5ce1-41af-80da-38d6937ced57.png",
-    "generation": "built-in image_gen",
-    "sourceDisposition": "moved into project",
-    "solidBounds": {
-      "x": 19,
-      "y": 18,
-      "width": 1499,
-      "height": 916
-    },
-    "alphaRange": [
-      0,
-      254
-    ],
-    "plotAnchors": {
-      "home": {
-        "x": 0.29,
-        "y": 0.55
-      },
-      "workshop": {
-        "x": 0.69,
-        "y": 0.55
-      },
-      "lookout": {
-        "x": 0.5,
-        "y": 0.32
-      }
-    }
-  },
   "route": {
     "path": "/assets/world/route-v1.png",
     "width": 1024,
@@ -292,5 +260,65 @@
       0,
       255
     ]
+  },
+  "islandLegacy": {
+    "path": "/assets/world/island-v1.png",
+    "width": 1536,
+    "height": 1024,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a1625c-d908-7f11-ae43-3c3b1ad19184/exec-9351044c-5ce1-41af-80da-38d6937ced57.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "moved into project",
+    "solidBounds": {
+      "x": 19,
+      "y": 18,
+      "width": 1499,
+      "height": 916
+    },
+    "alphaRange": [
+      0,
+      254
+    ],
+    "plotAnchors": {
+      "home": {
+        "x": 0.29,
+        "y": 0.55
+      },
+      "workshop": {
+        "x": 0.69,
+        "y": 0.55
+      },
+      "lookout": {
+        "x": 0.5,
+        "y": 0.32
+      }
+    },
+    "notes": "Archived three-clearing terrain; retained as original art reference. No longer loaded at runtime."
+  },
+  "island": {
+    "path": "/assets/world/island-township-v2.png",
+    "width": 1448,
+    "height": 1086,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-9a8954b9-40cb-4dd1-9724-a2054a25c57d.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied into project",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "plotAnchors": {
+      "home": {
+        "x": 0.442,
+        "y": 0.653
+      },
+      "workshop": {
+        "x": 0.402,
+        "y": 0.452
+      },
+      "lookout": {
+        "x": 0.746,
+        "y": 0.309
+      }
+    },
+    "notes": "Original road-network terrain inspired structurally by a user-supplied city-builder screenshot, not a recreation. Multiple landscaped/open blocks, connected streets, inlet, footbridge, and promenade; no additional functional buildings. Runtime map layout and pan/zoom live in src/game/islandMap.ts."
   }
 }
