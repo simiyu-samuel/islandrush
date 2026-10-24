@@ -74,7 +74,7 @@ Course generation is deterministic by row/range with stable entity IDs. Rows str
 
 Four original transparent 2×2 atlases supply all sixteen type frames. `art.ts` shares path/cell metadata between Phaser and HTML catalogue previews. Boot independently alpha-trims each cell; original generated PNGs remain byte-exact and retain real alpha. Legacy six style assets are still loaded. Prompts, sources, hashes and cell bounds are recorded in [the v4 art record](../design/settlement-art-v4.md) and [manifest](../public/assets/manifest.json).
 
-HTML provides semantic buttons, labels, space/job menus, result and fresh-start confirmation dialogs, keyboard focus containment, notices and polite announcements. Motion respects reduced-motion preference. Desktop shows a side panel; compact screens use separate management views and bottom navigation. Browser accessibility and responsive playtesting are verification tasks, not established by source alone.
+HTML provides semantic buttons, labels, space/job menus, result and fresh-start confirmation dialogs, keyboard focus containment, notices and polite announcements. Motion respects reduced-motion preference. Desktop shows a side panel; compact screens use separate management views and bottom navigation. The developer confirmed full end-to-end manual playtesting; mechanical and public-browser evidence is recorded in the verification section.
 
 ## Save validation and migration
 

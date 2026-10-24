@@ -6,10 +6,10 @@ Verified **24 October 2026**. Owner-authorized public release of the expanded se
 | --- | --- |
 | Public game | https://island-rush-six.vercel.app |
 | Target / status | Production · **READY** |
-| Source | **dde6c4d**, branch codex/island-rush; main expansion 9e4177e |
-| Immutable build | https://island-rush-hs77e933g-samueldevke.vercel.app |
-| Deployment ID | dpl_6FWwCJASDyQrvpZjuyn4s56F4SnK |
-| Dashboard | https://vercel.com/samueldevke/island-rush/6FWwCJASDyQrvpZjuyn4s56F4SnK |
+| Source | **b3b86e0**, branch codex/island-rush; building visibility follow-up; main expansion 9e4177e |
+| Immutable build | https://island-rush-idfv514pi-samueldevke.vercel.app |
+| Deployment ID | dpl_6sLeUVztwQgERUMrC4sLCKzenTki |
+| Dashboard | https://vercel.com/samueldevke/island-rush/6sLeUVztwQgERUMrC4sLCKzenTki |
 | Account/project | samueldevke / island-rush, existing Hobby account |
 | Build | Vite · Node 22.x · npm ci · npm run build · dist |
 | Game credentials/environment | No account, API key, backend or runtime environment variables required |
@@ -21,14 +21,14 @@ commits do not change this deployed game bundle.
 
 ## Verification
 
-All **99 model/controller/geometry checks**, TypeScript and production build pass.
+All **100 model/controller/geometry checks**, TypeScript and production build pass.
 Eleven updated Playwright journeys collect; they were **not executed as a full
 browser suite**. The existing Phaser bundle size warning remains informational.
 
 Anonymous HTTP requests, carrying no Vercel credentials or bypass link, verified
 the production HTML, **three emitted JS/CSS paths and twenty manifest PNG paths**:
 all returned 200 and expected content types. Final bundles include
-index-CkG_mJH8.js, index-yT4_rmSy.css and phaser-B_vcVLyb.js. Some manifest images
+index-BaZ6caz7.js, index-yT4_rmSy.css and phaser-B_vcVLyb.js. Some manifest images
 are retained archives; they are not all active runtime textures.
 
 The supported public browser was used for real desktop/phone observations:
@@ -79,3 +79,13 @@ The preceding three-building version was deployed from a1d2583 as
  dpl_E3ghDZ94vjandJeHY4bYKpqeqHwk. Expansion 9e4177e was first deployed as
  dpl_EJbB2d48nL5LcuPJ9w6yH2HJjfpy before the public-review corrections above.
 Neither is the current production bundle.
+
+## Building-scale and completed-playtest follow-up — 24 October
+
+The owner confirmed complete end-to-end playtesting and working functionality.
+Follow-up source b3b86e0 enlarges the architecture about 2.5×, spreads foundations
+and extends zoom to 4×. The normal and 2× close phone views plus normal desktop
+view were inspected on the public deployment; original saved buildings remained
+present and readable. Screenshots are in design/devpost/larger-buildings-*.jpg.
+No Devpost fields were changed for this follow-up: the owner requested paste-ready
+copy and will update the external submission directly.

@@ -37,7 +37,7 @@ The existing coastal runner art, endless pace, impact safety and controls are re
 
 Mechanical evidence: all **100 model/controller/geometry checks**, TypeScript
 and production build pass. Eleven updated Playwright journeys collect without
-launching a browser. Public production source **dde6c4d** is READY at
+launching a browser. Public production source **b3b86e0** is READY at
 https://island-rush-six.vercel.app. Anonymous checks passed for HTML, three emitted
 bundles and twenty PNGs. Public UI observations include desktop/phone catalog,
 purchase, placement/construction, completed save/reload, map-selected free moves,

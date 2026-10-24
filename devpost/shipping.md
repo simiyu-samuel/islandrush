@@ -22,7 +22,7 @@ production build pass. Eleven updated browser journeys collect but were not run
 as a full suite. Actual public interactions and responsive layout checks are
 listed in [deployment.md](deployment.md), along with anonymous 200/content-type
 checks for HTML, three bundles and twenty PNGs. Current deployed source is
-**dde6c4d**, Vercel status READY; later record-only commits do not change its code.
+**b3b86e0**, Vercel status READY; later record-only commits do not change its code.
 
 README, scope, PRD, spec, game guide, app map, checklist, design index, submission
 story and contribution reflect the expansion. Discovery notes and older build

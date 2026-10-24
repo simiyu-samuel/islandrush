@@ -52,7 +52,7 @@ npm run build
 npm run preview
 ```
 
-`npm run test:browser` runs the Playwright suite when browser access is available. Test collection is separate from browser execution. No fixed pass count here substitutes for the current recorded check results.
+`npm run test:browser` runs the Playwright suite. Detailed manual, automated and deployment evidence is recorded in [the checklist](devpost/checklist.md).
 
 ## Architecture and assets
 

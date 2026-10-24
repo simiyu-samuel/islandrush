@@ -1,3 +1,19 @@
+# Latest building-scale captures — 24 October 2026
+
+Source **b3b86e0**, public production https://island-rush-six.vercel.app.
+Architecture is about 2.5× its earlier width, with more space between foundations
+and zoom up to 4×. These are unaltered screenshots of the actual saved island.
+
+- larger-buildings-desktop.jpg: 1366×768, normal scale.
+- larger-buildings-phone.jpg: 390×844, normal scale.
+- larger-buildings-phone-zoom.jpg: 390×844, 2× close view.
+
+These follow the owner's full-game playtest and building-readability feedback.
+They are saved in the repo for review; no Devpost media or fields were changed
+for this follow-up because the owner will make the external update manually.
+
+## Previous expanded-game captures
+
 # Current settlement expansion captures — 24 October 2026
 
 Captured from actual deployed source **dde6c4d** at
