@@ -43,7 +43,7 @@ These are views of the same small game, not separate product modules.
 ### Island and Construction
 
 The island is the dominant scene, with the adult courier near the dock, clear
-paths, and three fixed building plots. Level, stored materials, and coins sit
+paths, and existing buildings placed among clear roadside grass blocks. Level, stored materials, and coins sit
 in compact status areas. The current goal and a main Run action remain easy to find.
 
 On desktop, selecting an available plot opens a compact construction panel
@@ -73,7 +73,13 @@ is hidden while running. A supply-goal readout shows saved stock plus the curren
 run's loot against the selected building recipe; pickup quantity labels explain
 what was collected. The last ten seconds also receive a distinct color cue. Group the loot
 counters compactly so they do not crowd the route. The course has
-exactly three lanes. The two visible dividers, pickups, obstacles, and courier
+exactly three lanes. A coastal jungle setting and the island on the horizon
+connect the run to home. The continuous stone trail, floating collectibles, and
+grounded blocks have distinct depth/shadow cues. Encounters are staggered rather
+than placing pickups and obstacles at the same depth. Slow roadside parallax and
+short scene transitions respect reduced motion. Island names/level remain in a
+contained header; floating building-name labels are removed from the map.
+The two visible dividers, pickups, obstacles, and courier
 share the same road perspective; the entire road surface moves, including
 both outer lanes. Portrait and landscape layouts keep the HUD and touch
 controls clear of the play area. The player runs forward automatically and controls lane changes
@@ -196,8 +202,14 @@ surplus materials after construction. The initial coin balance is zero.
 
 Initial design set: two visual designs for each of the home, workshop, and
 lookout. Previewing/selecting a design changes its appearance, with the same cost
-for both designs of a building. Fixed plots and paths preserve a readable island
-composition; a free-placement editor is deferred.
+for both designs of a building. Players may choose among eight inspected clear
+grass blocks and relocate a completed building for free. Choose location / Move
+building opens a ghost preview; select a block by map tap or accessible block
+button, flip facing to align with the road, then confirm or cancel. Occupied or
+explicitly reserved blocks are unavailable; roads, water, and gardens are excluded.
+Moves preserve completion and stock. Pending construction temporarily locks
+placement. Save confirmed location/facing; cancel never mutates the saved island.
+Fully unconstrained terrain placement and terrain editing remain deferred.
 
 Initial balance values:
 
@@ -242,7 +254,7 @@ because it resets that browser's saved island. Cross-device synchronization and
 player accounts are outside this first version.
 
 Sources for these behavior groups: `scope.md > The Core Loop`,
-`Agreed Level Progression`, and `The POC Boundary`. The timing, inputs, recipes, exchange prices, layouts, fixed placement, style
+`Agreed Level Progression`, and `The POC Boundary`. The timing, inputs, recipes, exchange prices, layouts, grass-block placement and relocation (24 October revision), style
 count, and persistence behavior were approved with this product plan. Terminal
 collisions, retaining collected materials, and coin-to-material purchasing were
 explicit revisions supplied by the learner.
@@ -298,7 +310,7 @@ added collectible coins that purchase materials.
 
 The learner approved the revised product plan, including the guided opening,
 60-second runs, three lanes plus jumping, desktop/touch controls, two styles per
-building, fixed plots, starting recipes and exchange prices, retained coins on
+building, initially fixed plots (superseded by the 24 October placement request), starting recipes and exchange prices, retained coins on
 collision, same-browser saving/restart, and coherent pixel-art treatment.
 
 ## What We're Building and Deferred Work
@@ -310,8 +322,8 @@ construction. Prioritize readability, coherent identity, responsive controls,
 and purposeful feedback. Coin purchases do not add more levels or building types.
 
 Additional courses, levels, and a larger building/design library are deferred by
-the approved scope. A free-placement editor, accounts, and cross-device saving
-are agreed deferrals to keep this first version focused. No architecture
+the approved scope. Fully unconstrained terrain editing, accounts, and cross-device saving
+remain deferrals to keep this first version focused. No architecture
 or service selection is implied by this product draft.
 
 ## Handoff to the Technical Plan

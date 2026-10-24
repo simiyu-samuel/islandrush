@@ -102,7 +102,8 @@ end-to-end game while accommodating the learner's added requirements:
 
 - Timed runs that end on timeout or obstacle impact, retaining collected materials.
 - Collected coins can buy eligible materials within the island's construction flow.
-- A choice of building styles/designs.
+- A choice of building styles/designs, locations among clear grass blocks, and
+  free relocation of finished buildings with either road-facing orientation.
 - Level-gated buildings and appropriate material pickups.
 - Material requirements shown for unfinished construction.
 - A choice to build after a run or continue collecting through another run.
@@ -112,6 +113,12 @@ The agreed first-version progression has two levels and three buildings on one
 short course. A small set of visual building designs will demonstrate player
 choice. Exact style counts, run duration, and resource amounts will be specified
 in the PRD; the scope does not promise a large content library.
+
+24 October revision: the owner explicitly requested player-chosen locations and
+confirmed using clear grass blocks while keeping roads/water/landscaping clear.
+This adds a small placement/move interface within the existing three-building
+scope. The runner adopts a coastal jungle presentation and spaced encounters;
+the one-course loop, collision/loot rules, recipes, and levels are retained.
 
 ## Later
 

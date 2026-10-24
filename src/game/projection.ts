@@ -1,4 +1,5 @@
 export const LOOK_AHEAD = 115;
+export const DEPTH_EXPONENT = 1.6;
 
 export interface RouteLayout {
   width: number;
@@ -59,7 +60,7 @@ export function projectRoute(
 ): { x: number; y: number; scale: number; visible: boolean } {
   const relative = z - distance;
   const t = Math.max(0, 1 - relative / LOOK_AHEAD);
-  const depth = t * t;
+  const depth = Math.pow(t, DEPTH_EXPONENT);
   const roadWidth = layout.horizonWidth + (layout.stageWidth - layout.horizonWidth) * depth;
   return {
     x: layout.centerX + lane * roadWidth / 3,

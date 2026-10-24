@@ -8,5 +8,5 @@ export const BUILDING_ART: Record<StyleId, string> = {
   lighthouse: '/assets/buildings/lookout-lighthouse-v1.png',
   watchtower: '/assets/buildings/lookout-watchtower-v1.png',
 };
-export const buildingWidth = (id: BuildingId, style: StyleId) =>
-  id === 'home' ? (style === 'bungalow' ? 0.235 : 0.22) : id === 'workshop' ? 0.20 : 0.115;
+export const buildingWidth = (id: BuildingId, _style: StyleId) =>
+  id === 'home' ? 0.097 : id === 'workshop' ? 0.095 : 0.054;

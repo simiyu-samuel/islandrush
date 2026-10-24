@@ -1,3 +1,4 @@
+import { buildingLot, lotOccupant, LOT_IDS, DEFAULT_LOTS, type LotId, type Facing } from './placement';
 import { BUILDING_IDS, BUILDINGS, MATERIALS, PURCHASES } from './catalog';
 import type { ActiveRun, BuildingId, CommandResult, Material, Progress, StyleId, TutorialStep, Wallet } from './types';
 
@@ -50,6 +51,21 @@ export function selectTarget(progress: Progress, id: BuildingId): CommandResult 
   if (!canTarget(progress, id)) return fail(progress, 'Finish your home to unlock this building.');
   return succeed(progress, { target: id }, BUILDINGS[id].name + ' selected.');
 }
+export function placeBuilding(progress: Progress, id: BuildingId, lot: LotId, facing: Facing): CommandResult {
+  if (progress.pendingConstruction) return fail(progress, 'Finish construction before moving a building.');
+  if (!BUILDINGS[id] || (!progress.buildings[id].built && !canTarget(progress, id))) return fail(progress, 'This building is not unlocked yet.');
+  if (!LOT_IDS.includes(lot) || !['left', 'right'].includes(facing)) return fail(progress, 'Choose a clear grass block.');
+  if (lotOccupant(progress, lot, id)) return fail(progress, 'That block already has a building or a saved plan.');
+  return succeed(progress, { buildings: { ...progress.buildings, [id]: { ...progress.buildings[id], lot, facing } } },
+    progress.buildings[id].built ? 'Building moved. Make the coast your own.' : 'Location saved. Your supplies will build here.');
+}
+
+function anchoredBuildings(progress: Progress, id: BuildingId) {
+  const lot = buildingLot(progress, id);
+  return lot === DEFAULT_LOTS[id] && !progress.buildings[id].lot ? progress.buildings :
+    { ...progress.buildings, [id]: { ...progress.buildings[id], lot } };
+}
+
 export function buildBuilding(progress: Progress, id: BuildingId): CommandResult {
   if (progress.pendingConstruction) return fail(progress, 'Wait for the current building to finish.');
   if (!BUILDINGS[id]) return fail(progress, 'That building is not available.');
@@ -63,7 +79,8 @@ export function buildBuilding(progress: Progress, id: BuildingId): CommandResult
   return completeBuilding(progress, id, wallet);
 }
 function completeBuilding(progress: Progress, id: BuildingId, wallet = progress.wallet): CommandResult {
-  const buildings = { ...progress.buildings, [id]: { ...progress.buildings[id], built: true } };
+  const anchored = anchoredBuildings(progress, id);
+  const buildings = { ...anchored, [id]: { ...anchored[id], built: true } };
   const next = { ...progress, buildings };
   const target = progress.target !== id && progress.target && canTarget(next, progress.target)
     ? progress.target : BUILDING_IDS.find(candidate => canTarget(next, candidate)) ?? null;
@@ -83,7 +100,7 @@ export function beginConstruction(progress: Progress, id: BuildingId, now = Date
   }
   const wallet = { ...progress.wallet, timber: progress.wallet.timber - recipe.timber, stone: progress.wallet.stone - recipe.stone };
   return succeed(progress, {
-    wallet, target: id,
+    wallet, target: id, buildings: anchoredBuildings(progress, id),
     pendingConstruction: { buildingId: id, startedAt: now, completesAt: now + CONSTRUCTION_DURATION_MS },
   }, BUILDINGS[id].name + ' is under construction.');
 }

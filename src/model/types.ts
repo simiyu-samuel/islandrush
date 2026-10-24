@@ -1,10 +1,11 @@
+import type { LotId, Facing } from './placement';
 
 export type Material = 'timber' | 'stone';
 export type BuildingId = 'home' | 'workshop' | 'lookout';
 export type StyleId = 'cottage' | 'bungalow' | 'forge' | 'studio' | 'lighthouse' | 'watchtower';
 export type Lane = -1 | 0 | 1;
 export interface Wallet { timber: number; stone: number; coins: number }
-export interface BuildingState { style: StyleId; built: boolean }
+export interface BuildingState { style: StyleId; built: boolean; lot?: LotId; facing?: Facing }
 export interface PendingConstruction { buildingId: BuildingId; startedAt: number; completesAt: number }
 export type TutorialStep = 'welcome' | 'choose-style' | 'first-run' | 'results' | 'build';
 export interface TutorialState { completed: TutorialStep[]; skipped: boolean }

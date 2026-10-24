@@ -40,6 +40,7 @@ export class RunScene extends Phaser.Scene {
     const unbind = bindRunnerInput(this.game.canvas, this.bridge);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, unbind);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => { this.views.clear(); this.previousEntities.clear(); });
+    if (!this.bridge.read().reducedMotion) this.cameras.main.fadeIn(240,21,68,74);
     this.paint(this.bridge.read(), 0);
   }
 
@@ -76,18 +77,20 @@ export class RunScene extends Phaser.Scene {
       }
       // At the model's 1.05-unit jump clearance, the boots must visibly
       // clear the block, including on short phone screens.
-      const nearHeight = entity.kind === 'obstacle' ? Math.min(56, height * 0.075) : entity.kind === 'coin' ? 43 : 47;
+      const nearHeight = entity.kind === 'obstacle' ? Math.min(56, height * 0.075) : entity.kind === 'coin' ? 34 : 45;
       const spriteScale = nearHeight / actor.sprite.frame.realHeight;
       const bob = frame.reducedMotion || entity.kind === 'obstacle' ? 0 : Math.sin(frame.elapsed * 3.8 + entity.z * 0.25) * 5;
-      const lift = entity.kind === 'obstacle' ? 0 : 32 + bob;
-      actor.container.setPosition(point.x, point.y).setScale(point.scale).setDepth(point.y);
+      const lift = entity.kind === 'obstacle' ? 0 : (entity.kind === 'coin' ? 41 : 48) + bob;
+      actor.container.setPosition(point.x, point.y).setScale(point.scale).setDepth(point.y).setAlpha(Phaser.Math.Clamp((point.scale - 0.04) / 0.13, 0, 1));
       actor.sprite.setScale(spriteScale).setPosition(0, -lift);
       actor.sprite.setAngle(entity.kind === 'timber' && !frame.reducedMotion ? Math.sin(frame.elapsed * 2.1 + entity.z) * 3 : 0);
       const visualWidth = actor.sprite.displayWidth;
       actor.shadow.setSize(Math.max(22, visualWidth * 0.76), entity.kind === 'obstacle' ? 14 : 10)
         .setAlpha(entity.kind === 'obstacle' ? 0.3 : 0.16);
-      actor.glow.setPosition(0, -lift - nearHeight * 0.45).setSize(visualWidth * 1.38, nearHeight * 1.2)
-        .setAlpha(entity.kind === 'obstacle' ? 0 : 0.14 + (frame.reducedMotion ? 0 : Math.sin(frame.elapsed * 3 + entity.z) * 0.025));
+      actor.glow.setPosition(0, entity.kind === 'obstacle' ? -2 : -lift - nearHeight * 0.45)
+        .setSize(visualWidth * 1.3, entity.kind === 'obstacle' ? 12 : nearHeight * 1.2)
+        .setFillStyle(entity.kind === 'obstacle' ? 0xe4a85d : entity.kind === 'coin' ? 0xffdc71 : 0x9ce6d0)
+        .setAlpha(entity.kind === 'obstacle' ? 0.28 : 0.18 + (frame.reducedMotion ? 0 : Math.sin(frame.elapsed * 3 + entity.z) * 0.02));
     }
     for (const [id, actor] of this.views) {
       if (live.has(id)) continue;

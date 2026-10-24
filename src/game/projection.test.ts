@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LOOK_AHEAD, projectRoute, routeLayout, sceneryTransform } from './projection';
+import { LOOK_AHEAD, DEPTH_EXPONENT, projectRoute, routeLayout, sceneryTransform } from './projection';
 
 describe('the three-lane boardwalk camera', () => {
   it.each([[390, 844], [320, 640], [844, 390], [1440, 900]])(
@@ -30,7 +30,7 @@ describe('the three-lane boardwalk camera', () => {
   it.each([[960, 640], [1440, 900], [1920, 1080]])(
     'leaves ocean visible beside the desktop road at %sx%s', (width, height) => {
       const camera = routeLayout(width, height);
-      const bottomRelative = LOOK_AHEAD * (1 - Math.sqrt((height - camera.horizonY) / (camera.baselineY - camera.horizonY)));
+      const bottomRelative = LOOK_AHEAD * (1 - Math.pow((height - camera.horizonY) / (camera.baselineY - camera.horizonY), 1 / DEPTH_EXPONENT));
       const left = projectRoute(-1.5, bottomRelative, 0, camera);
       const right = projectRoute(1.5, bottomRelative, 0, camera);
       expect(left.y).toBeCloseTo(height);
@@ -70,4 +70,13 @@ describe('the three-lane boardwalk camera', () => {
     expect(scenery.y + 267 * scenery.scale).toBeCloseTo(camera.horizonY);
     expect((1024 * scenery.scale) / (1536 * scenery.scale)).toBeCloseTo(2 / 3);
   });
+});
+
+
+it('gives separate encounters readable depth and avoids abrupt growth at the contact line', () => {
+  for (const [w,h] of [[320,640],[390,844],[1280,720]]) {
+    const camera=routeLayout(w!,h!);
+    expect(projectRoute(0,40,0,camera).y-projectRoute(0,54,0,camera).y).toBeGreaterThan(35);
+    expect(projectRoute(0,0,0,camera).scale-projectRoute(0,4,0,camera).scale).toBeLessThan(0.065);
+  }
 });

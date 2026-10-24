@@ -5,14 +5,15 @@ entry has been submitted.
 
 ## Current visual-review hold
 
-On 24 October the owner requested another UI/UX pass across the island, building
-experience, and runner, including a larger island and non-round plot markers.
-The owner rejected the first composition and supplied a city-builder reference.
-The resulting connected-road terrain and map exploration pass the production
-build and 75 unit/controller/map checks, but need fresh player visual review. Earlier acceptance below is historical.
-The existing Devpost draft is saved; no final submission has been made.
-See `checklist.md > Current checkpoint` for the active review state. Refresh
-submission media and the draft test count after the player approves this design.
+The 24 October placement/coastal-experience revision adds saved grass-block
+placement and free moves, removes floating building names, contains header text,
+and introduces jungle/coast scenery, a distant island, and staggered encounters.
+The owner confirmed the placement boundary. Production build and all 84 checks
+pass; runtime visual/gesture playtesting remains pending under the recorded
+browser restriction. See `checklist.md > Current checkpoint`.
+
+The saved Devpost draft has not been finally submitted. After design acceptance,
+refresh the story/test count and record the demo from this actual version.
 
 ## Ready
 

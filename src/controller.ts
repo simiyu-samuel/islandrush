@@ -1,4 +1,5 @@
-import { createProgress, getLevel, chooseStyle, beginConstruction, finishConstruction, settleRun, selectTarget, purchaseMaterials, canTarget, isSettlementComplete, completeTutorialStep, skipTutorial } from './model/progress';
+import { buildingLot, BUILDING_LOTS, lotOccupant, type LotId, type Facing } from './model/placement';
+import { createProgress, getLevel, placeBuilding, chooseStyle, beginConstruction, finishConstruction, settleRun, selectTarget, purchaseMaterials, canTarget, isSettlementComplete, completeTutorialStep, skipTutorial } from './model/progress';
 import { createRun, advanceRun, moveRun, jumpRun, pauseRun, resumeRun } from './model/run';
 import { loadProgress, saveProgress } from './model/save';
 import type { ActiveRun, BuildingId, CommandResult, Progress, StorageAdapter, StyleId, Material, TutorialStep } from './model/types';
@@ -12,6 +13,7 @@ export class IslandController {
   selectedPlot: BuildingId = 'home';
   compact = window.matchMedia('(max-width: 959px)').matches;
   settlementOpen = false;
+  placement: { id: BuildingId; lot: LotId; facing: Facing } | null = null;
   private lastConstructionUpdate = 0;
   ready = false;
   error = '';
@@ -123,7 +125,7 @@ export class IslandController {
     }
   }
   selectPlot(id: BuildingId) {
-    if (this.view !== 'island') return;
+    if (this.view !== 'island' || this.placement) return;
     if (this.progress.pendingConstruction) {
       this.toast('Wait for the current building to finish.');
       return;
@@ -134,7 +136,31 @@ export class IslandController {
     else if (!this.progress.buildings[id].built) this.toast('Build your coastal home to unlock this level 2 project.');
     else this.emit();
   }
+  openPlacement() {
+    if (this.view !== 'island' || this.modal !== 'none' || this.progress.pendingConstruction) return;
+    const id = this.selectedPlot;
+    if (!this.progress.buildings[id].built && !canTarget(this.progress, id)) return;
+    this.placement = { id, lot: buildingLot(this.progress, id), facing: this.progress.buildings[id].facing ?? 'left' };
+    this.settlementOpen = false;
+    this.emit();
+  }
+  selectPlacementLot(lot: LotId) {
+    if (!this.placement || !Object.hasOwn(BUILDING_LOTS, lot)) return;
+    if (lotOccupant(this.progress, lot, this.placement.id)) { this.toast('That block is occupied. Choose a highlighted grass block.'); return; }
+    this.placement = { ...this.placement, lot };
+    this.emit();
+  }
+  flipPlacement() { if (this.placement) { this.placement = { ...this.placement, facing: this.placement.facing === 'left' ? 'right' : 'left' }; this.emit(); } }
+  cancelPlacement() { this.placement = null; this.emit(); }
+  confirmPlacement() {
+    if (!this.placement) return;
+    const { id, lot, facing } = this.placement;
+    const result = placeBuilding(this.progress, id, lot, facing);
+    if (result.ok) this.placement = null;
+    this.apply(result);
+  }
   build() {
+    if (this.placement) return;
     if (this.apply(beginConstruction(this.progress, this.selectedPlot))) {
       this.settlementOpen = false;
       this.toast('Construction started. Watch your island come to life.');
@@ -180,6 +206,7 @@ export class IslandController {
     }
   }
   startRun() {
+    if (this.placement) return;
     if (!this.ready || this.error || this.modal !== 'none') return;
     if (this.progress.pendingConstruction) { this.toast('Construction will be finished in a moment.'); return; }
     this.recordTutorial('welcome', 'choose-style', ...(this.view === 'results' ? ['results' as const] : []));
@@ -252,6 +279,7 @@ export class IslandController {
   }
   freshStart() {
     this.progress = createProgress();
+    this.placement = null;
     this.run = null;
     this.view = 'island';
     this.selectedPlot = 'home';
@@ -273,6 +301,8 @@ export class IslandController {
       wallet: this.progress.wallet,
       loot: this.run?.loot ?? { timber: 0, stone: 0, coins: 0 },
       buildings: this.progress.buildings,
+      buildingLots: { home: buildingLot(this.progress,'home'), workshop: buildingLot(this.progress,'workshop'), lookout: buildingLot(this.progress,'lookout') },
+      placement: this.placement,
       constructionBuilding: this.progress.pendingConstruction?.buildingId ?? null,
       constructionProgress: this.constructionProgress,
       settlementOpen: this.compact && this.settlementOpen,
@@ -284,6 +314,7 @@ export class IslandController {
     jump: () => this.jump(),
     pause: () => this.pause(),
     selectPlot: id => this.selectPlot(id),
+    selectLot: lot => this.selectPlacementLot(lot),
     onReady: () => { this.ready = true; this.emit(); },
     onError: message => { this.error = message; this.emit(); },
   };

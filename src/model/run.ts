@@ -5,6 +5,7 @@ import {
 import { getTargetMaterials } from './progress';
 import type { ActiveRun, Lane, Progress, RunEntity } from './types';
 
+export const FIRST_OBSTACLE_DISTANCE = 100;
 const laneValues: Lane[] = [-1, 0, 1];
 const contactOrder = (a: RunEntity, b: RunEntity) =>
   a.z - b.z || Number(b.kind === 'obstacle') - Number(a.kind === 'obstacle');
@@ -25,22 +26,22 @@ function createCourse(seed: number, materials: ActiveRun['materials']): RunEntit
   };
   const material = () => materials[Math.floor(random() * materials.length)]!;
   // Three readable pickups come before the first grounded obstacle.
-  for (const z of [12, 28, 44]) {
+  for (const z of [16, 44, 72]) {
     if (materials.length) add(material(), 0, z);
   }
-  add('coin', 0, 20);
-  add('coin', 0, 36);
-  add('obstacle', 0, 64);
-  if (materials.length) add(material(), -1, 80);
-  add('coin', -1, 88);
-  for (let z = 104, row = 0; z < RUN_DURATION * RUN_SPEED; z += 24, row++) {
+  add('coin', 0, 30);
+  add('coin', 0, 58);
+  add('obstacle', 0, FIRST_OBSTACLE_DISTANCE);
+  if (materials.length) add(material(), -1, 124);
+  add('coin', -1, 140);
+  for (let z = 164, row = 0; z < RUN_DURATION * RUN_SPEED - 32; z += 48, row++) {
     const hazardLane = laneValues[Math.floor(random() * laneValues.length)]!;
     const hasHazard = row % 3 !== 2;
-    if (hasHazard) add('obstacle', hazardLane, z);
+    if (hasHazard) add('obstacle', hazardLane, z + 32);
     const safe = hasHazard ? laneValues.filter(lane => lane !== hazardLane) : laneValues;
     const pickupLane = safe[Math.floor(random() * safe.length)]!;
     if (materials.length) add(material(), pickupLane, z);
-    add('coin', pickupLane, z + 9);
+    add('coin', pickupLane, z + 14);
   }
   return entities.sort(contactOrder);
 }

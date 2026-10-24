@@ -1,115 +1,126 @@
 import Phaser from 'phaser';
 import type { Frame } from './bridge';
-import { LOOK_AHEAD, projectRoute, sceneryTransform, type RouteLayout } from './projection';
+import { LOOK_AHEAD, projectRoute, type RouteLayout } from './projection';
 
-const BOARD_LENGTH = 12;
-const SOURCE_WIDTH = 1024;
-const SOURCE_HEIGHT = 1536;
+const JOINT_DISTANCE = 16;
+const BACKDROP_WIDTH = 1536;
+const BACKDROP_HEIGHT = 1024;
+const BACKDROP_HORIZON = 298;
 
-/**
- * This scene geometry reuses the approved route PNG without editing the asset.
- * Its sky/coast are preserved at native aspect. A continuous painted deck stays
- * stable while fine plank joins move through the shared perspective camera.
- * No animated texture tiles, posts, or ropes interrupt the running surface.
- */
+/** Coastal jungle layers share the road camera, with a slower outer canopy. */
 export class Boardwalk {
   private readonly water: Phaser.GameObjects.Graphics;
-  private readonly coast: Phaser.GameObjects.Mesh2D;
-  private readonly road: Phaser.GameObjects.Graphics;
+  private readonly backdrop: Phaser.GameObjects.Image;
+  private readonly blend: Phaser.GameObjects.Graphics;
+  private readonly trail: Phaser.GameObjects.Graphics;
   private readonly details: Phaser.GameObjects.Graphics;
-  private readonly coastSource = [
-    [0, 0], [1024, 0], [0, 267], [1024, 267],
-    [0, 267], [467, 267], [0, 603],
-    [557, 267], [1024, 267], [1024, 603],
-  ];
+  private readonly foliage: Phaser.GameObjects.Image[];
+  private readonly canopyMask: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene) {
     this.water = scene.add.graphics().setDepth(-40);
-    const coastVertices = this.coastSource.flatMap(([x, y]) => [x!, y!, x! / SOURCE_WIDTH, y! / SOURCE_HEIGHT]);
-    this.coast = scene.add.mesh2d(0, 0, 'route', coastVertices,
-      [0, 1, 2, 0, 1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9, 0])
-      .setOrigin(0, 0).setDepth(-35).setRenderAsTriangles(true);
-    this.road = scene.add.graphics().setDepth(-25);
+    this.backdrop = scene.add.image(0,0,'coastalBackdrop').setOrigin(0.5,0).setDepth(-35);
+    // Runtime framing only; original image bytes remain unchanged.
+    this.backdrop.setCrop(0,0,BACKDROP_WIDTH,640);
+    this.blend = scene.add.graphics().setDepth(-34);
+    this.trail = scene.add.graphics().setDepth(-25);
     this.details = scene.add.graphics().setDepth(-20);
+    this.canopyMask = scene.make.graphics({ x:0, y:0 }, false);
+    const mask = this.canopyMask.createGeometryMask();
+    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => { mask.destroy(); this.canopyMask.destroy(); });
+    this.foliage = Array.from({length:12}, (_,i) => scene.add.image(0,0,'jungleFoliage','content')
+      .setOrigin(0.5,1).setFlipX(i % 2 === 1).setMask(mask));
   }
 
   paint(frame: Frame, layout: RouteLayout): void {
-    this.paintOcean(frame, layout);
-    const camera = sceneryTransform(layout);
-    for (let index = 0; index < this.coastSource.length; index++) {
-      const point = this.coastSource[index]!;
-      this.coast.vertices[index * 4] = camera.x + point[0]! * camera.scale;
-      this.coast.vertices[index * 4 + 1] = camera.y + point[1]! * camera.scale;
+    const { width,height,horizonY } = layout;
+    this.paintOcean(frame,layout);
+    // Width-based framing keeps the island small and distant on a phone too.
+    const scale = width / BACKDROP_WIDTH;
+    const top = horizonY - BACKDROP_HORIZON * scale;
+    this.backdrop.setPosition(width/2,top).setDisplaySize(width,BACKDROP_HEIGHT*scale);
+    const end = top + 640 * scale;
+    this.blend.clear();
+    for (let i=0;i<24;i++) {
+      const y = end - 42 + i*2;
+      this.blend.fillStyle(this.seaColor(y,layout),i/23).fillRect(0,y,width,3);
     }
-    this.paintWood(layout);
-    this.paintEdges(frame, layout);
+    this.paintTrail(layout);
+    this.paintEdges(frame,layout);
+    const farLeft = projectRoute(-1.6,LOOK_AHEAD,0,layout);
+    const farRight = projectRoute(1.6,LOOK_AHEAD,0,layout);
+    const nearLeft = projectRoute(-1.6,-LOOK_AHEAD,0,layout);
+    const nearRight = projectRoute(1.6,-LOOK_AHEAD,0,layout);
+    const mask = this.canopyMask.clear().fillStyle(0xffffff);
+    mask.beginPath().moveTo(0,0).lineTo(farLeft.x,0).lineTo(farLeft.x,farLeft.y)
+      .lineTo(nearLeft.x,nearLeft.y).lineTo(0,height).closePath().fillPath();
+    mask.beginPath().moveTo(width,0).lineTo(farRight.x,0).lineTo(farRight.x,farRight.y)
+      .lineTo(nearRight.x,nearRight.y).lineTo(width,height).closePath().fillPath();
+    const travel = frame.reducedMotion ? 0 : frame.distance * 0.48;
+    for (let i=0;i<this.foliage.length;i++) {
+      const side = i%2===0 ? -1 : 1;
+      const relative = ((Math.floor(i/2)*26 - travel)%156+156)%156-18;
+      const point = projectRoute(side*1.92,relative,0,layout);
+      const tree = this.foliage[i]!;
+      tree.setVisible(relative < LOOK_AHEAD && point.y < height+170);
+      const displayHeight = Math.min(340,height*0.42) * point.scale;
+      tree.setPosition(point.x,point.y+12*point.scale).setScale(displayHeight/tree.frame.realHeight)
+        .setDepth(point.y-3).setAlpha(Math.min(1,point.scale*3));
+    }
   }
 
-  private paintWood(layout: RouteLayout): void {
-    const graphics = this.road;
-    graphics.clear();
-    const point = (lane: number, relative: number) => projectRoute(lane, relative, 0, layout);
-    const farLeft = point(-1.5, LOOK_AHEAD);
-    const farRight = point(1.5, LOOK_AHEAD);
-    const nearLeft = point(-1.5, -LOOK_AHEAD);
-    const nearRight = point(1.5, -LOOK_AHEAD);
-    // A single unbroken surface: only its quiet cross joins scroll.
-    graphics.fillStyle(0xc39761).beginPath().moveTo(farLeft.x, farLeft.y)
-      .lineTo(farRight.x, farRight.y).lineTo(nearRight.x, nearRight.y)
-      .lineTo(nearLeft.x, nearLeft.y).closePath().fillPath();
+  private paintTrail(layout: RouteLayout) {
+    const g=this.trail.clear();
+    const p=(lane:number,z:number)=>projectRoute(lane,z,0,layout);
+    const a=p(-1.5,LOOK_AHEAD),b=p(1.5,LOOK_AHEAD),c=p(1.5,-LOOK_AHEAD),d=p(-1.5,-LOOK_AHEAD);
+    // One continuous weathered-stone surface: no animated mesh or tile patches.
+    g.fillStyle(0xbda979).beginPath().moveTo(a.x,a.y).lineTo(b.x,b.y).lineTo(c.x,c.y).lineTo(d.x,d.y).closePath().fillPath();
   }
 
-  private paintEdges(frame: Frame, layout: RouteLayout): void {
-    const graphics = this.details;
-    graphics.clear();
-    const point = (lane: number, relative: number) => projectRoute(lane, relative, 0, layout);
-    const band = (lane: number, halfWidth: number, color: number, alpha = 1) => {
-      const points = [point(lane - halfWidth, LOOK_AHEAD), point(lane + halfWidth, LOOK_AHEAD),
-        point(lane + halfWidth, -LOOK_AHEAD), point(lane - halfWidth, -LOOK_AHEAD)];
-      graphics.fillStyle(color, alpha).beginPath().moveTo(points[0]!.x, points[0]!.y);
-      for (const edge of points.slice(1)) graphics.lineTo(edge.x, edge.y);
-      graphics.closePath().fillPath();
+  private paintEdges(frame:Frame,layout:RouteLayout) {
+    const g=this.details.clear();
+    const p=(lane:number,z:number)=>projectRoute(lane,z,0,layout);
+    const band=(lane:number,half:number,color:number,alpha=1)=>{
+      const a=p(lane-half,LOOK_AHEAD),b=p(lane+half,LOOK_AHEAD),c=p(lane+half,-LOOK_AHEAD),d=p(lane-half,-LOOK_AHEAD);
+      g.fillStyle(color,alpha).beginPath().moveTo(a.x,a.y).lineTo(b.x,b.y).lineTo(c.x,c.y).lineTo(d.x,d.y).closePath().fillPath();
     };
-    // Two restrained seams identify the three lanes; curbs remain straight.
-    for (const divider of [-0.5, 0.5]) band(divider, 0.006, 0x765536, 0.32);
-    for (const edge of [-1.5, 1.5]) {
-      band(edge, 0.035, 0x795335);
-      band(edge - Math.sign(edge) * 0.032, 0.012, 0xe3be84);
+    for (const edge of [-1.5,1.5]) {
+      band(edge+Math.sign(edge)*0.07,0.08,0x638460);
+      band(edge,0.028,0x716e4d);
+      band(edge-Math.sign(edge)*0.035,0.012,0xe0cf9c);
     }
-    const phase = frame.distance % BOARD_LENGTH;
-    for (let row = -10; row <= Math.ceil(LOOK_AHEAD / BOARD_LENGTH); row++) {
-      const relative = row * BOARD_LENGTH - phase;
-      if (relative > LOOK_AHEAD) continue;
-      const left = point(-1.46, relative);
-      if (left.y < layout.horizonY + 4 || left.y > layout.height + 2) continue;
-      const right = point(1.46, relative);
-      graphics.lineStyle(Math.max(0.5, left.scale), 0x795635, 0.23 * Math.min(1, (left.y - layout.horizonY) / 48))
-        .beginPath().moveTo(left.x, left.y).lineTo(right.x, right.y).strokePath();
+    for (const divider of [-0.5,0.5]) band(divider,0.005,0x746e50,0.28);
+    const phase=frame.distance%JOINT_DISTANCE;
+    for (let row=-10;row<=Math.ceil(LOOK_AHEAD/JOINT_DISTANCE);row++) {
+      const relative=row*JOINT_DISTANCE-phase;
+      if (relative>LOOK_AHEAD) continue;
+      const left=p(-1.46,relative),right=p(1.46,relative);
+      if (left.y<layout.horizonY+5 || left.y>layout.height+2) continue;
+      g.lineStyle(Math.max(0.5,left.scale),0x726b4c,0.19*Math.min(1,(left.y-layout.horizonY)/55))
+        .beginPath().moveTo(left.x,left.y).lineTo(right.x,right.y).strokePath();
     }
   }
 
-  private paintOcean(frame: Frame, layout: RouteLayout): void {
-    const { width, height, horizonY } = layout;
-    const graphics = this.water;
-    graphics.clear().fillStyle(0x239bdf).fillRect(0, 0, width, height);
-    const bands = 26;
-    for (let row = 0; row < bands; row++) {
-      const t = row / bands;
-      const color = Phaser.Display.Color.Interpolate.ColorWithColor(
-        Phaser.Display.Color.ValueToColor(0x139fcf), Phaser.Display.Color.ValueToColor(0x2bc3bd), bands, row,
-      );
-      graphics.fillStyle(Phaser.Display.Color.GetColor(color.r, color.g, color.b))
-        .fillRect(0, horizonY + (height - horizonY) * t, width, (height - horizonY) / bands + 1);
+  private seaColor(y:number,layout:RouteLayout) {
+    const t=Phaser.Math.Clamp((y-layout.horizonY)/(layout.height-layout.horizonY),0,1);
+    const color=Phaser.Display.Color.Interpolate.ColorWithColor(
+      Phaser.Display.Color.ValueToColor(0x159ed0),Phaser.Display.Color.ValueToColor(0x49cdbd),100,Math.round(t*100));
+    return Phaser.Display.Color.GetColor(color.r,color.g,color.b);
+  }
+
+  private paintOcean(frame:Frame,layout:RouteLayout) {
+    const {width,height,horizonY}=layout;
+    const g=this.water.clear().fillStyle(0x64c6e0).fillRect(0,0,width,height);
+    for (let row=0;row<32;row++) {
+      const y=horizonY+(height-horizonY)*row/32;
+      g.fillStyle(this.seaColor(y,layout)).fillRect(0,y,width,(height-horizonY)/32+1);
     }
-    const motion = frame.reducedMotion ? 0 : frame.elapsed * 2;
-    for (let index = 0; index < 80; index++) {
-      const t = ((index * 0.137 + motion * 0.003) % 1);
-      const y = horizonY + t * (height - horizonY);
-      const x = ((index * 137.19 + Math.sin(index + motion * 0.1) * 9) % (width + 100)) - 50;
-      const rippleWidth = (9 + index % 5 * 7) * (0.3 + t);
-      graphics.fillStyle(index % 3 === 0 ? 0xe1ffff : 0x60e0e0, index % 3 === 0 ? 0.48 : 0.38)
-        .fillRect(Math.round(x), Math.round(y), Math.round(rippleWidth), Math.max(1, Math.round(t * 3)));
-      if (index % 4 === 0) graphics.fillRect(Math.round(x + rippleWidth * 0.5), Math.round(y + 4), Math.round(rippleWidth * 0.4), 1);
+    const motion=frame.reducedMotion ? 0 : frame.elapsed*0.7;
+    for (let i=0;i<55;i++) {
+      const t=(i*0.137+motion*0.004)%1;
+      const y=horizonY+t*(height-horizonY);
+      const x=(i*137.19+Math.sin(i+motion*0.1)*7)%(width+60)-30;
+      g.fillStyle(0xd9fff0,0.16).fillRect(Math.round(x),Math.round(y),(8+i%5*6)*(0.3+t),2);
     }
   }
 }

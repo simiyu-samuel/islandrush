@@ -4,22 +4,25 @@ A coastal runner and island builder, made as a fresh proof of concept for Build
 With AI: Basics. Run the coast, collect floating supplies, and turn them into
 visible progress on your island.
 
-## Road-network island revision — 24 October
+## Placement and coastal runner — 24 October
 
-The island is now a larger township landscape with connected roads, smaller
-grass blocks, parks, waterfront paths, an inlet and footbridge. The existing
-home, workshop, and lookout sit at a smaller scale in real lots; no new
-functional buildings or gameplay systems were added. Drag to explore, use +/−
-to zoom, or reset the view with the island button. Starting construction brings
-that lot into view. The former three-landmark map strip has been removed.
+Choose **Choose location** before building, or **Move building** after completion.
+Select a highlighted grass block (or its block button), flip the facing, and
+confirm with **Place here**. Cancel keeps the previous layout. Eight clear blocks
+are available; occupied/reserved blocks, roads, water, and gardens stay clear.
+Moves are free and confirmed locations/facing survive reload. Old saves retain
+their original defaults. No new building types or levels were added.
 
-The selected-building preview, fixed affordable Build action, and focused runner
-HUD remain. Source and generation prompt are in
-[the terrain record](design/township-island-v2.md).
+The island has a contained status header and visual site cues without floating
+names. The runner uses a coastal jungle backdrop, a distant island, masked slow
+foliage, a continuous stone trail, softer perspective growth, and encounters at
+separate depths. Pickups float; grounded obstacles have a distinct ground cue.
 
-Production build and all 75 unit/controller/map checks pass. This reference-led
-composition follows the owner's rejection of the previous visual pass and awaits
-fresh player review. Browser runtime checks remain unperformed as described below.
+Production build and all **84 unit/controller/geometry checks** pass. Ten browser
+journeys collect but remain unexecuted under the recorded local-preview URL-policy
+block. The generated assets were inspected; gameplay/gesture review is pending.
+Exact scenery prompts and implementation notes are in
+[the coastal experience record](design/coastal-experience-v3.md).
 
 ## Current playable checkpoint
 
@@ -28,7 +31,7 @@ fresh player review. Browser runtime checks remain unperformed as described belo
 - A collision ends the run immediately. Both collision and timeout bank collected loot once.
 - Results offer Run again or Return to island; banked supplies survive browser reloads.
 - Home, workshop, and lookout, each with two original designs. Home unlocks level 2; the other two projects can be completed in either order. Build reserves its recipe once and shows five seconds of foundation/framing/roof work before the final building reveal, with a percentage bar above the structure. Pending construction survives reload.
-- A narrower desktop road with a continuous deck and subtle moving plank joins; mobile road width is preserved.
+- A narrower desktop road with a continuous stone trail and subtle moving joints; mobile road width is preserved.
 - Mobile Island/Buildings/Run bottom navigation, a separate Buildings screen, and phone portrait/landscape controls.
 - Short contextual first-play guidance: choose a design, gather supplies, then build. Skip at any point; completed actions are remembered.
 - Pause/focus handling and same-browser saves, with guarded save recovery and restart controls.

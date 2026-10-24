@@ -116,11 +116,13 @@ building preview, catalog description, and fixed affordable Build action. The
 owner rejected merely enlarging the three-plot scene and supplied a city-builder
 image as a structural reference. The island now uses new original 4:3 terrain
 with connected streets, smaller grass blocks, parks, an inlet/bridge, pier, and
-promenade. Existing buildings occupy small roadside lots within the whole map;
+promenade. Existing buildings occupy small player-selectable roadside lots within the whole map;
 scenery does not introduce extra buildings, unlocks, levels, or currencies.
 
-`game/islandMap.ts` owns the active art aspect, normalized plot anchors, viewport,
-bounded drag offsets, and zoom limits. `IslandScene.ts` applies this transform to
+`model/placement.ts` owns valid grass blocks, default/fallback lots, and occupancy.
+`game/islandMap.ts` owns the active art aspect, responsive viewport,
+bounded drag offsets, and zoom limits. Optional building lot/facing fields
+are validated and saved; previews remain local controller state until confirmed. `IslandScene.ts` applies this transform to
 the terrain, sites, sprites, labels, and construction. Map controls dispatch
 view-only commands; pointer drags suppress plot selection, and newly started
 construction brings its lot into view. This camera state is not persisted.
@@ -192,9 +194,13 @@ uses fps.smoothStep: false so the model receives actual active elapsed time
 rather than a frame-smoothed value that stretches runs on slower renderers.
 
 RunScene renders route layers, the adult courier, grounded obstacles, and floating
-pickups with correct depth/shadow cues. One camera spans all three boardwalk
-lanes. Use a continuous stable deck with subtle moving plank joins and straight
-curbs, avoiding warped texture tiles and moving ropes/posts. The desktop road
+pickups with correct depth/shadow cues. One camera spans three weathered-stone
+trail lanes. A separate coastal panorama shows the distant island; masked foliage
+moves at 48% route speed outside the road. The deck remains continuous, with quiet
+joints and mossy edges, avoiding animated meshes or overlapping road images.
+Depth exponent 1.6 softens near-player growth. Later material, coin, and obstacle
+positions are staggered at least 14 route units apart. The first obstacle is at
+100 units; speed, jump/contact rules, retained loot, and the 60-second limit remain. The desktop road
 leaves ocean visible on both sides (bottom width at most 58% of the viewport,
 capped at 780px); preserve the reviewed mobile width. Scenery preserves its aspect ratio on narrow screens. Readable spacing must leave achievable
 choices. Recalculate projection after resizing without resetting the run.
@@ -204,7 +210,14 @@ and Run Results.
 
 ### Island Scene and Construction Interface
 
-Draw the island and three plot states. Desktop keeps an HTML side panel;
+Draw the island and saved building positions. Eight approved grass-block anchors
+exclude streets/water/gardens. A view-only placement draft controls the translucent
+preview, facing flip, and highlighted free lots. Map taps or HTML block buttons
+select a candidate; confirm calls placeBuilding() and persists, cancel drops the
+draft. Disallow other builds/runs while previewing, and disallow moves during
+construction. Resolve a free fallback if an unbuilt default lot was occupied.
+Use tool signs/selected foundations instead of floating building-name labels.
+Place island title, level, and loop description inside a contained header. Desktop keeps an HTML side panel;
 below 960px, keep the map free and use an Island/Buildings/Run bottom bar.
 Buildings opens a separate scrollable screen; plot taps open the same screen.
 Use safe-area-aware layouts for phone portrait and landscape. The panel previews styles/costs, shows
@@ -252,7 +265,8 @@ Implements PRD > Saved Progress and Restart.
 Persistent ProgressV1:
 - version and updated timestamp;
 - wallet with timber, stone, coins;
-- home/workshop/lookout records: selected style ID and built flag;
+- home/workshop/lookout records: selected style ID, built flag, optional valid
+  grass-block lot ID, and optional left/right facing (absent fields retain legacy defaults);
 - active unfinished target, or none at completion;
 - optional pending construction with building ID, start time, and deadline;
 - completed/skipped guidance steps;
@@ -368,9 +382,11 @@ deployment during shipping.
 ## What Was Kept Small
 
 The approved one-course, two-level, three-building model uses two designs each,
-fixed plots, local browser progress, and an integrated materials purchase panel.
+eight selectable grass blocks for the same three buildings, local browser progress,
+and an integrated materials purchase panel.
 These have direct homes in the engine, UI, and small rule modules. Additional
-content, accounts, cross-device sync, and free placement remain deferred.
+content, accounts, cross-device sync, and fully unconstrained terrain placement
+remain deferred. Block placement/relocation was explicitly added by the owner.
 Local-first delivery is approved, with optional hosting later.
 
 ## Decisions and Open Issues

@@ -219,3 +219,32 @@ describe('guidance and save recovery', () => {
     expect(saves.size).toBe(0);
   });
 });
+
+
+describe('placement preview commands', () => {
+  it('keeps canceled previews out of saves and saves a confirmed position without spending stock', () => {
+    const c=ready();
+    c.openPlacement();
+    c.selectPlacementLot('ridge');
+    c.flipPlacement();
+    expect(c.placement).toMatchObject({lot:'ridge',facing:'right'});
+    expect(c.progress.buildings.home.lot).toBeUndefined();
+    c.cancelPlacement();
+    expect(c.progress.buildings.home.lot).toBeUndefined();
+    c.openPlacement();c.selectPlacementLot('ridge');c.confirmPlacement();
+    expect(c.placement).toBeNull();
+    expect(saved().buildings.home.lot).toBe('ridge');
+    expect(c.progress.wallet).toEqual({timber:0,stone:0,coins:0});
+    const reloaded=ready();
+    expect(reloaded.bridge.read().buildingLots.home).toBe('ridge');
+  });
+
+  it('does not start a run or build while a placement preview is pending', () => {
+    const c=ready();c.progress.wallet.timber=30;
+    c.openPlacement();c.startRun();c.build();
+    expect(c.view).toBe('island');
+    expect(c.run).toBeNull();
+    expect(c.progress.pendingConstruction).toBeNull();
+    expect(c.progress.wallet.timber).toBe(30);
+  });
+});

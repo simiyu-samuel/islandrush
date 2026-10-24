@@ -15,26 +15,27 @@ Save each verified slice as a local commit; keep private context and secrets ign
 
 ## Current checkpoint
 
-24 October reference-led island revision: the owner rejected the earlier
-enlarged three-plot composition and supplied a city-builder screenshot as a
-structural reference, explicitly keeping functional buildings and game rules
-unchanged. The active island now uses newly generated connected-road terrain,
-multiple small landscaped/open blocks, waterfront detail, and smaller existing
-building overlays. Removed the three-landmark strip. Added bounded view-only
-drag/zoom/reset controls and automatic framing when construction starts.
+24 October placement/coastal-experience revision: the owner requested choosing
+and moving buildings, road-aligned sprites, no floating names, a contained status
+header, coastal jungle runner scenery with a distant island, and clearer
+approaching-object spacing. They explicitly confirmed placement among clear
+grass blocks while keeping roads/water/landscaping clear.
 
-Production build and **75 unit/controller/map checks** pass. Three new geometry
-checks cover seven viewport sizes; these are not visual browser checks.
-The generated asset was inspected, but runtime/gesture review is still pending
-under the recorded local-preview URL-policy block. Earlier acceptance applies
-to the previous gameplay build, not this island design.
+Implemented eight-block placement, preview/flip/confirm/cancel, free relocation,
+save-compatible lot/facing fields, occupancy protection, clear map chrome, new
+original coastal/jungle art, stable stone trail, restrained outside parallax,
+gentler depth growth, and staggered encounters. One course, two levels, three
+buildings, recipes, collision/loot rules, and reviewed contact-line widths remain.
 
-- [x] Generate and inspect original township terrain using the supplied reference
-  for structure, preserve its source and prompt, and integrate it into the scene.
-- [x] Preserve existing rules/saves and verify build plus bounded map geometry.
-- [x] Player approves the generated terrain direction ("Thats okay" on 24 October).
-- [ ] Player reviews the new road-network island and existing buildings, taps a
-  lot, drags/zooms/resets the view, and watches construction on phone and desktop.
+Production build and **84 unit/controller/geometry checks** pass. Ten browser
+journeys collect but remain unexecuted under the recorded URL-policy block.
+Generated assets were inspected directly. New gameplay layout, placement
+gestures, alignment, and motion need player review; no screenshot/device
+coverage or final acceptance is claimed for this revision.
+
+- [x] Implement and mechanically verify placement, persistence, scenery, and spacing.
+- [ ] Player checks choosing/canceling/confirming a lot, flipping facing, moving a
+  finished building, reload persistence, header separation, and one runner session.
 
 ## Slices
 
@@ -146,3 +147,12 @@ Activity mode: Actual feedback/revision investigation plus brief evidence-based 
   two new test failures were floating-point assertion precision (-0 and a
   subpixel rounding residue); corrected tolerances. Production build and all 75
   tests now pass. Runtime gesture/layout approval remains pending.
+
+- 24 October placement/coastal-experience feedback: owner confirmed clear-block
+  placement and moving completed buildings. Added eight valid blocks, mirrored
+  facing, draft preview with cancel/confirm, free moves and occupancy guards,
+  legacy-compatible save metadata, tool signs without name labels, and a contained
+  header. Runner now uses two new original jungle/coast assets, distant-island
+  scenery, masked slower foliage, a continuous stone trail, softer projection,
+  and separated pickup/hazard depths. All 84 checks and production build pass;
+  ten browser journeys collect only. Player review was requested and is pending.

@@ -1,6 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
+import { FIRST_OBSTACLE_DISTANCE } from '../../src/model/run';
+import { RUN_SPEED } from '../../src/model/catalog';
 import { createProgress } from '../../src/model/progress';
 import { SAVE_KEY } from '../../src/model/save';
 import type { Progress } from '../../src/model/types';
@@ -55,11 +57,11 @@ async function expectPastFirstObstacle(page: Page) {
   await expect.poll(async () => {
     if (await page.getByRole('dialog', { name: 'A bump in the road.' }).isVisible()) {
       const duration = await page.getByText(/Active running time:/).textContent();
-      // The first block ends a centered run at 3.6s; a later collision is valid gameplay.
-      return Number(duration?.match(/([0-9.]+)s/)?.[1] ?? 0) > 3.6;
+      // A later collision is valid gameplay only after passing the first block.
+      return Number(duration?.match(/([0-9.]+)s/)?.[1] ?? 0) > FIRST_OBSTACLE_DISTANCE / RUN_SPEED;
     }
     const seconds = Number((await page.locator('#time-left').textContent())?.replace('s', ''));
-    return seconds <= 56;
+    return seconds <= Math.floor(60 - FIRST_OBSTACLE_DISTANCE / RUN_SPEED);
   }, { timeout: 12_000, message: 'Actual controls steer past the first center-lane obstacle' }).toBe(true);
 }
 

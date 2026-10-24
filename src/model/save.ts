@@ -1,3 +1,4 @@
+import { LOT_IDS, DEFAULT_LOTS } from './placement';
 import { BUILDING_IDS, BUILDINGS } from './catalog';
 import { CONSTRUCTION_DURATION_MS } from './progress';
 import type { LoadResult, Progress, SaveResult, StorageAdapter, TutorialStep } from './types';
@@ -27,9 +28,19 @@ export function validateProgress(value: unknown): value is Progress {
   if (!record(buildings) || !keysAre(buildings, BUILDING_IDS)) return false;
   for (const id of BUILDING_IDS) {
     const building = buildings[id];
-    if (!record(building) || !keysAre(building, ['style', 'built']) || typeof building.built !== 'boolean' ||
+    if (!record(building) || !keysAre(building, ['style', 'built', ...(Object.hasOwn(building, 'lot') ? ['lot'] : []), ...(Object.hasOwn(building, 'facing') ? ['facing'] : [])]) || typeof building.built !== 'boolean' ||
       !BUILDINGS[id].styles.some(style => style.id === building.style)) return false;
   }
+  for (const id of BUILDING_IDS) {
+    const state = buildings[id] as Record<string, unknown>;
+    if (Object.hasOwn(state, 'lot') && !LOT_IDS.includes(state.lot as typeof LOT_IDS[number])) return false;
+    if (Object.hasOwn(state, 'facing') && state.facing !== 'left' && state.facing !== 'right') return false;
+  }
+  const reserved = BUILDING_IDS.filter(id => {
+    const state = buildings[id] as Record<string, unknown>;
+    return state.built || state.lot !== undefined || (record(value.pendingConstruction) && value.pendingConstruction.buildingId === id);
+  }).map(id => (buildings[id] as Record<string, unknown>).lot ?? DEFAULT_LOTS[id]);
+  if (new Set(reserved).size !== reserved.length) return false;
   const built = (id: keyof Progress['buildings']) => (buildings[id] as { built: boolean }).built;
   if (!built('home') && (built('workshop') || built('lookout'))) return false;
   const complete = BUILDING_IDS.every(id => built(id));

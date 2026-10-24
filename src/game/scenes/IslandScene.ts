@@ -1,14 +1,14 @@
 import Phaser from 'phaser';
 import type { Frame, GameBridge, PlotId } from '../bridge';
+import { buildingWidth } from '../art';
 import { drawConstruction } from '../construction';
-import { BUILDINGS } from '../../model/catalog';
+import { BUILDING_LOTS, LOT_IDS, type LotId } from '../../model/placement';
 import { islandMapLayout, ISLAND_PLOTS, MAP_CAMERA_EVENT, type MapCameraCommand } from '../islandMap';
 
 type PlotView = {
   id: PlotId; x: number; y: number;
   container: Phaser.GameObjects.Container;
   site: Phaser.GameObjects.Graphics;
-  label: Phaser.GameObjects.Text;
   image: Phaser.GameObjects.Image;
   shadow: Phaser.GameObjects.Ellipse;
   wasBuilt: boolean;
@@ -22,12 +22,15 @@ export class IslandScene extends Phaser.Scene {
   private constructionMeter!: Phaser.GameObjects.Graphics;
   private constructionPercent!: Phaser.GameObjects.Text;
   private plots: PlotView[] = [];
+  private lots: { id: LotId; container: Phaser.GameObjects.Container; graphics: Phaser.GameObjects.Graphics }[] = [];
   private zoom = 1;
   private panX = 0;
   private panY = 0;
   private dragStart: { x: number; y: number; panX: number; panY: number } | null = null;
   private dragged = false;
   private lastConstruction: PlotId | null = null;
+  private lastPlacementLot: LotId | null = null;
+  private focusTarget: {x:number;y:number} | null = null;
 
   constructor(private readonly bridge: GameBridge) { super('island'); }
 
@@ -43,20 +46,23 @@ export class IslandScene extends Phaser.Scene {
     this.bindMapNavigation();
     this.plots = (Object.keys(ISLAND_PLOTS) as PlotId[]).map(id => ({ id, ...ISLAND_PLOTS[id] })).map(plot => {
       const site = this.add.graphics();
-      const label = this.add.text(0, 33, BUILDINGS[plot.id].name.toUpperCase(), {
-        fontFamily: 'Arial, sans-serif', fontSize: '10px', fontStyle: 'bold', color: '#fff4d1',
-        backgroundColor: '#173f49', padding: { x: 10, y: 7 },
-      }).setOrigin(0.5, 0);
-      const container = this.add.container(0, 0, [site, label]).setDepth(20);
+      const container = this.add.container(0, 0, [site]).setDepth(20);
       container.setSize(110, 88).setInteractive({ useHandCursor: true });
       container.on('pointerup', () => { if (!this.dragged) this.bridge.selectPlot(plot.id); });
       const shadow = this.add.ellipse(0, 0, 120, 36, 0x294d37, 0.17).setDepth(8);
       const image = this.add.image(0, 0, frame.buildings[plot.id].style, 'content').setOrigin(0.5, 0.91).setDepth(10);
       image.setInteractive({ useHandCursor: true });
       image.on('pointerup', () => { if (!this.dragged) this.bridge.selectPlot(plot.id); });
-      return { ...plot, container, site, label, image, shadow,
+      return { ...plot, container, site, image, shadow,
         wasBuilt: frame.buildings[plot.id].built, reveal: 1 };
     });
+    this.lots = LOT_IDS.map(id => {
+      const graphics = this.add.graphics();
+      const container = this.add.container(0,0,[graphics]).setDepth(9000).setSize(84,64).setInteractive({useHandCursor:true});
+      container.on('pointerup', () => { if (!this.dragged) this.bridge.selectLot(id); });
+      return { id, container, graphics };
+    });
+    if (!frame.reducedMotion) this.cameras.main.fadeIn(280, 21, 68, 74);
     this.paint(frame, 0, 0);
   }
 
@@ -73,12 +79,22 @@ export class IslandScene extends Phaser.Scene {
     const height = this.scale.height;
     const desktop = width >= 960;
     let map = islandMapLayout(width, height, this.zoom, this.panX, this.panY);
-    // Bring a newly started build into view, even after exploring another area.
-    if (frame.constructionBuilding && frame.constructionBuilding !== this.lastConstruction) {
-      const anchor = ISLAND_PLOTS[frame.constructionBuilding];
-      this.panX = (0.5 - anchor.x) * map.mapWidth;
-      this.panY = (0.5 - anchor.y) * map.mapHeight;
-      map = islandMapLayout(width, height, this.zoom, this.panX, this.panY);
+    // Previewing a lot and starting construction both bring that block into
+    // the open map area. Pointer dragging cancels this optional camera easing.
+    const focusLot = frame.placement && frame.placement.lot !== this.lastPlacementLot ? frame.placement.lot :
+      frame.constructionBuilding && frame.constructionBuilding !== this.lastConstruction ? frame.buildingLots[frame.constructionBuilding] : null;
+    if (focusLot) {
+      const anchor = BUILDING_LOTS[focusLot];
+      const target = islandMapLayout(width,height,this.zoom,(0.5-anchor.x)*map.mapWidth,(0.5-anchor.y)*map.mapHeight);
+      this.focusTarget = {x:target.panX,y:target.panY};
+    }
+    this.lastPlacementLot = frame.placement?.lot ?? null;
+    if (this.focusTarget) {
+      const amount=frame.reducedMotion ? 1 : Math.min(1,dt*10);
+      this.panX += (this.focusTarget.x-this.panX)*amount;
+      this.panY += (this.focusTarget.y-this.panY)*amount;
+      if (Math.hypot(this.focusTarget.x-this.panX,this.focusTarget.y-this.panY)<0.5) this.focusTarget=null;
+      map=islandMapLayout(width,height,this.zoom,this.panX,this.panY);
     }
     this.lastConstruction = frame.constructionBuilding;
     this.panX = map.panX; this.panY = map.panY;
@@ -95,32 +111,32 @@ export class IslandScene extends Phaser.Scene {
       const building = frame.constructionBuilding === plot.id;
       const unlocked = plot.id === 'home' || frame.buildings.home.built;
       const selected = frame.selectedPlot === plot.id;
-      const x = left + plot.x * islandWidth;
-      const y = top + plot.y * islandHeight;
+      const preview = frame.placement?.id === plot.id;
+      const lot = preview ? frame.placement!.lot : frame.buildingLots[plot.id];
+      const anchor = BUILDING_LOTS[lot];
+      const x = left + anchor.x * islandWidth;
+      const y = top + anchor.y * islandHeight;
       const anchorY = y + islandHeight * 0.012;
       plot.image.setTexture(state.style, 'content');
       const aspect = plot.image.frame.realHeight / plot.image.frame.realWidth;
-      const desiredWidth = islandWidth * (plot.id === 'home' ? 0.105 : plot.id === 'workshop' ? 0.10 : 0.055);
+      const desiredWidth = islandWidth * buildingWidth(plot.id,state.style);
       const spriteWidth = plot.id === 'lookout' ? Math.min(desiredWidth, islandHeight * 0.42 / aspect) : desiredWidth;
       const spriteHeight = spriteWidth * aspect;
-      plot.container.setPosition(x, y).setAlpha(unlocked ? 1 : 0.78).setDepth(y + 10);
+      plot.container.setPosition(x, y).setAlpha(unlocked ? 1 : 0.55).setDepth(state.built ? y - 0.5 : y + 10);
       this.paintPlot(plot.site, markerSize, selected, unlocked);
-      plot.site.setVisible(!building && !state.built);
-      plot.label.setY(markerSize * 0.33 + 9).setVisible(!building)
-        .setColor(selected ? '#173f49' : '#fff4d1')
-        .setBackgroundColor(selected ? '#f5ce79' : '#173f49')
-        .setText(BUILDINGS[plot.id].name.toUpperCase() + (state.built ? ' ✓' : unlocked ? '' : ' · L2'));
-      if (plot.container.input) plot.container.input.enabled = !frame.constructionBuilding && !(frame.settlementOpen && !desktop);
-      if (plot.image.input) plot.image.input.enabled = !frame.constructionBuilding && !(frame.settlementOpen && !desktop);
-      plot.image.setPosition(x, anchorY).setVisible(state.built).setDepth(y);
-      plot.shadow.setPosition(x, anchorY).setSize(spriteWidth * 0.78, spriteWidth * 0.22).setVisible(state.built || building).setDepth(y - 1);
+      plot.site.setVisible(!frame.placement && !building && (!state.built || selected));
+      if (plot.container.input) plot.container.input.enabled = !frame.placement && !frame.constructionBuilding && !(frame.settlementOpen && !desktop);
+      if (plot.image.input) plot.image.input.enabled = !frame.placement && !frame.constructionBuilding && !(frame.settlementOpen && !desktop);
+      plot.image.setPosition(x, anchorY).setVisible(state.built || preview).setDepth(y)
+        .setFlipX((preview ? frame.placement!.facing : state.facing ?? 'left') === 'right');
+      plot.shadow.setPosition(x, anchorY).setSize(spriteWidth * 0.78, spriteWidth * 0.22).setVisible(state.built || building || preview).setDepth(y - 1);
       if (state.built && !plot.wasBuilt) plot.reveal = frame.reducedMotion ? 1 : 0;
       plot.wasBuilt = state.built;
       plot.reveal = Math.min(1, plot.reveal + dt * 3.8);
-      if (state.built) {
+      if (state.built || preview) {
         plot.image.setTexture(state.style, 'content');
         const revealScale = frame.reducedMotion ? 1 : 0.84 + 0.16 * Phaser.Math.Easing.Back.Out(plot.reveal);
-        plot.image.setScale(spriteWidth / plot.image.frame.realWidth * revealScale).setAlpha(plot.reveal);
+        plot.image.setScale(spriteWidth / plot.image.frame.realWidth * revealScale).setAlpha(preview ? 0.65 : plot.reveal);
       }
       if (building) {
         this.construction.setDepth(y + 1);
@@ -130,19 +146,33 @@ export class IslandScene extends Phaser.Scene {
         this.paintConstructionMeter(x, anchorY, spriteHeight, state.built ? 1 : frame.constructionProgress ?? 0, width);
       }
     }
+    for (const view of this.lots) {
+      const draft = frame.placement;
+      const occupied = draft && (Object.keys(frame.buildings) as PlotId[]).some(id => id !== draft.id &&
+        (frame.buildings[id].built || frame.buildings[id].lot !== undefined || frame.constructionBuilding === id) && frame.buildingLots[id] === view.id);
+      view.container.setVisible(Boolean(draft && !occupied));
+      if (view.container.input) view.container.input.enabled = Boolean(draft && !occupied);
+      if (!draft || occupied) continue;
+      const anchor = BUILDING_LOTS[view.id];
+      view.container.setPosition(left + anchor.x * islandWidth, top + anchor.y * islandHeight);
+      this.paintPlot(view.graphics, markerSize, draft.lot === view.id, true);
+    }
   }
+
 
   private bindMapNavigation() {
     this.zoom = 1; this.panX = 0; this.panY = 0;
-    this.dragStart = null; this.dragged = false; this.lastConstruction = null;
+    this.dragStart = null; this.dragged = false; this.lastConstruction = null; this.lastPlacementLot = null; this.focusTarget=null;
     const command = (event: Event) => {
       const action = (event as CustomEvent<MapCameraCommand>).detail;
+      this.focusTarget=null;
       if (action === 'reset') { this.zoom = 1; this.panX = 0; this.panY = 0; }
       else if (action === 'in' || action === 'out') this.zoom = Math.max(0.65, Math.min(1.8, this.zoom + (action === 'in' ? 0.15 : -0.15)));
     };
     window.addEventListener(MAP_CAMERA_EVENT, command);
     const down = (pointer: Phaser.Input.Pointer) => {
       this.dragged = false;
+      this.focusTarget=null;
       this.dragStart = { x: pointer.x, y: pointer.y, panX: this.panX, panY: this.panY };
     };
     const move = (pointer: Phaser.Input.Pointer) => {

@@ -1,3 +1,4 @@
+import type { LotId, Facing } from '../model/placement';
 import type { BuildingState } from '../model/types';
 
 /** The renderer reads this snapshot; the controller alone changes game rules. */
@@ -23,6 +24,8 @@ export interface Frame {
   wallet: Resources;
   loot: Resources;
   buildings: Record<PlotId, BuildingState>;
+  buildingLots: Record<PlotId, LotId>;
+  placement: { id: PlotId; lot: LotId; facing: Facing } | null;
   constructionBuilding: PlotId | null;
   /** Five-second construction clock, or null when no build is underway. */
   constructionProgress: number | null;
@@ -38,6 +41,7 @@ export interface GameBridge {
   jump(): void;
   pause(): void;
   selectPlot(id: PlotId): void;
+  selectLot(id: LotId): void;
   onReady(): void;
   onError(message: string): void;
 }

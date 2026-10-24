@@ -10,7 +10,7 @@
       "x": 0.5,
       "y": 0.18
     },
-    "notes": "Sky and coast retain native aspect from this unchanged PNG. Boardwalk.ts draws one continuous deck with subtle moving plank joins and stable curbs; three lane centers, two dividers, and actors share one projection. Desktop road width is capped; the reviewed mobile width is preserved."
+    "notes": "Archived boardwalk panorama; no longer loaded. The active coastal jungle backdrop and foliage are separate original assets, with a continuous stone trail drawn through the shared camera."
   },
   "courier": {
     "path": "/assets/courier/run-v1.png",
@@ -320,5 +320,23 @@
       }
     },
     "notes": "Original road-network terrain inspired structurally by a user-supplied city-builder screenshot, not a recreation. Multiple landscaped/open blocks, connected streets, inlet, footbridge, and promenade; no additional functional buildings. Runtime map layout and pan/zoom live in src/game/islandMap.ts."
+  },
+  "coastalBackdrop": {
+    "path": "/assets/world/coastal-jungle-backdrop-v3.png",
+    "width": 1536,
+    "height": 1024,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-8903cd85-c396-421f-95d6-4f0bdd37d586.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied into project",
+    "notes": "Original coastal jungle runner scenery; no road/pickups baked into backdrop. See design/coastal-experience-v3.md for prompts."
+  },
+  "jungleFoliage": {
+    "path": "/assets/world/jungle-foliage-v3.png",
+    "width": 1254,
+    "height": 1254,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a15ea3-bfb6-7010-aa25-4f78f0d53296/exec-603247da-908f-4cf4-9d6a-7c8b709ea904.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied into project",
+    "notes": "Original coastal jungle runner scenery; no road/pickups baked into backdrop. See design/coastal-experience-v3.md for prompts."
   }
 }

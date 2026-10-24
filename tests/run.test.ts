@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createProgress } from '../src/model/progress';
-import { advanceRun, createRun, jumpRun, moveRun, pauseRun, resumeRun } from '../src/model/run';
+import { FIRST_OBSTACLE_DISTANCE, advanceRun, createRun, jumpRun, moveRun, pauseRun, resumeRun } from '../src/model/run';
 import { RUN_SPEED } from '../src/model/catalog';
 import type { RunEntity } from '../src/model/types';
 
@@ -77,5 +77,23 @@ describe('timed runner', () => {
     const generated = createRun(createProgress(), { seed: 99 });
     expect(generated.entities.some(item => item.kind === 'stone')).toBe(false);
     expect(generated.entities).toEqual(createRun(createProgress(), { seed: 99 }).entities);
+  });
+});
+
+
+describe('readable coastal encounters', () => {
+  it('separates pickup, coin, and hazard depths across generated courses', () => {
+    for (const seed of [0,1,42,99,9999]) {
+      const p=createProgress();
+      p.buildings.home.built=true;p.target='workshop';
+      const run=createRun(p,{seed});
+      for (let i=1;i<run.entities.length;i++) {
+        expect(run.entities[i]!.z-run.entities[i-1]!.z).toBeGreaterThanOrEqual(14);
+      }
+      const first=run.entities.find(e=>e.kind==='obstacle')!;
+      expect(first.z).toBe(FIRST_OBSTACLE_DISTANCE);
+      expect(first.z/RUN_SPEED).toBeGreaterThan(5);
+      expect(run.entities.some(e=>e.kind==='stone')).toBe(true);
+    }
   });
 });
