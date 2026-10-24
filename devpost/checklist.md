@@ -15,18 +15,22 @@ Save each verified slice as a local commit; keep private context and secrets ign
 
 ## Current checkpoint
 
-All three implementation slices are complete. On 23 October 2026 the player
-reported testing the current game successfully and asked to proceed. This is
-player acceptance of the delivered build, without a claim about unreported
-devices or individual edge cases. All 72 unit/controller checks and the
-production build pass at source commit `cf9590f`. Ten browser journeys collect
-but remain unexecuted under the tool URL-policy block; the player's hands-on
-confirmation supplies the reported runtime evidence, not automated-suite results.
+24 October visual revision: implementation and mechanical checks are complete;
+**new player visual review is pending**. The owner requested improvements to all
+three areas (overall identity, building experience, and runner), specifically
+calling out the small island and round building markers. The revision enlarges
+the island, introduces isometric marked sites, consolidates the interface theme,
+adds selected-building previews, promotes an affordable Build action, and focuses
+the runner HUD on its current task. The approved gameplay scope is unchanged.
 
-The focused learning activity used the actual road feedback/revision. The app
-map is generated, statically checked, linked, and queued to open in Codex.
-Shipping now needs the demo, human-written form answers, and
-actual submission; see `shipping.md`.
+All 72 unit/controller checks and the production build pass for this revision.
+The local server is running at http://127.0.0.1:5173/. Browser runtime validation
+and fresh screenshots remain unperformed under the previously recorded browser
+URL-policy block. The 23 October acceptance applies to the earlier build only.
+
+- [x] Implement the requested UI/UX revision and run mechanical verification.
+- [ ] Player reviews larger island, site markers, building choices/actions, and
+  a run on desktop and mobile; record feedback and revise as needed.
 
 ## Slices
 
@@ -119,3 +123,13 @@ Activity mode: Actual feedback/revision investigation plus brief evidence-based 
 - On 23 October the player explicitly reported: “Perfect its working have tested lets proceed.” Marked implementation, hands-on acceptance, and feedback resolution complete on that evidence; no specific device/edge-case coverage is inferred. Created the offline app map from `cf9590f`, statically checked its links/anchors, and queued it to open. Continued into shipping preparation; no deployment or submission was performed.
 
 - The owner approved MIT on 23 October. Added the exact reviewed license text as root LICENSE, set matching package metadata, and updated sharing records. The hackathon requirements were checked again while answering whether the game fits the brief; no runtime AI feature is stated as a project requirement. Demo/form/submission remain pending.
+
+- 24 October UI/UX feedback reopened visual review after shipping preparation.
+  The owner named all three areas and specifically requested a larger island
+  and better, non-round building markers. Implemented larger map composition,
+  inward mobile plot anchors, numbered isometric construction sites, consistent
+  ocean/cream/amber controls, larger design previews, a fixed affordable Build
+  action, and focused runner HUD with recipe progress and pickup quantities.
+  Preserved road width/motion, game rules, existing art, and save compatibility.
+  Production build and all 72 unit/controller checks pass. New hands-on review
+  remains pending; no fresh browser execution or screenshot is claimed.

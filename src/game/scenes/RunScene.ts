@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { Frame, GameBridge, RenderEntity } from '../bridge';
 import { bindRunnerInput } from '../input';
+import { MATERIAL_PICKUP_UNITS, COIN_PICKUP_UNITS } from '../../model/catalog';
 import { Boardwalk } from '../Boardwalk';
 import { projectRoute, routeLayout } from '../projection';
 
@@ -11,7 +12,7 @@ type EntityView = {
   glow: Phaser.GameObjects.Ellipse;
   kind: RenderEntity['kind'];
 };
-type Burst = { x: number; y: number; age: number };
+type Burst = { x: number; y: number; age: number; label: Phaser.GameObjects.Text };
 
 export class RunScene extends Phaser.Scene {
   private boardwalk!: Boardwalk;
@@ -59,6 +60,7 @@ export class RunScene extends Phaser.Scene {
       for (const actor of this.views.values()) actor.container.destroy();
       this.views.clear();
       this.previousEntities.clear();
+      for (const burst of this.bursts) burst.label.destroy();
       this.bursts = [];
       this.cameras.main.resetFX();
     }
@@ -91,7 +93,15 @@ export class RunScene extends Phaser.Scene {
       if (live.has(id)) continue;
       const before = this.previousEntities.get(id);
       const earned = before && before.kind !== 'obstacle' && !frame.entities.some(entity => entity.id === id) && Math.abs(before.z - frame.distance) < 5 && frame.phase === 'active';
-      if (earned && !frame.reducedMotion) this.bursts.push({ x: actor.container.x, y: actor.container.y - 40, age: 0 });
+      if (earned && !frame.reducedMotion) {
+        const x = actor.container.x, y = actor.container.y - 65;
+        const quantity = before.kind === 'coin' ? '+' + COIN_PICKUP_UNITS + ' coin' : '+' + MATERIAL_PICKUP_UNITS + ' ' + before.kind;
+        const label = this.add.text(x, y, quantity, {
+          fontFamily: 'Arial, sans-serif', fontSize: '13px', fontStyle: 'bold',
+          color: '#fff0bf', backgroundColor: '#173f49', padding: { x: 7, y: 5 },
+        }).setOrigin(0.5, 1).setDepth(100001);
+        this.bursts.push({ x, y, age: 0, label });
+      }
       actor.container.destroy();
       this.views.delete(id);
     }
@@ -136,10 +146,14 @@ export class RunScene extends Phaser.Scene {
 
   private paintBursts(dt: number, reducedMotion: boolean): void {
     this.sparks.clear();
-    if (reducedMotion) { this.bursts = []; return; }
-    this.bursts = this.bursts.filter((burst) => burst.age < 0.36);
+    this.bursts = this.bursts.filter(burst => {
+      if (reducedMotion || burst.age >= 0.65) { burst.label.destroy(); return false; }
+      return true;
+    });
+    if (reducedMotion) return;
     for (const burst of this.bursts) {
       burst.age += dt;
+      burst.label.setPosition(burst.x, burst.y - burst.age * 38).setAlpha(Math.min(1, (0.65 - burst.age) / 0.2));
       const progress = Math.min(1, burst.age / 0.36);
       for (let ray = 0; ray < 6; ray++) {
         const angle = ray * Math.PI / 3;

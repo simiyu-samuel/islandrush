@@ -54,13 +54,21 @@ and closing it returns to the island. The Run action remains easy to reach.
 The construction view previews the building designs, material costs, stored
 amounts, and what is still missing. An integrated material-purchase area shows
 eligible bundles, coin prices, and the remaining coin balance before purchase.
-Build is actionable when affordable. Locked level-2 plots explain that finishing
+Build is actionable when affordable and replaces Gather supplies in the fixed
+construction action area. A larger selected-design preview and its description
+help players compare the two designs. A secondary action still allows running
+for more supplies when a build is affordable. Building sites are numbered isometric
+footprints with visible survey stakes and selected/locked states on a larger
+island composition. Locked level-2 plots explain that finishing
 the home unlocks them.
 
 ### Timed Run
 
 The route, character, obstacles, and floating pickups dominate. The compact HUD
-shows time remaining, this run's materials and coins, and Pause. Group the loot
+shows time remaining, this run's materials and coins, and Pause. Island inventory
+is hidden while running. A supply-goal readout shows saved stock plus the current
+run's loot against the selected building recipe; pickup quantity labels explain
+what was collected. The last ten seconds also receive a distinct color cue. Group the loot
 counters compactly so they do not crowd the route. The course has
 exactly three lanes. The two visible dividers, pickups, obstacles, and courier
 share the same road perspective; the entire road surface moves, including

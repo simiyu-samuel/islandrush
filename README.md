@@ -4,6 +4,18 @@ A coastal runner and island builder, made as a fresh proof of concept for Build
 With AI: Basics. Run the coast, collect floating supplies, and turn them into
 visible progress on your island.
 
+## UI/UX revision — 24 October
+
+The island is larger, with numbered isometric building sites and survey stakes
+instead of round plus markers. A bold ocean/cream/amber interface includes larger
+selected-design previews and a fixed Build action when supplies are ready. The
+runner focuses on its backpack, timer, and current supply goal, with pickup
+quantity feedback. The opening screen explains the core loop immediately.
+
+Production build and all 72 unit/controller checks pass. This visual revision
+awaits fresh player review; the previous version's acceptance does not validate
+the new layout or motion. Browser runtime checks remain blocked as described below.
+
 ## Current playable checkpoint
 
 - One three-lane coastal course with an adult courier, jumping, and 60 seconds of active running.

@@ -3,6 +3,15 @@
 Checked 24 October 2026. This is a preparation record, not a claim that an
 entry has been submitted.
 
+## Current visual-review hold
+
+On 24 October the owner requested another UI/UX pass across the island, building
+experience, and runner, including a larger island and non-round plot markers.
+That revision is implemented and passes the production build and 72 unit tests,
+but needs fresh player visual review. Earlier acceptance below is historical.
+The existing Devpost draft is saved; no final submission has been made.
+See `checklist.md > Current checkpoint` for the active review state.
+
 ## Ready
 
 - [x] Working proof of concept: one course, two levels, three buildings, six designs, relevant floating materials, retained loot, explicit coin exchanges, and saved construction.
@@ -57,7 +66,7 @@ pasted recap; it does not claim the recording was watched.
 | Email check | Island Rush evidence / next action |
 | --- | --- |
 | Easy access without account creation | The game needs no account or API key. A live playable link would make access quicker; currently judges have the repo and the video is pending. Hosting remains an optional owner decision. |
-| Clear opening screen and audience | The approved scope identifies fans of short arcade runs and island building. Devpost's tagline explains the loop. The game intro is poetic ("A home on the horizon" / "A little adventure"); consider a direct run/collect/build sentence. No game code was changed during this review. |
+| Clear opening screen and audience | The approved scope identifies fans of short arcade runs and island building. Devpost's tagline explains the loop. The revised game intro states "Run the coast. Collect supplies. Build your island." and identifies runners/island builders. The revised layout awaits player review. |
 | Working app shown early in video | Start with design choice, a real run, banked loot, and the construction reveal; briefly show planning documents after gameplay. Capture the actual app rather than a simulated demo. |
 | Planning documents match implementation | Approved scope, PRD, and spec are in `devpost/`. They describe one course, two levels, three buildings, design choices, retained loot, coin exchanges, and five-second construction. |
 | Deliberately directed design | Original coastal pixel assets and the owner's documented revisions cover character proportions, floating supplies, mobile navigation, road width/motion, and construction progress. |
