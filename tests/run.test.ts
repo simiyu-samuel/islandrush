@@ -86,7 +86,7 @@ describe('readable coastal encounters', () => {
   it('separates pickup, coin, and hazard depths across generated courses', () => {
     for (const seed of [0,1,42,99,9999]) {
       const p=createProgress();
-      p.buildings.home.built=true;p.target='workshop';
+      p.target='artisan-workshop';
       const run=createRun(p,{seed});
       for (let i=1;i<run.entities.length;i++) {
         expect(run.entities[i]!.z-run.entities[i-1]!.z).toBeGreaterThanOrEqual(14);

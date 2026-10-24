@@ -338,5 +338,197 @@
     "generation": "built-in image_gen",
     "sourceDisposition": "original copied into project",
     "notes": "Original coastal jungle runner scenery; no road/pickups baked into backdrop. See design/coastal-experience-v3.md for prompts."
+  },
+  "settlement-civic": {
+    "path": "/assets/buildings/settlement-civic-v4.png",
+    "width": 1254,
+    "height": 1254,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a16d4b-f874-7512-b972-38c77a8bcd88/exec-ed6c3bb9-b676-43dc-8305-02ee4cc9f1cb.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied byte-for-byte into project",
+    "sha256": "0c7a19660da7430c690292af398a19009d523b4a5b092b490332edee56c8e218",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "columns": 2,
+    "rows": 2,
+    "frames": [
+      "town-hall",
+      "community-plaza",
+      "medical-clinic",
+      "visitor-lodge"
+    ],
+    "frameSolidBounds": [
+      {
+        "x": 35,
+        "y": 34,
+        "right": 625,
+        "bottom": 600
+      },
+      {
+        "x": 16,
+        "y": 141,
+        "right": 607,
+        "bottom": 601
+      },
+      {
+        "x": 38,
+        "y": 46,
+        "right": 608,
+        "bottom": 553
+      },
+      {
+        "x": 6,
+        "y": 16,
+        "right": 601,
+        "bottom": 589
+      }
+    ],
+    "notes": "Four original isometric building sprites; independent alpha trim per equal atlas cell at runtime. Exact prompts and rejected packing variants recorded in design/settlement-art-v4.md."
+  },
+  "settlement-production": {
+    "path": "/assets/buildings/settlement-production-v4.png",
+    "width": 1254,
+    "height": 1254,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a16d4b-f874-7512-b972-38c77a8bcd88/exec-968c2e2d-b0dc-46ff-9589-b6f6db3779fc.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied byte-for-byte into project",
+    "sha256": "68a034c0ed2e9eb4709d003f46677266944bd5682b876e6487a2322fe664d4de",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "columns": 2,
+    "rows": 2,
+    "frames": [
+      "lumber-yard",
+      "artisan-workshop",
+      "windmill-bakery",
+      "archipelago-pier"
+    ],
+    "frameSolidBounds": [
+      {
+        "x": 121,
+        "y": 184,
+        "right": 562,
+        "bottom": 564
+      },
+      {
+        "x": 84,
+        "y": 151,
+        "right": 519,
+        "bottom": 565
+      },
+      {
+        "x": 137,
+        "y": 50,
+        "right": 569,
+        "bottom": 528
+      },
+      {
+        "x": 79,
+        "y": 120,
+        "right": 514,
+        "bottom": 511
+      }
+    ],
+    "notes": "Four original isometric building sprites; independent alpha trim per equal atlas cell at runtime. Exact prompts and rejected packing variants recorded in design/settlement-art-v4.md."
+  },
+  "settlement-utility": {
+    "path": "/assets/buildings/settlement-utility-v4.png",
+    "width": 1254,
+    "height": 1254,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a16d4b-f874-7512-b972-38c77a8bcd88/exec-56b27fe9-5ccc-4d79-8712-75413c6f5f38.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied byte-for-byte into project",
+    "sha256": "7b90837c90e8effcf13a5de477b3309fc316fd00dfcb04bb425eb1aab7cc5806",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "columns": 2,
+    "rows": 2,
+    "frames": [
+      "rainwater-collector",
+      "coastal-lighthouse",
+      "storage-depot",
+      "geothermal-generator"
+    ],
+    "frameSolidBounds": [
+      {
+        "x": 113,
+        "y": 194,
+        "right": 519,
+        "bottom": 544
+      },
+      {
+        "x": 161,
+        "y": 127,
+        "right": 460,
+        "bottom": 552
+      },
+      {
+        "x": 105,
+        "y": 135,
+        "right": 532,
+        "bottom": 487
+      },
+      {
+        "x": 130,
+        "y": 135,
+        "right": 503,
+        "bottom": 484
+      }
+    ],
+    "notes": "Four original isometric building sprites; independent alpha trim per equal atlas cell at runtime. Exact prompts and rejected packing variants recorded in design/settlement-art-v4.md."
+  },
+  "settlement-expansion": {
+    "path": "/assets/buildings/settlement-expansion-v4.png",
+    "width": 1254,
+    "height": 1254,
+    "source": "/home/simiyusamuel/.codex/generated_images/01a16d4b-f874-7512-b972-38c77a8bcd88/exec-fe4bdaee-d842-4027-b30a-b16f87a9a931.png",
+    "generation": "built-in image_gen",
+    "sourceDisposition": "original copied byte-for-byte into project",
+    "sha256": "554e05fc6bb2f6a01a9a1c15df7255db2c446cd87400f45615e6dece106d1a1a",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "columns": 2,
+    "rows": 2,
+    "frames": [
+      "pioneer-cottage",
+      "border-outpost",
+      "terrace-hamlet",
+      "bridge-link"
+    ],
+    "frameSolidBounds": [
+      {
+        "x": 180,
+        "y": 179,
+        "right": 534,
+        "bottom": 512
+      },
+      {
+        "x": 114,
+        "y": 144,
+        "right": 491,
+        "bottom": 539
+      },
+      {
+        "x": 125,
+        "y": 108,
+        "right": 583,
+        "bottom": 487
+      },
+      {
+        "x": 127,
+        "y": 183,
+        "right": 510,
+        "bottom": 468
+      }
+    ],
+    "notes": "Four original isometric building sprites; independent alpha trim per equal atlas cell at runtime. Exact prompts and rejected packing variants recorded in design/settlement-art-v4.md."
   }
 }

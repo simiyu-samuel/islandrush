@@ -1,45 +1,45 @@
 ## Inspiration
 
-I enjoy island-building games and fast runners. I wanted each run to leave useful progress in a place the player could shape. Island Rush connects those interests: collect supplies on a coastal trail, then use them to design a small island settlement. It is for players who enjoy short arcade sessions and creative building choices.
+I enjoy both city builders and arcade runners. I wanted each run to leave something behind: the timber and stone I collect should become a home, a working service, or a connection to another island. Island Rush is for players who enjoy quick action alongside the slower satisfaction of growing a settlement.
+
+My earlier game, Zalura, worked logically, but I was unhappy with its visual identity and experience. This project became a chance to direct that part more deliberately: a structured coastal township, an adult courier, floating supplies, readable hazards, and construction that visibly takes shape.
 
 ## What it does
 
-Island Rush is an **endless coastal runner and island builder**, playable in the browser without an account: [Play Island Rush](https://island-rush-six.vercel.app).
+**Run. Return. Build. Thrive.** Island Rush combines an endless coastal jungle runner with a living island settlement. It opens directly in the game, without an account.
 
-Choose a building design and preview its location on one of eight clear roadside grass blocks. Flip its facing to suit the street, then confirm. Roads, water, landscaping, and occupied blocks stay clear. Tap any completed building directly on the map to preview a free move to another available block.
+Choose a project from **16 building types across four categories**: civic and community, resource production, utilities, and expansion. Read its purpose, recipe, terrain requirement, and construction stages. Preview a suitable clear space, flip its facing, and confirm **Build here**. Resources are deducted once; a five-second foundation/frame/roof sequence and overhead percentage bar lead to the completed building. Build repeated copies whenever suitable land and supplies remain. Tap a finished building directly to move it for free.
 
-Run a three-lane coastal jungle trail with an adult courier, floating timber, stone, and coins, grounded obstacles, and your island on the distant horizon. **There is no countdown:** speed increases gradually and hazards become more frequent. Change lanes and jump using keyboard controls, swipes, or visible buttons. Choose **Head home** whenever you want to build. A collision also ends the run; both endings preserve the loot already collected.
+The supply trail has three lanes, floating timber, stone and coins, grounded hazards, and the island on the horizon. Change lanes and jump using keyboard controls, touch buttons or swipes. There is no countdown: speed rises and hazards become more frequent. **Head home** banks supplies whenever you choose. A collision also ends the run while preserving everything already collected. Coins buy missing construction materials; storage overflow keeps runner loot safely in harbor crates.
 
-Back on the island, choose to build, exchange coins for eligible materials, or run again. Construction takes five seconds, with foundation/framing/roof stages and an overhead percentage bar before the reveal. The first home unlocks level 2, where the workshop and lookout can be finished in either order. Each of the three buildings has two designs; completing all three finishes the starter settlement.
+Buildings change the settlement rather than serving only as decorations. Individual islanders have homes, jobs, hunger, health and shortage-related illness. Water collectors, cottage gardens, bakeries, lumber crews, artisans and fishing piers form supply chains. Clinics treat residents; plazas hold festivals. Lodges attract tourists and merchants with seeds, medicine and navigation charts. Piers receive scheduled cargo boats, while lighthouses clear the route. Town Halls unlock policies and higher tiers, depots expand storage, and geothermal plants supply advanced services.
 
-The game includes a larger connected-road island with pan/zoom, separate mobile Island/Buildings/Run navigation, skippable contextual guidance, focus-aware pause, and same-browser saves for stock, designs, locations, facing, and unfinished construction. Progress belongs to the browser and URL; there is no account or cloud sync.
+Outposts open more ground on each islet. Repeatable bridges connect further islets; there is no three-building ending or fixed building-count cap. The map supports pan and zoom. Mobile bottom navigation opens separate Build and Village screens; desktop keeps management alongside the island.
+
+Progress saves in the same browser and URL, including residents, goods, jobs, locations and unfinished construction. Older islands migrate with a backup of the original save. Settlement simulation advances every ten seconds, with up to thirty minutes of catch-up after absence. There is no cloud sync or multiplayer.
 
 ## How I built it
 
-This is a new project built from scratch with the **Devpost Learn Skill Pack** and **Codex**. The skill-led scope, PRD, technical plan, and build checklist kept the proof of concept within one course, two levels, and three building types. I directed the product decisions, visual revisions, and playtest feedback; Codex assisted implementation and original artwork generation.
+This is a new project built with **Codex and the Devpost Learn Skill Pack**. The scope, PRD, specification and build checklist made the combined loop concrete. I directed the concept, visual choices, playtest revisions and later expansion; AI assisted implementation and original artwork generation. The planning documents were updated as those decisions changed.
 
-The game uses **Phaser 4, TypeScript, Vite, HTML, and CSS**, with static hosting on **Vercel**. Small deterministic rule modules handle running, placement, inventory, and construction. One controller owns progress, reward settlement, and browser persistence. The endless course streams ahead and discards passed entities; acceleration is integrated into contact timing. AI is used during development, not as a runtime game dependency.
+The game uses **Phaser 4, TypeScript, Vite, HTML and CSS**, hosted on **Vercel**. Pure model modules handle the runner, settlement, placement, construction and save validation. A controller owns commands and persistence; Phaser renders the world while HTML provides management screens and accessible controls. The endless course streams ahead and discards passed entities. AI is used during development, without a runtime AI service.
 
-The public MIT-licensed repository includes the source, original runtime assets and generation records, setup instructions, scope.md, prd.md, spec.md, a current game guide, and an offline app map.
+The public **MIT-licensed** repository includes source, original assets and provenance, setup instructions, scope.md, prd.md, spec.md, the game guide and an app map.
 
 ## Challenges
 
-Making working logic feel visually clear required repeated design revisions. The first island felt too small and basic, and a road revision was too wide and distracting. My feedback led to a larger township layout, cleaner island header, small construction-site cues without floating names, and player-chosen building blocks.
+The hardest part was making the two activities feel connected and readable. My feedback rejected a basic island, overly wide road and disruptive motion. Those iterations led to connected streets, smaller building footprints, a clear header, calmer trail movement and foliage outside the mobile lanes. The expanded settlement also needed individual building identities, safe placement, repeat construction, understandable management screens and migration from the older save format.
 
-The runner evolved into a continuous stone trail with quieter joints, coastal jungle scenery, separated pickup/hazard depths, and foliage positioned outside the mobile lanes. The final gameplay revision replaced the timer with endless progressive difficulty and added a deliberate return action.
-
-Other challenges were retaining collected loot without duplicate rewards, preventing repeated construction charges, preserving the original build deadline across reload, and keeping confirmed placement separate from a cancelable preview.
+Resource safety matters: collisions must stop collection at impact, results must not pay twice, construction must reserve supplies only once, and reload must preserve the original deadline. Focus loss pauses the courier until explicit resume, while settlement life follows its own clock.
 
 ## Accomplishments
 
-The current project connects running, collecting, banking, building, unlocking, and relocation in one playable loop. It is deployed publicly without login. All **91 unit/controller/geometry checks**, TypeScript, and the production build pass. Eleven automated browser journeys are prepared; they have not been executed as a full suite for this version. I have playtested earlier builds and approved the coastal runner direction; the final mobile/endless refinements remain subject to further device playtesting.
-
-The image gallery shows actual screenshots of the current deployed game. The project thumbnail is separately generated promotional artwork.
+The project connects actual running, collection, return, construction and settlement consequences in one playable loop. Its visual direction reflects repeated product decisions rather than a single prompt. Deterministic model, controller and geometry tests accompany the production build. Prepared browser journeys are distinguished from actual public-page observations in the repository verification record; a complete device-matrix pass is not claimed.
 
 ## What I learned
 
-The iterations made the difference between numerical correctness and perceived clarity concrete. Lane-alignment tests can pass while motion still feels wrong. Planning documents kept the scope focused, while playable feedback drove better road width, navigation, placement, and construction feedback. The documents were updated when the agreed behavior changed, including the switch from timed to endless runs.
+The development process showed me how different working logic can feel after changes to layout, motion and feedback. It also made planning useful as a living description: when the idea grew from three landmarks into repeatable civic and production systems, the data model, player journey and documents had to change together.
 
 ## What's next
 
-More hands-on phone testing and tuning of difficulty, resource balance, and visual feedback within the current small settlement. Additional courses and buildings are future possibilities, not features claimed by this proof of concept.
+Playtest the expanded settlement on more phones, tune resource production against running rewards, and refine how needs and expansion opportunities are explained. Balance and performance at very large population and island counts remain areas for further testing.

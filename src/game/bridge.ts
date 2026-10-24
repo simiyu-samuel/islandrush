@@ -1,9 +1,9 @@
-import type { LotId, Facing } from '../model/placement';
-import type { BuildingState } from '../model/types';
+import type { Facing } from '../model/placement';
+import type { BuildingInstance, BuildingType, Citizen, SettlementStats, ShipState, StyleId } from '../model/types';
+import type { BuildingLot } from '../model/placement';
 
 /** The renderer reads this snapshot; the controller alone changes game rules. */
 export type Resources = { timber: number; stone: number; coins: number };
-export type PlotId = 'home' | 'workshop' | 'lookout';
 export type RenderEntity = {
   id: string;
   kind: 'timber' | 'stone' | 'coin' | 'obstacle';
@@ -11,6 +11,9 @@ export type RenderEntity = {
   lane: number;
   /** Absolute route distance; contact occurs at z === Frame.distance. */
   z: number;
+};
+export type PlacementPreview = {
+  type: BuildingType; style: StyleId; lot: string; facing: Facing; instanceId?: string;
 };
 export interface Frame {
   view: 'island' | 'run';
@@ -23,15 +26,17 @@ export interface Frame {
   entities: RenderEntity[];
   wallet: Resources;
   loot: Resources;
-  buildings: Record<PlotId, BuildingState>;
-  buildingLots: Record<PlotId, LotId>;
-  placement: { id: PlotId; lot: LotId; facing: Facing } | null;
-  constructionBuilding: PlotId | null;
-  /** Five-second construction clock, or null when no build is underway. */
-  constructionProgress: number | null;
+  buildings: BuildingInstance[];
+  lots: BuildingLot[];
+  regions: number;
+  placement: PlacementPreview | null;
+  selectedInstance: string | null;
   /** The mobile settlement sheet is open; desktop keeps its side panel. */
   settlementOpen: boolean;
-  selectedPlot: PlotId;
+  simTime: number;
+  citizens: Citizen[];
+  stats: SettlementStats;
+  ship?: ShipState;
   reducedMotion: boolean;
 }
 export interface GameBridge {
@@ -40,8 +45,9 @@ export interface GameBridge {
   move(direction: -1 | 1): void;
   jump(): void;
   pause(): void;
-  selectPlot(id: PlotId): void;
-  selectLot(id: LotId): void;
+  /** A completed map building opens its move preview directly. */
+  selectBuilding(id: string): void;
+  selectLot(id: string): void;
   onReady(): void;
   onError(message: string): void;
 }

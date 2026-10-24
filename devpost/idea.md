@@ -1,3 +1,5 @@
+> Historical discovery record. Current owner-approved behavior is in [scope.md](scope.md), [prd.md](prd.md), [spec.md](spec.md) and [game-guide.md](game-guide.md). The 24 October settlement expansion supersedes earlier three-building and two-level limits.
+
 # Island Rush — chosen concept
 
 An endless coastal runner where collected building materials grow a player-shaped

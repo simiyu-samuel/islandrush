@@ -1,34 +1,60 @@
-import { BUILDING_IDS } from './catalog';
-import type { BuildingId, Progress } from './types';
-
-// Clear grass blocks inspected against island-township-v2.png. Road and park
-// interiors are deliberately excluded. Each anchor is the building's ground base.
-export const BUILDING_LOTS = {
-  harbor: { x: 0.442, y: 0.653, name: 'Harbor green' },
-  grove: { x: 0.402, y: 0.452, name: 'Palm grove' },
-  east: { x: 0.746, y: 0.309, name: 'East terrace' },
-  west: { x: 0.300, y: 0.550, name: 'West garden' },
-  square: { x: 0.584, y: 0.504, name: 'Square side' },
-  ridge: { x: 0.454, y: 0.197, name: 'Ridge meadow' },
-  upper: { x: 0.398, y: 0.280, name: 'Upper grove' },
-  shore: { x: 0.846, y: 0.414, name: 'Shore lawn' },
-} as const;
-export type LotId = keyof typeof BUILDING_LOTS;
+import { BUILDINGS } from './catalog';
+import type { BuildingInstance, BuildingType, Progress } from './types';
+export type LotId = string;
 export type Facing = 'left' | 'right';
-export const LOT_IDS = Object.keys(BUILDING_LOTS) as LotId[];
-export const DEFAULT_LOTS: Record<BuildingId, LotId> = { home: 'harbor', workshop: 'grove', lookout: 'east' };
-type IslandSites = Pick<Progress, 'buildings' | 'pendingConstruction'>;
-
-export function lotOccupant(progress: IslandSites, lot: LotId, except?: BuildingId): BuildingId | undefined {
-  return BUILDING_IDS.find(id => id !== except &&
-    (progress.buildings[id].built || progress.buildings[id].lot !== undefined || progress.pendingConstruction?.buildingId === id) &&
-    (progress.buildings[id].lot ?? DEFAULT_LOTS[id]) === lot);
+export interface BuildingLot { id: LotId; name: string; region: number; block: string; x: number; y: number; tags: string[]; unlocked: boolean }
+// Macroblocks lie inside existing painted grass clearings. Four small foundations
+// replace each old oversized anchor, leaving roads, plazas and coastline clear.
+export const BUILDING_LOTS = {
+  harbor: { x: .442, y: .653, name: 'Harbor green', tags: ['coast', 'edge'] },
+  grove: { x: .402, y: .452, name: 'Palm grove', tags: ['forest', 'spring'] },
+  east: { x: .746, y: .309, name: 'East terrace', tags: ['coast', 'hill'] },
+  west: { x: .300, y: .550, name: 'West garden', tags: ['forest', 'edge'] },
+  square: { x: .584, y: .504, name: 'Square side', tags: ['hill'] },
+  ridge: { x: .454, y: .197, name: 'Ridge meadow', tags: ['spring', 'hill'] },
+  upper: { x: .398, y: .280, name: 'Upper grove', tags: ['forest', 'hill', 'edge'] },
+  shore: { x: .846, y: .414, name: 'Shore lawn', tags: ['coast', 'edge'] },
+} as const;
+export const BLOCK_IDS = Object.keys(BUILDING_LOTS) as (keyof typeof BUILDING_LOTS)[];
+export const LOT_IDS = BLOCK_IDS.flatMap(block => [0, 1, 2, 3].map(cell => `0:${block}:${cell}`));
+export function lotRegion(id: string): number { return Number(id.split(':')[0]); }
+export function getRegionCount(progress: Pick<Progress, 'buildings'>): number {
+  return 1 + progress.buildings.filter(b => b.type === 'bridge-link' && b.state === 'complete').length;
 }
-
-export function buildingLot(progress: IslandSites, id: BuildingId): LotId {
-  const explicit = progress.buildings[id].lot;
-  if (explicit) return explicit;
-  const preferred = DEFAULT_LOTS[id];
-  if (!lotOccupant(progress, preferred, id)) return preferred;
-  return LOT_IDS.find(lot => !lotOccupant(progress, lot, id)) ?? preferred;
+export function getLots(progress: Pick<Progress, 'buildings'>): BuildingLot[] {
+  const lots: BuildingLot[] = [];
+  for (let region = 0; region < getRegionCount(progress); region++) {
+    const outposts = progress.buildings.filter(b => b.type === 'border-outpost' && b.state === 'complete' && lotRegion(b.lot) === region).length;
+    const unlockedBlocks = Math.min(8, 4 + outposts);
+    BLOCK_IDS.forEach((block, index) => {
+      const base = BUILDING_LOTS[block];
+      for (let cell = 0; cell < 4; cell++) {
+        // Isometric diamond offsets follow the painted street axes.
+        const a = cell % 2 ? 1 : -1;
+        const b = cell < 2 ? -1 : 1;
+        lots.push({ id: `${region}:${block}:${cell}`, name: `${base.name} ${cell + 1}`, region, block,
+          x: base.x + a * .016 + b * .014, y: base.y + a * .010 - b * .010,
+          tags: [...base.tags], unlocked: index < unlockedBlocks || progress.buildings.some(b => b.legacy && b.lot.startsWith(`${region}:${block}:`)) });
+      }
+    });
+  }
+  return lots;
+}
+export function lotOccupant(progress: Pick<Progress, 'buildings'>, lot: LotId, except?: string): BuildingInstance | undefined {
+  return progress.buildings.find(b => b.lot === lot && b.id !== except);
+}
+export function validLot(progress: Pick<Progress, 'buildings'>, type: BuildingType, lotId: LotId, except?: string): string | null {
+  const lot = getLots(progress).find(l => l.id === lotId);
+  if (!lot || !lot.unlocked) return 'This ground is not open. Build an outpost or bridge to expand.';
+  if (lotOccupant(progress, lotId, except)) return 'That space already has a building or construction site.';
+  const terrain = BUILDINGS[type]?.terrain;
+  if (!terrain) return 'Choose a known building.';
+  if (terrain !== 'any' && !lot.tags.includes(terrain)) return `This building needs ${terrain === 'coast' ? 'coastal' : terrain} ground.`;
+  return null;
+}
+export function availableLots(progress: Pick<Progress, 'buildings'>, type: BuildingType, except?: string): BuildingLot[] {
+  return getLots(progress).filter(l => validLot(progress, type, l.id, except) === null);
+}
+export function buildingLot(progress: Pick<Progress, 'buildings'>, instanceId: string): LotId | undefined {
+  return progress.buildings.find(b => b.id === instanceId)?.lot;
 }

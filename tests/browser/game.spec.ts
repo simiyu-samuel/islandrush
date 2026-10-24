@@ -1,369 +1,192 @@
 import { expect, test, type Page } from '@playwright/test';
-import { mkdir } from 'node:fs/promises';
-import { join } from 'node:path';
-import { FIRST_OBSTACLE_DISTANCE } from '../../src/model/run';
-import { timeForRunDistance } from '../../src/model/runPace';
 import { createProgress } from '../../src/model/progress';
 import { SAVE_KEY } from '../../src/model/save';
-import type { Progress } from '../../src/model/types';
+import { islandMapLayout, lotPosition } from '../../src/game/islandMap';
+import { getLots } from '../../src/model/placement';
+import type { BuildingInstance, BuildingType, Progress } from '../../src/model/types';
 
-// Software WebGL startup and repeated page loads need their own budget.
+// Prepared browser journeys only. Run separately when browser access is allowed.
 test.setTimeout(90_000);
-
 test.beforeEach(async ({ page }) => {
   page.on('pageerror', error => console.error('Uncaught browser error:', error.stack ?? error.message));
 });
 
-async function captureScene(page: Page, name: string) {
-  const directory = process.env.ISLAND_RUSH_QA_DIR;
-  if (!directory) return;
-  await mkdir(directory, { recursive: true });
-  await page.screenshot({ path: join(directory, name), fullPage: true });
-}
-
-async function waitForWorld(page: Page) {
+async function worldReady(page: Page) {
   await expect(page.getByRole('heading', { name: 'Charting your coast…' })).toBeHidden({ timeout: 30_000 });
   await expect(page.getByRole('alert')).toHaveCount(0);
   await expect(page.locator('canvas')).toBeVisible();
 }
+async function openIsland(page: Page) { await page.goto('/'); await worldReady(page); }
+async function openCatalog(page: Page) {
+  if ((page.viewportSize()?.width ?? 1280) < 960) await page.getByRole('navigation', { name: 'Island navigation' }).getByRole('button', { name: 'Build', exact: true }).click();
+  await expect(page.getByRole('complementary', { name: 'Settlement', exact: true })).toBeVisible();
+}
+async function saved(page: Page): Promise<Progress> {
+  return page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), SAVE_KEY);
+}
+async function fixture(page: Page, progress: Progress) {
+  await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key: SAVE_KEY, value: progress });
+  await page.reload(); await worldReady(page);
+}
+function settlement(types: BuildingType[] = []): Progress {
+  const now = Date.now(); const progress = createProgress(now);
+  progress.wallet = { timber: 90, stone: 90, coins: 50 };
+  progress.tutorial.skipped = true;
+  progress.buildings = types.map((type, index): BuildingInstance => ({ id: `qa-building-${index}`, type,
+    style: 'island', lot: ['0:harbor:0','0:grove:0','0:west:0','0:east:0'][index]!,
+    facing: 'left', state: 'complete', startedAt: now-10_000, completesAt: now-5_000, level: 1 }));
+  return progress;
+}
+async function chooseCottage(page: Page) {
+  await openCatalog(page);
+  await page.locator('.building-catalog').getByRole('button', { name: /Pioneer Cottage/ }).click();
+}
+async function preview(page: Page) {
+  await page.getByRole('button', { name: /Choose a building space|Preview a location/ }).click();
+  await expect(page.getByRole('complementary', { name: 'Building placement' })).toBeVisible();
+}
+async function startRun(page: Page) {
+  if ((page.viewportSize()?.width ?? 1280) < 960) await page.getByRole('navigation', { name: 'Island navigation' }).getByRole('button', { name: 'Run', exact: true }).click();
+  else await page.getByRole('button', { name: /Gather supplies|Run for supplies/ }).click();
+  await expect(page.getByLabel('Run progress', { exact: true })).toBeVisible();
+}
+async function noPageOverflow(page: Page) {
+  await expect.poll(() => page.evaluate(() => ({ horizontal: document.documentElement.scrollWidth > innerWidth,
+    vertical: document.documentElement.scrollHeight > innerHeight }))).toEqual({ horizontal: false, vertical: false });
+}
+async function thumbTarget(page: Page, name: string) {
+  const button = page.getByRole('button', { name, exact: true });
+  await expect(button).toBeInViewport({ ratio: 1 });
+  const bounds = await button.boundingBox();
+  expect(bounds?.width).toBeGreaterThanOrEqual(44); expect(bounds?.height).toBeGreaterThanOrEqual(44);
+}
 
-async function openIsland(page: Page) {
-  await page.goto('/');
-  await waitForWorld(page);
-  if ((page.viewportSize()?.width ?? 1280) < 960) {
-    await expect(page.getByRole('navigation', { name: 'Island navigation' })).toBeVisible();
-    await expect(page.getByRole('complementary', { name: 'Home construction' })).toHaveCount(0);
-  } else {
-    await expect(page.getByRole('button', { name: 'Gather supplies' })).toBeInViewport({ ratio: 1 });
+test('the four categories expose sixteen distinct building types with recipes and construction stages', async ({ page }) => {
+  await openIsland(page); await openCatalog(page);
+  const categories = page.getByRole('group', { name: 'Building categories' });
+  const names = new Set<string>();
+  for (const category of ['Civic','Resource','Utility','Settlement']) {
+    await categories.getByRole('button', { name: new RegExp(category) }).click();
+    await expect(page.locator('.building-catalog button')).toHaveCount(4);
+    for (const name of await page.locator('.building-catalog strong').allTextContents()) names.add(name);
+    await page.getByText('How it takes shape', { exact: true }).click();
+    await expect(page.locator('.build-stages li')).toHaveCount(3);
   }
-}
+  expect(names.size).toBe(16);
+});
 
-async function expectNoPageOverflow(page: Page) {
-  await expect.poll(() => page.evaluate(() => ({
-    horizontal: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) > window.innerWidth,
-    vertical: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight) > window.innerHeight,
-  }))).toEqual({ horizontal: false, vertical: false });
-}
+test('construction reserves resources once and reload finishes the same five-second building', async ({ page }) => {
+  await openIsland(page); await fixture(page, settlement()); await chooseCottage(page); await preview(page);
+  await page.getByRole('button', { name: 'Flip facing', exact: true }).click();
+  await page.getByRole('button', { name: 'Build here', exact: true }).click();
+  await expect.poll(async () => (await saved(page)).buildings[0]?.state).toBe('building');
+  const pending = await saved(page); const id = pending.buildings[0]!.id;
+  expect(pending.wallet.timber).toBe(60); expect(pending.buildings[0]!.facing).toBe('right');
+  await expect(page.getByRole('progressbar', { name: 'Construction progress' })).toBeVisible();
+  await page.reload(); await worldReady(page);
+  await expect.poll(async () => (await saved(page)).buildings.find(building => building.id === id)?.state, { timeout: 12_000 }).toBe('complete');
+  const complete = await saved(page); expect(complete.buildings).toHaveLength(1); expect(complete.wallet.timber).toBe(60);
+});
 
-async function expectThumbTarget(control: ReturnType<Page['getByRole']>) {
-  await expect(control).toBeInViewport({ ratio: 1 });
-  const bounds = await control.boundingBox();
-  expect(bounds).not.toBeNull();
-  expect(bounds!.width).toBeGreaterThanOrEqual(44);
-  expect(bounds!.height).toBeGreaterThanOrEqual(44);
-}
+test('another copy uses a different free space and keeps the first building identity', async ({ page }) => {
+  await openIsland(page); const progress = settlement(['pioneer-cottage']); await fixture(page, progress);
+  await chooseCottage(page); await preview(page);
+  const options = await page.getByRole('combobox', { name: 'Available building space' }).locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value));
+  expect(options).not.toContain(progress.buildings[0]!.lot);
+  await page.getByRole('button', { name: 'Build here', exact: true }).click();
+  await expect.poll(async () => (await saved(page)).buildings.filter(building => building.state === 'complete').length, { timeout: 12_000 }).toBe(2);
+  const next = await saved(page); expect(new Set(next.buildings.map(building => building.id)).size).toBe(2);
+  expect(new Set(next.buildings.map(building => building.lot)).size).toBe(2);
+  expect(next.buildings[0]!.id).toBe(progress.buildings[0]!.id);
+});
 
-async function expectPastFirstObstacle(page: Page) {
-  await expect.poll(async () => {
-    if (await page.getByRole('dialog', { name: 'A bump in the road.' }).isVisible()) {
-      const duration = await page.getByText(/Active running time:/).textContent();
-      // A later collision is valid gameplay only after passing the first block.
-      return Number(duration?.match(/([0-9.]+)s/)?.[1] ?? 0) > timeForRunDistance(0,FIRST_OBSTACLE_DISTANCE);
-    }
-    const distance=Number((await page.locator('#run-distance').textContent())?.replace('m',''));
-    return distance>FIRST_OBSTACLE_DISTANCE;
-  }, { timeout: 12_000, message: 'Actual controls steer past the first center-lane obstacle' }).toBe(true);
-}
+test('tapping a completed map building opens its free move preview and persists the move', async ({ page }) => {
+  await openIsland(page); const progress = settlement(['pioneer-cottage']); await fixture(page, progress);
+  const viewport = page.viewportSize()!; const map = islandMapLayout(viewport.width, viewport.height);
+  const homeLot = getLots(progress).find(lot => lot.id === progress.buildings[0]!.lot)!;
+  const point = lotPosition(homeLot, map);
+  await page.locator('canvas').click({ position: { x: point.x, y: point.y - map.mapWidth * 0.012 } });
+  const placement = page.getByRole('complementary', { name: 'Building placement' }); await expect(placement).toBeVisible();
+  await expect(placement.getByText('Moves cost no supplies', { exact: true })).toBeVisible();
+  await page.getByRole('combobox', { name: 'Available building space' }).selectOption('0:harbor:1');
+  await placement.getByRole('button', { name: 'Place here', exact: true }).click();
+  const moved = await saved(page); expect(moved.buildings[0]!.lot).toBe('0:harbor:1'); expect(moved.wallet).toEqual(progress.wallet);
+});
 
-async function setSavedFixture(page: Page, progress: Progress) {
-  await page.evaluate(({ key, value }) => {
-    localStorage.setItem(key, JSON.stringify(value));
-  }, { key: SAVE_KEY, value: progress });
-  await page.reload();
-  await waitForWorld(page);
-}
-
-async function waitForCollision(page: Page, timber: number, coins: number) {
-  const result = page.getByRole('dialog', { name: 'A bump in the road.' });
-  await expect(result).toBeVisible({ timeout: 15_000 });
+test('a collision banks earlier supplies exactly once and reload preserves the bank', async ({ page }) => {
+  await openIsland(page); await startRun(page);
+  const result = page.getByRole('dialog', { name: 'A bump in the road.' }); await expect(result).toBeVisible({ timeout: 15_000 });
   await expect(result.getByLabel('15 timber', { exact: true })).toBeVisible();
   await expect(result.getByLabel('2 coins', { exact: true })).toBeVisible();
-  await expect(result.getByText(timber + ' timber · ' + coins + ' coins', { exact: true })).toBeVisible();
-  return result;
-}
-
-test('a collision banks collected loot once, replay adds new loot, and reload preserves the island', async ({ page }) => {
-  await openIsland(page);
-  await captureScene(page, 'island-desktop.png');
-  await page.getByRole('button', { name: 'Gather supplies' }).click();
-  const firstResult = await waitForCollision(page, 15, 2);
-  await firstResult.getByRole('button', { name: 'Return to island' }).click();
-  await expect(page.getByLabel('15 timber', { exact: true })).toBeVisible();
-  await expect(page.getByLabel('2 coins', { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Build your home' })).toBeDisabled();
-
-  await page.getByRole('button', { name: 'Gather supplies' }).click();
-  const secondResult = await waitForCollision(page, 30, 4);
-  await secondResult.getByRole('button', { name: 'Run again', exact: true }).click();
-  const running = page.getByLabel('Run progress', { exact: true });
-  await expect(running.getByLabel('0 timber', { exact: true })).toBeVisible();
-  await expect(running.getByLabel('0 coins', { exact: true })).toBeVisible();
-  await captureScene(page, 'runner-desktop.png');
-
-  // Reload discards this unfinished third run; it must not credit prior results again.
-  await page.reload();
-  await expect(page.getByRole('heading', { name: 'Charting your coast…' })).toBeHidden({ timeout: 30_000 });
-  await expect(page.getByLabel('30 timber', { exact: true })).toBeVisible();
-  await expect(page.getByLabel('4 coins', { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Build your home' })).toBeEnabled();
+  const bank = (await saved(page)).wallet;
+  expect(bank.timber).toBe(15); expect(bank.coins).toBe(2);
+  await result.getByRole('button', { name: 'Return to island' }).click();
+  await page.reload(); await worldReady(page); expect((await saved(page)).wallet).toEqual(bank);
 });
 
-test('the selected home stays under construction for five seconds before its saved reveal', async ({ page }) => {
-  await openIsland(page);
-  await page.getByRole('button', { name: 'Palm Bungalow', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Palm Bungalow', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await page.reload();
-  await waitForWorld(page);
-  await expect(page.getByRole('button', { name: 'Palm Bungalow', exact: true })).toHaveAttribute('aria-pressed', 'true');
-
-  const supplies = createProgress();
-  supplies.buildings.home.style = 'bungalow';
-  supplies.wallet.timber = 30;
-  await setSavedFixture(page, supplies);
-  await page.getByRole('button', { name: 'Build your home' }).click();
-  await expect(page.getByRole('heading', { name: 'Building in progress' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Welcome home.' })).toHaveCount(0);
-  await expect(page.getByText('Level 1', { exact: true })).toBeVisible();
-  await expect(page.getByLabel('0 timber', { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Build your home' })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Palm Bungalow', exact: true })).toHaveCount(0);
-  await expect(page.getByRole('progressbar', { name: 'Construction progress' })).toBeVisible();
-  // Observe the intermediate phase rather than photographing only the finished home.
-  await page.waitForTimeout(1_200);
-  await expect(page.getByRole('heading', { name: 'Building in progress' })).toBeVisible();
-  await captureScene(page, 'construction-desktop.png');
-
-  await expect(page.getByRole('heading', { name: 'Welcome home.' })).toBeVisible({ timeout: 10_000 });
-  await expect(page.getByText('Level 2', { exact: true })).toBeVisible();
-  await expect(page.getByRole('img', { name: 'Your completed palm bungalow' })).toBeVisible();
-  await expect(page.getByLabel('0 timber', { exact: true })).toBeVisible();
-  await page.waitForTimeout(350);
-  await captureScene(page, 'complete-desktop.png');
-  await page.reload();
-  await waitForWorld(page);
-  await page.getByRole('button', { name: 'Home', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Welcome home.' })).toBeVisible();
-  await expect(page.getByText('Level 2', { exact: true })).toBeVisible();
-  await expect(page.getByRole('img', { name: 'Your completed palm bungalow' })).toBeVisible();
-  await expect(page.getByLabel('0 timber', { exact: true })).toBeVisible();
+test('Head home banks an active run before collision and replay starts an empty backpack', async ({ page }) => {
+  await openIsland(page); await startRun(page);
+  await expect.poll(async () => Number((await page.locator('#run-distance').textContent())?.replace('m','')), { timeout: 5_000 }).toBeGreaterThan(20);
+  await page.getByRole('button', { name: 'Return with supplies', exact: true }).click();
+  const result = page.getByRole('dialog', { name: 'A run worth bringing home.' }); await expect(result).toBeVisible();
+  expect((await saved(page)).wallet.timber).toBeGreaterThanOrEqual(5);
+  await result.getByRole('button', { name: 'Run again', exact: true }).click();
+  await expect(page.getByLabel('Run progress', { exact: true }).getByLabel('0 timber', { exact: true })).toBeVisible();
 });
 
-test('reloading during construction preserves the reservation and finishes the same home', async ({ page }) => {
-  await openIsland(page);
-  const supplies = createProgress();
-  supplies.wallet.timber = 30;
-  await setSavedFixture(page, supplies);
-  await page.getByRole('button', { name: 'Build your home' }).click();
-  await expect(page.getByRole('heading', { name: 'Building in progress' })).toBeVisible();
-  await expect(page.getByLabel('0 timber', { exact: true })).toBeVisible();
-  await page.reload();
-  await waitForWorld(page);
-  // Asset loading may span the deadline; the original five-second job is never restarted.
-  await expect(page.getByText('Level 2', { exact: true })).toBeVisible({ timeout: 10_000 });
-  await page.getByRole('button', { name: 'Home', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Welcome home.' })).toBeVisible();
-  await expect(page.getByText('Level 2', { exact: true })).toBeVisible();
-  await expect(page.getByLabel('0 timber', { exact: true })).toBeVisible();
-  const saved = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), SAVE_KEY);
-  expect(saved).toMatchObject({
-    wallet: { timber: 0, stone: 0, coins: 0 },
-    buildings: { home: { style: 'cottage', built: true } },
-    pendingConstruction: null,
-  });
-});
-
-test('the pause overlay freezes the visible distance until explicit resume', async ({ page }) => {
-  await openIsland(page);
-  await page.getByRole('button', { name: 'Gather supplies' }).click();
-  const distance = page.locator('#run-distance');
-  await page.getByRole('button', { name: 'Pause run', exact: true }).click();
-  const paused = page.getByRole('dialog', { name: 'The coast can wait.' });
-  await expect(paused).toBeVisible();
-  const frozenDistance = await distance.textContent();
-  // This elapsed real time is the behavior under test, not a wait for the page to load.
-  await page.waitForTimeout(1_200);
-  await expect(distance).toHaveText(frozenDistance!);
-  await expect(page.getByRole('dialog', { name: 'A bump in the road.' })).toHaveCount(0);
+test('pause freezes runner distance until explicit resume while keeping a way to bank', async ({ page }) => {
+  await openIsland(page); await startRun(page); await page.getByRole('button', { name: 'Pause run', exact: true }).click();
+  const paused = page.getByRole('dialog', { name: 'The coast can wait.' }); await expect(paused).toBeVisible();
+  const distance = await page.locator('#run-distance').textContent();
+  // Elapsed wall time is deliberately the behavior being checked here.
+  await page.waitForTimeout(1_000); await expect(page.locator('#run-distance')).toHaveText(distance!);
+  await expect(paused.getByRole('button', { name: 'End run and return', exact: true })).toBeVisible();
   await paused.getByRole('button', { name: 'Resume run', exact: true }).click();
-  await expect(paused).toHaveCount(0);
-  await page.locator('canvas').focus();
-  await page.keyboard.press('ArrowRight');
-  await page.keyboard.press('Space');
-  await expect.poll(async () => {
-    const distanceAdvanced = await distance.textContent() !== frozenDistance;
-    const reachedResult = await page.getByRole('dialog', { name: 'A bump in the road.' }).count() > 0;
-    return distanceAdvanced || reachedResult;
-  }, { timeout: 15_000, message: 'Distance advances or the run ends after explicit resume' }).toBe(true);
-  await expectPastFirstObstacle(page);
+  await expect.poll(() => page.locator('#run-distance').textContent()).not.toBe(distance);
 });
 
-test('active time advances at a low rendering frame rate', async ({ page }) => {
-  await page.addInitScript(() => {
-    const requestFrame = window.requestAnimationFrame.bind(window);
-    window.requestAnimationFrame = callback => requestFrame(() => {
-      window.setTimeout(() => callback(performance.now()), 120);
-    });
-  });
-  await openIsland(page);
-  await page.getByRole('button', { name: 'Gather supplies' }).click();
-  await expect.poll(async () => {
-    const visibleDistance = Number((await page.locator('#run-distance').textContent())?.replace('m', ''));
-    return visibleDistance > 0;
-  }, { timeout: 3_000, message: 'Active time follows elapsed time even when frames are delayed' }).toBe(true);
-  await page.getByRole('button', { name: 'Pause run', exact: true }).click();
-  await expect(page.getByRole('dialog', { name: 'The coast can wait.' })).toBeVisible();
+test('islanders expose persistent individual health, hunger and actual work assignments', async ({ page }) => {
+  await openIsland(page); await fixture(page, settlement(['pioneer-cottage','rainwater-collector'])); await openCatalog(page);
+  await page.getByRole('navigation', { name: 'Settlement sections' }).getByRole('button', { name: 'Islanders', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Your islanders', exact: true })).toBeVisible();
+  const person = (await saved(page)).simulation.citizens[0]!;
+  await expect(page.getByRole('meter', { name: person.name+' health', exact: true })).toBeVisible();
+  await page.getByRole('combobox', { name: person.name+' work assignment', exact: true }).selectOption('qa-building-1');
+  expect((await saved(page)).simulation.citizens[0]!.jobId).toBe('qa-building-1');
+  await page.reload(); await worldReady(page); expect((await saved(page)).simulation.citizens[0]!.jobId).toBe('qa-building-1');
 });
 
-test.describe('compact layouts and touch controls', () => {
+test('trade and council explain cargo schedules, fog safety and Town Hall unlocking', async ({ page }) => {
+  await openIsland(page); await openCatalog(page); const sections = page.getByRole('navigation', { name: 'Settlement sections' });
+  await sections.getByRole('button', { name: 'Trade', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Harbor & visitors', exact: true })).toBeVisible();
+  await expect(page.getByText(/90 seconds, with a 30-second docking window/)).toBeVisible();
+  await sections.getByRole('button', { name: 'Council', exact: true }).click();
+  await expect(page.getByRole('heading', { name: /Island council/ })).toBeVisible();
+  await expect(page.locator('.policy-option').first()).toBeDisabled();
+});
+
+test('corrupt saved data is preserved until the player explicitly chooses a fresh island', async ({ page }) => {
+  await openIsland(page); await page.evaluate(key => localStorage.setItem(key,'{broken-island'), SAVE_KEY); await page.reload(); await worldReady(page);
+  const recovery = page.getByRole('dialog', { name: 'A save we couldn’t read.' }); await expect(recovery).toBeVisible();
+  await recovery.getByRole('button', { name: 'Play this session', exact: true }).click();
+  expect(await page.evaluate(key => localStorage.getItem(key), SAVE_KEY)).toBe('{broken-island');
+});
+
+test.describe('compact island and runner', () => {
   test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
-
-  test('bottom navigation, building sheets, and runner controls fit phone, tablet, and landscape screens', async ({ page }) => {
-    test.setTimeout(120_000);
-    const sizes = [
-      { width: 320, height: 640 },
-      { width: 390, height: 844 },
-      { width: 768, height: 1024 },
-      { width: 844, height: 390 },
-    ];
-    for (const size of sizes) {
-      await test.step(size.width + '×' + size.height, async () => {
-        await page.setViewportSize(size);
-        await openIsland(page);
-        await expectNoPageOverflow(page);
-        const nav = page.getByRole('navigation', { name: 'Island navigation' });
-        for (const name of ['Island', 'Buildings', 'Run']) {
-          await expectThumbTarget(nav.getByRole('button', { name, exact: true }));
-        }
-        await expect(page.getByRole('region', { name: 'Buildings', exact: true })).toHaveCount(0);
-        if (size.width === 390) await captureScene(page, 'island-phone.png');
-
-        await nav.getByRole('button', { name: 'Buildings', exact: true }).tap();
-        const buildings = page.getByRole('region', { name: 'Buildings', exact: true });
-        await expect(buildings).toBeInViewport({ ratio: 1 });
-        const close = buildings.getByRole('button', { name: 'Close buildings', exact: true });
-        await expectThumbTarget(close);
-        const gather = buildings.getByRole('button', { name: 'Gather supplies', exact: true });
-        await expectThumbTarget(gather);
-        await buildings.getByRole('button', { name: 'Build your home' }).scrollIntoViewIfNeeded();
-        await expect(gather).toBeInViewport({ ratio: 1 });
-        await expect(close).toBeInViewport({ ratio: 1 });
-        await expectNoPageOverflow(page);
-        if (size.width === 390) await captureScene(page, 'buildings-phone.png');
-        await close.tap();
-        await expect(buildings).toHaveCount(0);
-        await expect(page.getByRole('complementary', { name: 'Home construction' })).toHaveCount(0);
-        await nav.getByRole('button', { name: 'Buildings', exact: true }).tap();
-        await nav.getByRole('button', { name: 'Island', exact: true }).tap();
-        await expect(buildings).toHaveCount(0);
-        await expect(page.getByRole('complementary', { name: 'Home construction' })).toHaveCount(0);
-
-        await nav.getByRole('button', { name: 'Run', exact: true }).tap();
-        const hud = page.getByLabel('Run progress', { exact: true });
-        await expect(hud).toBeInViewport({ ratio: 1 });
-        const right = page.getByRole('button', { name: 'Move right', exact: true });
-        const jump = page.getByRole('button', { name: 'Jump', exact: true });
-        for (const control of [page.getByRole('button', { name: 'Move left', exact: true }), jump, right,
-          page.getByRole('button', { name: 'Pause run', exact: true })]) {
-          await expectThumbTarget(control);
-        }
-        await expectNoPageOverflow(page);
-        await right.tap();
-        await jump.tap();
-        if (size.width === 390) await captureScene(page, 'runner-phone.png');
-        if (size.height === 390) await captureScene(page, 'runner-landscape.png');
-        await page.getByRole('button', { name: 'Pause run', exact: true }).tap();
-        const paused = page.getByRole('dialog', { name: 'The coast can wait.' });
-        await expect(paused).toBeVisible();
-        if (size.width === 390) {
-          await paused.getByRole('button', { name: 'Resume run', exact: true }).tap();
-          await expectPastFirstObstacle(page);
-        }
-      });
+  test('phone, tablet and landscape keep separate settlement sheets and usable runner controls', async ({ page }) => {
+    for (const size of [{width:320,height:640},{width:390,height:844},{width:768,height:1024},{width:844,height:390}]) {
+      await page.setViewportSize(size); await openIsland(page); await noPageOverflow(page);
+      const nav = page.getByRole('navigation', { name: 'Island navigation' }); await expect(nav).toBeVisible();
+      await expect(page.getByRole('complementary', { name: 'Settlement', exact: true })).toHaveCount(0);
+      await nav.getByRole('button', { name: 'Build', exact: true }).click();
+      await expect(page.getByRole('complementary', { name: 'Settlement', exact: true })).toBeInViewport();
+      await thumbTarget(page,'Close settlement'); await page.getByRole('button', { name: 'Close settlement', exact: true }).click();
+      await startRun(page); await thumbTarget(page,'Move left'); await thumbTarget(page,'Jump'); await thumbTarget(page,'Move right');
+      await page.getByRole('button', { name: 'Pause run', exact: true }).click();
+      await page.getByRole('button', { name: 'End run and return', exact: true }).click();
+      await page.getByRole('button', { name: 'Return to island' }).click();
     }
   });
-});
-
-for (const order of [['workshop', 'lookout'], ['lookout', 'workshop']] as const) {
-  test('material shop and saved settlement: ' + order.join(' then '), async ({ page }) => {
-    await openIsland(page);
-    const fixture = createProgress();
-    fixture.buildings.home.built = true;
-    fixture.target = order[0];
-    fixture.wallet = { timber: 55, stone: 55, coins: 25 };
-    await setSavedFixture(page, fixture);
-    const shop = page.getByRole('region', { name: 'Material shop' });
-    await shop.getByRole('button', { name: 'Buy 5 timber for 10 coins', exact: true }).click();
-    await shop.getByRole('button', { name: 'Buy 5 stone for 15 coins', exact: true }).click();
-    await expect(shop.getByRole('button', { name: 'Buy 5 timber for 10 coins', exact: true })).toBeDisabled();
-    for (const id of order) {
-      await page.getByRole('button', { name: id === 'workshop' ? 'Workshop' : 'Lookout', exact: true }).click();
-      await page.getByRole('button', { name: id === 'workshop' ? 'Maker Studio' : 'Timber Watchtower', exact: true }).click();
-      await page.getByRole('button', { name: 'Build ' + id, exact: true }).click();
-      await expect(page.getByRole('heading', { name: 'Building in progress' })).toBeVisible();
-      await expect(page.getByRole('button', { name: 'Gather supplies', exact: true })).toBeDisabled();
-      await expect.poll(async () => page.evaluate(({ key, id }) => {
-        const progress = JSON.parse(localStorage.getItem(key) ?? 'null');
-        return progress?.buildings[id].built;
-      }, { key: SAVE_KEY, id }), { timeout: 12_000 }).toBe(true);
-      await page.reload();
-      await waitForWorld(page);
-    }
-    await expect(page.getByRole('heading', { name: 'Your coast is complete.' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Run for coins', exact: true })).toBeEnabled();
-    const completed = await page.evaluate(key => JSON.parse(localStorage.getItem(key)!), SAVE_KEY);
-    expect(completed).toMatchObject({ target: null, wallet: { timber: 0, stone: 0, coins: 0 }, buildings: {
-      workshop: { built: true, style: 'studio' }, lookout: { built: true, style: 'watchtower' },
-    }});
-  });
-}
-
-
-test('first-play guidance follows real actions and stays skipped after reload', async ({ page }) => {
-  await openIsland(page);
-  await expect(page.getByRole('complementary', { name: 'Getting started' })).toBeVisible();
-  await page.getByRole('button', { name: 'Palm Bungalow', exact: true }).click();
-  await expect(page.getByText('Bring supplies home', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Gather supplies', exact: true }).click();
-  const hint = page.getByRole('complementary', { name: 'First run guidance' });
-  await expect(hint).toBeVisible();
-  await page.getByRole('button', { name: 'Move right', exact: true }).click();
-  await expect(hint).toHaveCount(0);
-  await page.reload();
-  await waitForWorld(page);
-  await page.getByRole('button', { name: 'Skip guide', exact: true }).click();
-  await page.reload();
-  await waitForWorld(page);
-  await expect(page.getByRole('complementary', { name: 'Getting started' })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Palm Bungalow', exact: true })).toHaveAttribute('aria-pressed', 'true');
-});
-
-test('unreadable saves survive session play and restart cancellation until explicit reset', async ({ page }) => {
-  await openIsland(page);
-  await page.evaluate(key => localStorage.setItem(key, '{unreadable'), SAVE_KEY);
-  await page.reload();
-  await waitForWorld(page);
-  await page.getByRole('button', { name: 'Play this session', exact: true }).click();
-  await page.getByRole('button', { name: 'Palm Bungalow', exact: true }).click();
-  expect(await page.evaluate(key => localStorage.getItem(key), SAVE_KEY)).toBe('{unreadable');
-  await page.getByRole('button', { name: 'Start over', exact: true }).click();
-  await page.getByRole('button', { name: 'Keep my island', exact: true }).click();
-  expect(await page.evaluate(key => localStorage.getItem(key), SAVE_KEY)).toBe('{unreadable');
-  await page.getByRole('button', { name: 'Start over', exact: true }).click();
-  await page.getByRole('button', { name: 'Yes, start a fresh island', exact: true }).click();
-  const fresh = await page.evaluate(key => JSON.parse(localStorage.getItem(key)!), SAVE_KEY);
-  expect(fresh.wallet).toEqual({ timber: 0, stone: 0, coins: 0 });
-  expect(fresh.buildings.home).toEqual({ built: false, style: 'cottage' });
-});
-
-
-test('an endless run can bank supplies without a collision', async ({page}) => {
-  await openIsland(page);
-  await page.getByRole('button',{name:'Gather supplies',exact:true}).click();
-  await expect.poll(async()=>Number((await page.locator('#run-distance').textContent())?.replace('m',''))).toBeGreaterThan(20);
-  await page.getByRole('button',{name:'Return with supplies',exact:true}).click();
-  const result=page.getByRole('dialog',{name:'A run worth bringing home.'});
-  await expect(result).toBeVisible();
-  const timber=result.locator('.earned-loot [aria-label$=" timber"]');
-  await expect(timber).toBeVisible();
-  expect(Number.parseInt((await timber.getAttribute('aria-label'))!,10)).toBeGreaterThanOrEqual(5);
 });

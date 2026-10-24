@@ -1,4 +1,5 @@
 import './ui/styles.css';
+import './ui/settlement.css';
 import { IslandController } from './controller';
 import { mountUI } from './ui/app';
 import { mountGame } from './game/config';

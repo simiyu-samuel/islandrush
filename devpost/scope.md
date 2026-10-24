@@ -3,153 +3,51 @@ doc: scope
 status: approved
 ---
 
-# Island Rush
+# Island Rush — scope
 
-A game where endless supply runs supply the materials to build and personalize a growing
-island, with building choices and resources introduced through progression.
+Approved by the owner on **24 October 2026**: expand the working runner/island game to sixteen building types, repeat construction and detailed settlement simulations, updating the app flow, documentation and demo materials. The earlier three-building/two-level boundary is superseded.
 
-## The Unique Kernel
+## Unique kernel and audience
 
-Running has a concrete purpose on the island: collect the materials needed for
-available construction, choose a building design, and see that project become
-part of the island. Collectible materials should remain relevant to unfinished
-buildings at the player's current level.
+An endless coastal supply run has a visible purpose: bring materials home, choose where to construct, and support a community that lives and works on the island. For players who enjoy responsive arcade running and the creative planning of a settlement builder.
 
-## Who It's For
+## Core journey
 
-Players who enjoy short arcade runs and choosing how a small island develops.
-The concept combines the learner's interest in City Island's building with the
-action of Subway Surfers and Temple Run.
+1. Choose a building type, see benefits, recipe, terrain, tier and construction stages.
+2. Run for the selected recipe's timber/stone and coins. Speed and obstacle frequency rise with progress.
+3. Return voluntarily or hit an obstacle; keep collected loot once, then build or run again.
+4. Preview an eligible clear foundation and facing; confirm a resource-funded five-second construction.
+5. Inspect residents and services, assign work, maintain food/water, manage policies and trade.
+6. Repeat any building type while suitable space and supplies remain; claim additional blocks and connect additional islets.
 
-## The Core Loop
+## Included content
 
-1. See the buildings and design choices available at the current level, including
-   what materials unfinished construction needs.
-2. Play a endless supply run, avoiding grounded hazards and collecting animated materials
-   and coins floating above the route. Show materials relevant to the current
-   progression and available, unfinished buildings.
-3. End the run by choosing Head home or hitting an obstacle. Show the collected loot
-   and retain it for use on the island.
-4. Choose to return to the island and use materials immediately, spend collected
-   coins on eligible materials, or run again and collect more before building.
-5. Complete construction and see a visible change on the island. Completing the
-   first home unlocks level 2; completing the workshop and lookout finishes the
-   first version's starter settlement.
+| Category | Types |
+| --- | --- |
+| Civic & Community | Town Hall, Community Plaza, Medical Clinic, Visitor Lodge |
+| Resource & Production | Lumber Yard, Artisan Workshop, Windmill Bakery, Archipelago Pier |
+| Utility & Infrastructure | Rainwater Collector, Coastal Lighthouse, Storage Depot, Geothermal Generator |
+| Settlement Expansion | Pioneer Cottage, Border Outpost, Terrace Hamlet, Bridge Link |
 
-## Agreed Level Progression
+The [player guide](game-guide.md#all-building-types) and [PRD](prd.md#building-catalogue) list all sixteen costs, tiers and terrain requirements. These values come from `src/model/catalog.ts`.
 
-The learner accepted the construction-based progression and the complete scope
-on 22 October 2026, then explicitly added collision-ended runs with retained
-materials and coins that buy materials during product review. These additions
-preserve the one-course, two-level, three-building boundary.
+- Repeatable instance-based buildings, concurrent five-second construction, free relocation and facing, half-recipe dismantle salvage, and safeguards against stranding occupied expansion land.
+- Three technology tiers: a completed Town Hall opens tier 2; a 100-timber/80-stone Town Hall upgrade opens tier 3.
+- Individual residents with homes, jobs, hunger, health and shortage-related fever. Automatic essential staffing with manual reassignment, treatment and recovery.
+- Working water, forest/timber, grain/flour/bread, fish and plank/tool production; per-resource storage, safe runner overflow, power demand and generation.
+- Happiness, festivals, four island policies, tourists, rare-item merchants, fog clearance and scheduled cargo ships with explicit trades.
+- Eight four-space blocks per islet: 16 initially open, outposts add four up to 32, each completed bridge adds another islet. No arbitrary copy limit or fixed last island.
+- Original sixteen-building art in four category atlases, existing connected-road terrain, adult courier and coastal jungle runner; responsive HTML controls and compact mobile screens.
+- Browser-local version-2 saves, safe migration/backups of valid version-1 saves, retained invalid data, truthful session-only fallback and bounded offline simulation.
 
-Advance levels by completing the current level's required construction. This
-connects each endless supply run to visible island progress and keeps the next goal easy
-to explain.
+## Boundaries
 
-| Level | Available construction | Materials | Completion and unlock |
-| --- | --- | --- | --- |
-| 1 — First home | One home with a choice of visual designs | Timber | Completing the home unlocks level 2 and its building/material choices. |
-| 2 — Small settlement | A workshop and lookout tower, with visual design choices | Timber and stone, according to the selected unfinished building's requirements | Completing both finishes the first playable version's settlement. |
+This is a local single-player simulation with discrete ten-second life ticks and at most thirty minutes of catch-up. Islanders and ships are game state with visual representations; it does not simulate a full pathfinding economy, real-time infectious disease spread, or a real external marketplace. Fever is a shortage-related game condition. No resident death, multiplayer, accounts, cloud saves, runtime AI service or paid transaction is included.
 
-This preserves the initial three-building boundary while proving a level change,
-new material availability, and building-style choices. The six-style set and exact
-resource amounts are specified in the approved PRD. Collected resources remain
-available between endless supply runs, and the player may build or run again.
+The island remains structured: free choice among suitable open foundations, with terrain requirements, rather than arbitrary placement on roads/water. Technology tiers gate construction; gathering for locked recipes is allowed. Upgrades are implemented for Town Halls, not every building type.
 
-The interface can show the current construction goal and remaining materials,
-then clearly announce new buildings and resources when the home is completed.
-The first home should provide an early satisfying milestone; the number of runs
-needed must be tuned through play rather than assumed here.
+## Working outcome
 
-## Inspiration & Identity
+Players can enter without registration, understand the run/build/care loop, construct and move multiple copies, see individual needs and production change over time, expand territory and use a real dock/merchant schedule. Costs, shortage messages, timers, pause behavior, save status and recovery should be clear.
 
-Pixel Coast is the approved leading visual direction, with the warm coastal
-atmosphere of Painted Adventure as inspiration. Use a clearly adult character,
-more usable island space, and clear paths between building sites. Materials
-should hover and animate so they invite collection; obstacles remain visibly
-grounded. The approved PRD defines the consistent pixel-art treatment.
-
-Relevant exploratory studies were shown in the conversation. They demonstrate
-appearance and intended motion, rather than working gameplay or animation.
-References named by the learner include City Island, chess, Call of Duty,
-eFootball, Subway Surfers, and Temple Run. One official runner reference is
-[Temple Run](https://imangistudios.com/thegames/temple-run/); the other titles
-remain learner-named inspirations rather than copied assets or mechanics.
-
-## Why This Matters to the Learner
-
-The learner's previous Zalura game worked logically, but they disliked its visual
-identity and player experience. They want to practise imagining, designing, and
-refining attractive game interfaces and gameplay experiences through this build.
-
-## What "Working" Looks Like
-
-Demonstration: choose an available building design, play a
-complete endless supply run, collect the needed materials, return to the island, and
-complete construction with a visible result. Another run should retain useful
-progress and respect which buildings and resources are available. Also show
-that the player can run again directly instead of building after each run.
-
-The core proof is that the runner and island work together as one game. The
-submission must demonstrate this in a short video and include the public repo
-with the completed scope, PRD, and spec.
-
-## The POC Boundary
-
-The initial concept was one course and three buildings. Preserve a small
-end-to-end game while accommodating the learner's added requirements:
-
-- Endless runs with gradually increasing pace, ending on obstacle impact or
-  voluntary return while retaining collected materials.
-- Collected coins can buy eligible materials within the island's construction flow.
-- A choice of building styles/designs, locations among clear grass blocks, and
-  free relocation of finished buildings with either road-facing orientation.
-- Level-gated buildings and appropriate material pickups.
-- Material requirements shown for unfinished construction.
-- A choice to build after a run or continue collecting through another run.
-- Adult character, readable floating pickups, and a coherent island identity.
-
-The agreed first-version progression has two levels and three buildings on one
-streamed course. Six visual building designs demonstrate player choice. Exact
-pace tuning and resource amounts are specified in the PRD; the scope does not
-promise a large content library.
-
-24 October revision: the owner explicitly requested player-chosen locations and
-confirmed using clear grass blocks while keeping roads/water/landscaping clear.
-This adds a small placement/move interface within the existing three-building
-scope. The runner adopts a coastal jungle presentation and spaced encounters;
-the one-course loop, collision/loot rules, recipes, and levels are retained.
-
-24 October follow-up: the owner approved the coastal runner direction and
-explicitly replaced the 60-second limit with endless running, increasing speed,
-and increasing difficulty. Head home lets players return with supplies whenever
-they choose. They also requested clear mobile outer lanes and direct map-tap
-relocation for completed buildings. No buildings or levels were added.
-
-## Later
-
-Additional courses, buildings, and design variants beyond the small first
-version can extend the same loop. No specific expansion is committed yet.
-
-## Explicitly Cut
-
-The first version stays within one course, two levels, and three building types.
-Additional content belongs to later expansion. No other named feature has been
-explicitly cut.
-
-## Approved product detail
-
-The approved PRD defines the first-use journey, six designs, eight-block
-placement and relocation, exact recipes, endless pace and collision/return
-behavior, responsive screens, and construction animation. The implemented
-controls and limits are collected in game-guide.md; spec.md describes their
-architecture. Later changes carry a dated owner-request record.
-
-## Delivery revision — 24 October
-
-The owner explicitly selected Vercel hosting and requested complete documentation,
-Devpost updates, a voice-over reading script, and a screen-recording guide.
-These share the same proof of concept without adding gameplay content. Public
-hosting supplements the required public repository and recorded demo. The video
-and final submission remain incomplete until their actual steps are performed.
+Owner authorization is not a claim of a successful new playtest. Current check results, player review and deployment evidence are tracked separately in [checklist.md](checklist.md) and [deployment.md](deployment.md). Demo/submission materials must describe only the version actually recorded and published.

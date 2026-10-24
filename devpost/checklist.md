@@ -13,38 +13,40 @@ Git: local initialization and project commits authorized on 22 October 2026.
 Remote: https://github.com/simiyu-samuel/islandrush.git (provided by the learner).
 Save each verified slice as a local commit; keep private context and secrets ignored.
 
-## Current checkpoint
+## Current checkpoint — settlement expansion, 24 October
 
-Delivery checkpoint: production is live at https://island-rush-six.vercel.app
-from a1d2583 (gameplay 72275d5). Anonymous HTML/bundle/PNG access checks pass.
-The Devpost story, tagline, live/repository links, Vercel tag, three genuine
-screenshots, and contribution have been saved and reloaded for verification.
-The 332-word narration and matched recording guide are ready. The required video
-URL and final terms/submission remain pending; see `shipping.md`.
+The owner explicitly approved sixteen building types, repeat copies and detailed
+simulation. This replaces the original three-building/two-level completion cap.
+The existing coastal runner art, endless pace, impact safety and controls are retained.
 
-24 October endless/mobile/direct-move follow-up: the owner said the coastal
-runner is now “perfect” and requested no time limit, progressive speed and
-difficulty, mobile trees outside both outer lanes, and direct relocation by
-tapping a completed building on the map.
+- [x] Instance construction, single cost reservation, occupancy, free moves and
+  backup-first version 1 save migration to version 2.
+- [x] Sixteen functional types and ten-second settlement simulation: named people,
+  homes/jobs/hunger/illness, supply chains, festivals, visitors/rare merchants,
+  policies, storage/power and scheduled cargo.
+- [x] Four-category catalog, five management sections, mobile bottom navigation,
+  distinct original building art, individual sites/meters and expandable islets.
+- [x] Reclaim-space action with half-recipe salvage and guards against stranding
+  occupied ground by removing an outpost/bridge.
+- [ ] Complete integrated verification and public-page layout/interaction checks.
+- [x] Refresh current README, scope, PRD, spec, guide, app map, story, contribution,
+  narration and recording instructions. The new narration contains 359 words.
+- [ ] Publish the verified revision and save/reload matching Devpost content/media.
+- [ ] Owner tries the expanded game before recording the demo.
+- [ ] Add the real public video URL, review final declarations and finally submit.
 
-Implemented endless deterministic course streaming, smooth pace growth from
-18 to 34 units/second (cap reached after 80 active seconds), more frequent later
-hazards, distance/pace HUD, and Head home / paused return with once-only loot
-banking. Old entities and collection IDs are pruned during long runs. Foliage
-uses smaller phone sprites and full-image exclusion beyond the road edge.
-Tapping a finished map building opens the existing move preview directly.
-The same three buildings, eight grass blocks, two levels, recipes, and
-construction/save rules remain.
+Mechanical evidence: all 97 model/controller/geometry checks pass; TypeScript
+passes and eleven updated Playwright journeys collect without launching a browser.
+Production build and public observations are being completed before delivery. Test collection is not execution; earlier browser/device approvals
+do not establish approval of this settlement expansion.
 
-Production build and **91 unit/controller/geometry checks** pass. Eleven browser
-journeys collect but remain unexecuted under the recorded URL-policy block.
-The coastal art direction has player approval; the new endless behavior,
-mobile lane clearance, and direct map moves still need a player retry.
+## Historical delivery and review checkpoints
 
-- [x] Implement and mechanically verify endless pace/course, once-only return,
-  mobile foliage bounds, and direct completed-building move previews.
-- [ ] Player tries a longer run, Head home, the outer lanes on phone, and tapping
-  a finished map building to choose and confirm an available block.
+The original source below describes the previous implementation and actual feedback.
+It is retained as history; current behavior is defined above and in the revised
+scope/PRD/spec. Prior production: a1d2583 (gameplay 72275d5), 91 checks and eleven
+prepared browser journeys. Earlier public screenshots show that smaller version.
+The required demo video and final submission remain incomplete.
 
 ## Slices
 
@@ -194,3 +196,12 @@ Activity mode: Actual feedback/revision investigation plus brief evidence-based 
   reloaded the story, tagline, live/repo links, Vercel tag, and contribution.
   The saved entry remains DRAFT 3/5 because the video field is blank and final
   terms/submission are unperformed. No personal survey answers were changed.
+
+- 24 October settlement expansion: the owner requested sixteen repeatable building
+  types and explicitly selected detailed simulations. Replaced the fixed-building
+  dictionary with saved instances, added citizen/production/health/community/trade
+  state, Town Hall tiers, terrain rules, local outpost land and repeated bridge
+  expansion. Added original category atlases, catalog/management screens, safe
+  v1 backup migration, concurrent five-second construction, and reclaim-space
+  salvage. Current documents and demo materials were rewritten to match; original
+  learning records remain historical. Player review remains open for this revision.

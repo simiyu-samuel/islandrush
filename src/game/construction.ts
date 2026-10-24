@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import type { StyleId } from '../model/types';
+import type { BuildingType, StyleId } from '../model/types';
 
 type Point = { x: number; y: number };
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -14,6 +14,7 @@ export function drawConstruction(
   progress: number,
   style: StyleId,
   reducedMotion: boolean,
+  type?: BuildingType,
 ): void {
   graphics.clear();
   const roofColor = style === 'studio' ? 0x4e9390 : style === 'cottage' || style === 'forge' || style === 'lighthouse' ? 0xc97543 : 0xc4ac64;
@@ -52,7 +53,8 @@ export function drawConstruction(
     graphics.lineStyle(Math.max(1, width * 0.006), 0x676e5a, 0.7).beginPath().moveTo(bx, by).lineTo(bx, by + foundationDepth).strokePath();
   }
   const rise = step(p, 0.16, 0.44);
-  const wallHeight = width * (style === 'lighthouse' ? 1.8 : style === 'watchtower' ? 1.25 : style === 'cottage' ? 0.43 : 0.35);
+  const openStructure = type === 'community-plaza' || type === 'archipelago-pier' || type === 'bridge-link';
+  const wallHeight = width * (type === 'coastal-lighthouse' || style === 'lighthouse' ? 1.8 : type === 'terrace-hamlet' ? 0.9 : style === 'watchtower' ? 1.25 : openStructure ? 0.18 : style === 'cottage' ? 0.43 : 0.5);
   const tops = base.map(point => ({ x: point.x, y: point.y - wallHeight * rise }));
   const [topFrontLeft, topFrontRight, topBackRight, topBackLeft] = tops as [Point, Point, Point, Point];
   if (p >= 0.16) {
@@ -83,7 +85,7 @@ export function drawConstruction(
       beam(ridge, eave, 0xd0a163, 0.019);
     }
   }
-  if (p >= 0.64 && style !== 'watchtower') {
+  if (p >= 0.64 && style !== 'watchtower' && !openStructure) {
     const walls = step(p, 0.64, 0.82);
     const frontTopL = { x: frontLeft.x, y: frontLeft.y - wallHeight * walls };
     const frontTopR = { x: frontRight.x, y: frontRight.y - wallHeight * walls };
@@ -94,7 +96,7 @@ export function drawConstruction(
     beam(topFrontLeft, topFrontRight);
     beam(topFrontRight, topBackRight);
   }
-  if (p >= 0.8) {
+  if (p >= 0.8 && !openStructure) {
     const cover = step(p, 0.8, 0.98);
     const frontEave = { x: lerp(ridgeFront.x, topFrontRight.x, cover), y: lerp(ridgeFront.y, topFrontRight.y, cover) };
     const backEave = { x: lerp(ridgeBack.x, topBackRight.x, cover), y: lerp(ridgeBack.y, topBackRight.y, cover) };

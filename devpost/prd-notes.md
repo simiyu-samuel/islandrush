@@ -1,3 +1,5 @@
+> Historical discovery record. Current owner-approved behavior is in [scope.md](scope.md), [prd.md](prd.md), [spec.md](spec.md) and [game-guide.md](game-guide.md). The 24 October settlement expansion supersedes earlier three-building and two-level limits.
+
 # Island Rush — product interview notes
 
 These are historical discovery notes from 22 October, not the current PRD. The approved scope remains the

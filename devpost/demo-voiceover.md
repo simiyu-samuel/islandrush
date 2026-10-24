@@ -1,50 +1,46 @@
-# Island Rush — voice-over script
+# Island Rush — voice-over reading script
 
-Read only the paragraphs between “Script starts” and “Script ends.” The headings
-and production notes are not spoken. Use this as an AI-assisted draft in your
-own voice; change any phrase that does not sound like you.
-
-Target: about 2:40–2:50 including pauses. Record one rehearsal before capturing
-the final audio. Match the shots in [the screen-recording guide](demo-recording-guide.md).
-Do not rush to force a duration: remove a sentence if your natural reading runs long.
+Read only the paragraphs between Script starts and Script ends. This is an
+AI-assisted draft for your own voice; adjust phrasing that feels unnatural.
+Target roughly 2:40–2:50 at a comfortable pace, including brief pauses. Rehearse
+and shorten if needed; the final video must stay below three minutes.
+Match the nine paragraphs to the [recording guide](demo-recording-guide.md).
 
 ## Script starts
 
-Hi, I’m Samuel, and this is Island Rush: an endless coastal runner where the supplies you collect become buildings on your own island. It’s for players who enjoy quick arcade runs and the slower satisfaction of shaping a settlement.
+Hi, I’m Samuel. This is Island Rush, a game for players who enjoy the action of an endless runner and the creativity of a city builder. Every supply run helps a coastal settlement grow.
 
-I start by choosing a home design and a clear grass block. I can preview its location, flip its facing to suit the street, and confirm before spending any materials. The larger island gives those choices room to breathe.
+On the island, I choose from sixteen building types in four categories. Each project explains its purpose, material cost and suitable terrain. I can build several copies, choose a clear space, and flip the design to face the street.
 
-Next, I head onto the coastal jungle trail. Timber, stone, and coins float above the road, while solid blocks stay grounded. I change lanes and jump to avoid them. The island on the horizon connects this adventure to the place I’m building.
+Then I head onto the coastal jungle trail. Timber, stone and coins float above the road, while solid obstacles stay grounded. I change lanes and jump to collect supplies. The island on the horizon reminds me what I’m running for.
 
-There’s no countdown. Speed increases as I run, and hazards become more frequent. I can keep going or choose Head home when I’m ready to build. A collision ends the run too, but I keep everything I collected before impact.
+There is no countdown. Speed increases and hazards become more frequent. I can choose Head home whenever I’m ready. If I hit an obstacle, the run stops, but I keep everything already collected. Coins can also buy missing materials.
 
-Back on the island, those supplies fill the selected building’s recipe. Coins can buy eligible missing materials. When I choose Build, construction progresses for five seconds, with an overhead percentage bar, before revealing my chosen design.
+Back on the island, I confirm Build here. Supplies are reserved once, and five seconds of construction show the foundation, frame and final reveal, with a percentage bar above the site. I can tap a finished building to move it for free.
 
-Completing the home unlocks the workshop, lookout, and stone supplies. Each building has two designs. I can tap a completed building, preview another available block, and move it for free. Finishing all three completes the starter settlement.
+The buildings support a living community. Islanders have homes, work assignments, hunger and health. Water, gardens and bakeries supply daily needs. Clinics treat illness, plazas host festivals, and lodges attract tourists and rare-item merchants. The Village screens make those systems visible.
 
-On a phone, the bottom navigation keeps the island, buildings, and running within reach. Progress is saved in the same browser, including building locations and unfinished construction.
+A Town Hall unlocks policies and higher tiers. Piers receive cargo ships, lighthouses clear the route, and geothermal plants power advanced services. Outposts claim more ground, while bridges connect further islets. Growth depends on space and supplies, rather than a three-building finish line.
 
-I built this from scratch with Codex and the Devpost Learn Skill Pack. The scope, product requirements, and technical plan kept the idea focused. I directed the visual revisions through playtesting, while AI assisted with code and original artwork. The game uses Phaser, TypeScript, and Vite.
+I built Island Rush with Codex and the Devpost Learn Skill Pack, using the scope, product requirements and technical specification to guide development. I directed the visual revisions and expansion; AI assisted with implementation and original artwork. The game uses Phaser, TypeScript and Vite, with browser saves and mobile navigation.
 
-The result is one connected loop: run, return, and build. You can play it on Vercel, and explore the MIT-licensed source and planning documents on GitHub.
+Island Rush connects action to visible progress: run, return, build and thrive. You can try it without an account on Vercel, and explore the MIT-licensed source and planning documents on GitHub.
 
 ## Script ends
 
-Live game: https://island-rush-six.vercel.app
-Public source: https://github.com/simiyu-samuel/islandrush
+Play: https://island-rush-six.vercel.app
+Source: https://github.com/simiyu-samuel/islandrush
 
-## Audio recording notes
+## Audio notes
 
-- Read warmly, like you are showing a friend what you made. Pause briefly between
-  paragraphs; say the button names clearly.
-- Pronounce Phaser as “fay-zer,” Vercel as “ver-sell,” and Devpost as “dev-post.”
-- Record in a quiet room with a consistent microphone distance. Avoid background
-  music; your narration is sufficient.
-- Leave a few seconds of silence at the beginning and end for editing. Record
-  again if clipping or room noise makes words hard to hear.
-- Keep the exported final video below three minutes. The rules require real
-  working footage and a publicly visible YouTube/Vimeo link:
-  https://learn-ai-basics.devpost.com/rules (checked 24 October 2026).
-- The script describes current features. It does not claim cloud saves, runtime
-  AI, more than three buildings, an unlimited design library, or a browser test
-  suite that was not run. The game is static-hosted; AI helped during development.
+Record in a quiet room, at a consistent microphone distance. Leave a few seconds
+of silence at both ends. Use your normal speaking voice; pause after each
+paragraph. Say Phaser as “fay-zer”, Vercel as “ver-sell”, and Devpost as “dev-post”.
+Record a rehearsal and measure its duration. Keep the build reveal at normal
+speed. The voice-over describes implemented behavior; the footage must show
+actual gameplay rather than mockups. No music is needed.
+
+[Official rules](https://learn-ai-basics.devpost.com/rules), checked 24 October
+2026: video below three minutes, real working footage, publicly visible YouTube
+or Vimeo link. No runtime AI, cloud saves or completed full-device testing is
+claimed by this script.

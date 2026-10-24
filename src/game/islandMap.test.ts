@@ -1,24 +1,34 @@
 import { describe, expect, it } from 'vitest';
-import { islandMapLayout, ISLAND_PLOTS } from './islandMap';
+import { islandMapLayout, lotPosition, lotFootprint, regionOffset, regionPosition } from './islandMap';
+import { getLots } from '../model/placement';
+import type { BuildingInstance } from '../model/types';
 
 const sizes = [[320,640],[390,844],[768,1024],[844,390],[960,540],[1280,720],[1920,1080]];
+const island = { buildings: [] as BuildingInstance[] };
 
-describe('explorable island map', () => {
-  it('keeps every playable lot and its label inside the initial map area', () => {
-    for (const [width,height] of sizes) {
-      const map = islandMapLayout(width!,height!);
-      for (const anchor of Object.values(ISLAND_PLOTS)) {
-        const x = map.left + anchor.x * map.mapWidth;
-        const y = map.top + anchor.y * map.mapHeight;
-        expect(x - 50, `${width}×${height} label left`).toBeGreaterThanOrEqual(0);
-        expect(x + 50, `${width}×${height} label right`).toBeLessThanOrEqual(width! >= 960 ? width! - 370 : width!);
-        expect(y - 45, `${width}×${height} building top`).toBeGreaterThanOrEqual(70);
-        expect(y + 35, `${width}×${height} label bottom`).toBeLessThanOrEqual(height! - 70);
+describe('expandable archipelago map', () => {
+  it('gives the island 32 distinct small footprints instead of three fixed plots', () => {
+    const lots = getLots(island);
+    expect(lots).toHaveLength(32);
+    expect(new Set(lots.map(lot => lot.id)).size).toBe(32);
+    const map = islandMapLayout(1280,720);
+    const footprint = lotFootprint(map);
+    expect(footprint.width / map.mapWidth).toBeLessThanOrEqual(0.03);
+    for (const lot of lots) {
+      const point = lotPosition(lot, map);
+      expect(point.x).toBeGreaterThan(map.left);
+      expect(point.x).toBeLessThan(map.left + map.mapWidth);
+      expect(point.y).toBeGreaterThan(map.top);
+      expect(point.y).toBeLessThan(map.top + map.mapHeight);
+      for (const neighbor of lots.filter(other => other.block === lot.block && other.id !== lot.id)) {
+        const horizontal = Math.abs(lot.x - neighbor.x) * map.mapWidth / footprint.width;
+        const vertical = Math.abs(lot.y - neighbor.y) * map.mapHeight / footprint.height;
+        expect(horizontal + vertical).toBeGreaterThan(1);
       }
     }
   });
 
-  it('lets zoom-out reveal the whole terrain inside the usable viewport', () => {
+  it('lets zoom-out reveal a single terrain inside the usable viewport', () => {
     for (const [width,height] of sizes) {
       const map = islandMapLayout(width!,height!,0.65,9999,-9999);
       expect(map.mapWidth).toBeLessThanOrEqual(map.viewport.width);
@@ -28,16 +38,32 @@ describe('explorable island map', () => {
     }
   });
 
-  it('bounds dragging and zooming so the island cannot be lost offscreen', () => {
-    for (const [width,height] of sizes) {
-      for (const direction of [-1,1]) {
-        const map = islandMapLayout(width!,height!,100,100000*direction,100000*direction);
-        expect(map.zoom).toBe(1.8);
-        expect(map.left).toBeLessThanOrEqual(map.viewport.x + 1e-8);
-        expect(map.top).toBeLessThanOrEqual(map.viewport.y + 1e-8);
-        expect(map.left + map.mapWidth).toBeGreaterThanOrEqual(map.viewport.x + map.viewport.width - 1e-8);
-        expect(map.top + map.mapHeight).toBeGreaterThanOrEqual(map.viewport.y + map.viewport.height - 1e-8);
+  it('bounds panning across every connected islet without losing the archipelago', () => {
+    for (const [width,height] of sizes) for (const regions of [1,2,4,12,50]) for (const direction of [-1,1]) {
+      const map = islandMapLayout(width!,height!,100,100000*direction,100000*direction,regions);
+      expect(map.zoom).toBe(2.4);
+      expect(map.left).toBeLessThanOrEqual(map.viewport.x + 1e-8);
+      expect(map.top).toBeLessThanOrEqual(map.viewport.y + 1e-8);
+      expect(map.left + map.worldWidth).toBeGreaterThanOrEqual(map.viewport.x + map.viewport.width - 1e-8);
+      expect(map.top + map.worldHeight).toBeGreaterThanOrEqual(map.viewport.y + map.viewport.height - 1e-8);
+    }
+  });
+
+  it('keeps each newly revealed islet adjacent to its preceding bridge with no region cap', () => {
+    const seen = new Set<string>();
+    for (let index = 0; index < 200; index++) {
+      const position = regionOffset(index);
+      expect(seen.has(`${position.x},${position.y}`)).toBe(false);
+      seen.add(`${position.x},${position.y}`);
+      if (index) {
+        const previous = regionOffset(index - 1);
+        expect(Math.abs(position.x - previous.x) + Math.abs(position.y - previous.y)).toBeCloseTo(1.04);
       }
     }
+    const map = islandMapLayout(1280,720,1,0,0,200);
+    const last = regionPosition(199,map);
+    expect(last.x).toBeGreaterThanOrEqual(map.left);
+    expect(last.x + map.mapWidth).toBeLessThanOrEqual(map.left + map.worldWidth + 1e-8);
+    expect(last.y + map.mapHeight).toBeLessThanOrEqual(map.top + map.worldHeight + 1e-8);
   });
 });
