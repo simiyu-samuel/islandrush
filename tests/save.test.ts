@@ -38,6 +38,15 @@ describe('v2 durable settlement validation and saves', () => {
 });
 
 describe('v1 migration without data loss', () => {
+  it('starts newly introduced needs at migration instead of starving legacy residents retroactively', () => {
+    const before=Date.now();
+    const loaded=loadProgress(memory(JSON.stringify(legacy())).storage);
+    if(loaded.status!=='ok')throw new Error('migration failed');
+    expect(loaded.progress.simulation.lastTickAt).toBeGreaterThanOrEqual(before);
+    const settled=advanceSettlement(loaded.progress,Date.now());
+    expect(settled.simulation.goods.water).toBe(40);
+    expect(settled.simulation.citizens.every(person=>person.health===100&&person.illness===null)).toBe(true);
+  });
   it('preserves stocks, original completed design, facing, location, tutorial and reward ledger before any save writes', () => {
     const raw = JSON.stringify(legacy()); const store = memory(raw); const loaded = loadProgress(store.storage);
     expect(loaded.status).toBe('ok'); if (loaded.status !== 'ok') throw new Error('migration failed');

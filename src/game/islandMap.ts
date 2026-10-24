@@ -15,7 +15,7 @@ export function islandMapLayout(width: number, height: number, requestedZoom = 1
   const desktop = width >= 960;
   const landscape = !desktop && width > height;
   const viewport = desktop
-    ? { x: 12, y: 112, width: width - 402, height: Math.max(200, height - 162) }
+    ? { x: 12, y: 134, width: width - 402, height: Math.max(200, height - 184) }
     : landscape
       ? { x: 12, y: 80, width: width * 0.66, height: Math.max(160, height - 145) }
       : { x: 12, y: 130, width: width - 24, height: Math.max(150, height - 370) };

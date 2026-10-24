@@ -58,9 +58,11 @@ export class IslandController {
   subscribe(listener: (structural:boolean) => void) {this.listeners.add(listener); return () => this.listeners.delete(listener);}
   emit(structural = true) {this.listeners.forEach(listener => listener(structural));}
   toast(message:string) {
-    this.notice = message; clearTimeout(this.noticeTimeout);
-    this.noticeTimeout = setTimeout(() => {this.notice = ''; this.emit();},4200);
-    this.emit();
+    this.notice = message; this.scheduleNoticeClear(); this.emit();
+  }
+  private scheduleNoticeClear() {
+    clearTimeout(this.noticeTimeout);
+    this.noticeTimeout=setTimeout(()=>{this.notice='';this.emit();},4200);
   }
   private persist(overwriteCorrupt = false) {
     if (!this.writable && !overwriteCorrupt) return;
@@ -158,7 +160,7 @@ export class IslandController {
     const now=Date.now();let changed=false;
     if (this.progress.buildings.some(b => b.state === 'building' && now >= b.completesAt)) {
       const result=finishConstruction(this.progress,now);
-      if (result.ok) {this.progress=result.progress;changed=true;this.recordTutorial('build');this.notice=result.message;}
+      if (result.ok) {this.progress=result.progress;changed=true;this.recordTutorial('build');this.notice=result.message;this.scheduleNoticeClear();}
     }
     const next=advanceSettlement(this.progress,now);
     if (next !== this.progress) {this.progress=next;changed=true;}
@@ -207,6 +209,6 @@ export class IslandController {
     }),
     tick:dt=>this.tick(dt),move:direction=>this.move(direction),jump:()=>this.jump(),pause:()=>this.pause(),
     selectBuilding:id=>{if(this.view!=='island'||this.modal!=='none')return;const building=this.progress.buildings.find(b=>b.id===id);if (!building) return;this.selectedType=building.type;this.selectedInstance=id;this.category=BUILDINGS[building.type].category;if (building.state==='complete') this.openPlacement(id);else this.openSettlement('catalog');},
-    selectLot:id=>this.selectPlacementLot(id),onReady:()=>{this.ready=true;this.emit();},onError:message=>{this.error=message;this.emit();},
+    selectLot:id=>this.selectPlacementLot(id),onReady:()=>{this.ready=true;if(this.notice)this.scheduleNoticeClear();this.emit();},onError:message=>{this.error=message;this.emit();},
   };
 }

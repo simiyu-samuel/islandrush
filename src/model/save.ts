@@ -74,7 +74,9 @@ function migrateLegacy(value: unknown): Progress | null {
   if (allBuilt ? value.target !== null : !oldIds.includes(value.target) || value.buildings[value.target].built || (value.target !== 'home' && !value.buildings.home.built)) return null;
   const pending = value.pendingConstruction;
   if (pending !== undefined && pending !== null && (!record(pending) || !keysAre(pending, ['buildingId', 'startedAt', 'completesAt']) || !oldIds.includes(pending.buildingId) || value.target !== pending.buildingId || value.buildings[pending.buildingId].built || !time(pending.startedAt) || !time(pending.completesAt) || pending.completesAt - pending.startedAt !== CONSTRUCTION_DURATION_MS)) return null;
-  const next = createProgress(value.updatedAt);
+  // New daily needs begin at migration, never retroactively in the old game.
+  const next = createProgress();
+  next.updatedAt = value.updatedAt;
   next.wallet = { ...value.wallet }; next.tutorial = structuredClone(value.tutorial);
   next.lastSettledRunId = value.lastSettledRunId; next.settledRunIds = [...value.settledRunIds];
   next.target = value.target ? oldTypes[value.target as typeof oldIds[number]] : 'pioneer-cottage';

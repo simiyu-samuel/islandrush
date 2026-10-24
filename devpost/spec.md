@@ -89,3 +89,5 @@ Save reads/writes are caught; failures show truthful session-only status. Reset 
 Run `npm run typecheck`, meaningful model/controller/geometry tests and `npm run build`; collect or execute prepared browser journeys only through allowed browser access. Cover repeat/concurrent construction, tier/terrain/occupancy, move/dismantle expansion safety, production/needs/health, scheduled trade, once-only run credit, overflow and valid/invalid migration including failed backups.
 
 Current results, remaining player/device review, publication and submission status are recorded in [checklist.md](checklist.md), [deployment.md](deployment.md) and [shipping.md](shipping.md). This specification does not claim a fixed test count, completed browser execution, fresh player approval or publication of the new revision.
+
+Migration starts newly introduced resident needs at the time of conversion; the old game’s absence does not retroactively cause hunger or illness. Original in-flight construction deadlines are retained.

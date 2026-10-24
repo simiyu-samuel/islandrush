@@ -365,7 +365,7 @@ export class IslandScene extends Phaser.Scene {
   private paintConstructionMeter(view: BuildingView, x: number, y: number, spriteHeight: number, progress: number): void {
     const camera = this.cameras.main;
     const meterWidth = 90, meterX = Phaser.Math.Clamp(x, camera.x + 53, camera.x + camera.width - 53);
-    const meterY = Math.max(this.scale.width >= 960 ? 112 : this.scale.width > this.scale.height ? 80 : 130, y - spriteHeight * 0.91 - 34);
+    const meterY = Math.max(this.scale.width >= 960 ? 134 : this.scale.width > this.scale.height ? 80 : 130, y - spriteHeight * 0.91 - 34);
     const graphics = view.meter.setVisible(true).setDepth(9000);
     graphics.fillStyle(0xfff9e9, 0.98).fillRoundedRect(meterX - meterWidth / 2, meterY, meterWidth, 31, 7);
     graphics.lineStyle(1, 0xd8cba5).strokeRoundedRect(meterX - meterWidth / 2, meterY, meterWidth, 31, 7);

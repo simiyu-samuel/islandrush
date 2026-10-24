@@ -35,9 +35,10 @@ The existing coastal runner art, endless pace, impact safety and controls are re
 - [ ] Owner tries the expanded game before recording the demo.
 - [ ] Add the real public video URL, review final declarations and finally submit.
 
-Mechanical evidence: all 97 model/controller/geometry checks pass; TypeScript
+Mechanical evidence: all 99 model/controller/geometry checks pass; TypeScript
 passes and eleven updated Playwright journeys collect without launching a browser.
-Production build and public observations are being completed before delivery. Test collection is not execution; earlier browser/device approvals
+Production build passes. Public desktop/phone catalog, purchase, placement and
+construction observations are in progress before delivery. Test collection is not execution; earlier browser/device approvals
 do not establish approval of this settlement expansion.
 
 ## Historical delivery and review checkpoints
@@ -205,3 +206,8 @@ Activity mode: Actual feedback/revision investigation plus brief evidence-based 
   v1 backup migration, concurrent five-second construction, and reclaim-space
   salvage. Current documents and demo materials were rewritten to match; original
   learning records remain historical. Player review remains open for this revision.
+
+- Public review correction: moved the desktop map/panel below the full header,
+  enlarged the phone Help target, cleared migration/completion notices, and
+  started newly introduced resident needs at migration time instead of applying
+  them retroactively to absence from version 1. Added two regression checks.

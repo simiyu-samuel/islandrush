@@ -145,3 +145,11 @@ describe('guidance, migration and safe recovery',()=>{
     expect(c.selectedInstance).toBeNull();expect(c.selectedCitizen).toBeNull();expect(c.placement).toBeNull();expect(c.run).toBeNull();expect(c.progress.buildings).toEqual([]);expect(c.progress.simulation.citizens).toHaveLength(2);expect(c.modal).toBe('none');
   });
 });
+
+it('clears the migration notice after the game is ready instead of covering vitals indefinitely',()=>{
+  saves.set(SAVE_KEY,JSON.stringify(legacy()));
+  const c=ready();
+  expect(c.notice).toContain('carried');
+  vi.advanceTimersByTime(4200);
+  expect(c.notice).toBe('');
+});
