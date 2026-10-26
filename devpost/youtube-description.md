@@ -35,3 +35,8 @@ Fit it to the 16:9 timeline, keep both links readable and fade out gently. Keep
 the complete video below three minutes. This is generated promotional closing
 art; use real gameplay for the demonstration itself. Add chapter timestamps
 only after the final edit, if useful.
+
+
+## Thumbnail asset
+
+Upload [youtube-thumbnail-v1.jpg](../design/devpost/youtube-thumbnail-v1.jpg) as the custom thumbnail. The [original PNG and generation prompt](../design/devpost/youtube-thumbnail-provenance.md) are preserved separately. This artwork is distinct from the video closing card.
